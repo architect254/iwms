@@ -38,19 +38,19 @@ export class MembershipComponent extends GridContainerDirective {
       name: 'jared',
       age: 21,
       status: 'stopped',
-      action: 'stopped',
+      action: 'run',
     },
     {
       name: 'jared',
       age: 21,
-      status: 'stopped',
-      action: 'stopped',
+      status: 'waiting',
+      action: 'run',
     },
     {
       name: 'jared',
       age: 21,
-      status: 'stopped',
-      action: 'stopped',
+      status: 'running',
+      action: 'stop',
     },
   ];
 
@@ -171,8 +171,8 @@ export const MOCK = {
   ],
   STATUS: {
     status: {
-      labels: { stopped: 'STOPPED' },
-      cssFormats: { stopped: 'stopped' },
+      labels: { stopped: 'STOPPED', waiting: 'WAITING', running: 'RUNNING' },
+      colors: { stopped: 'red', waiting: 'orange', running: 'green' },
     },
   },
   ACTIONS: {

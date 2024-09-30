@@ -1,14 +1,15 @@
 import { Component, Input, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule, SortDirection } from '@angular/material/sort';
-
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'lh-grid',
@@ -22,6 +23,7 @@ import { CommonModule } from '@angular/common';
     MatProgressSpinnerModule,
     MatSortModule,
     MatPaginatorModule,
+    MatCheckboxModule,
     CommonModule,
   ],
   templateUrl: './grid.component.html',
@@ -104,7 +106,7 @@ export interface ColumnProperties {
 export interface StatusProperties {
   [columnKey: string]: {
     labels: { [value: string]: string };
-    cssFormats: { [value: string]: string };
+    colors: { [value: string]: string };
   };
 }
 export interface ActionProperties {

@@ -17,6 +17,32 @@
             gap: 16px;
         }
     }
+
+    .table {
+        --mat-table-header-container-height: 10px !important;
+        --mat-table-row-item-container-height: 10px !important;
+
+        .column-header {
+            font-weight: bold;
+        }
+
+        .header-row {
+            background-color: rgb(233, 233, 233);
+        }
+
+        .cell {
+
+            &.status-cell {
+                font-weight: 900;
+
+            }
+
+            &.action-cell {
+                text-align: right;
+                padding: 0;
+            }
+        }
+    }
 }
 
 .avg-btn {}
