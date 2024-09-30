@@ -1,0 +1,190 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false"
+  >
+    <mat-toolbar class="mobile-navigation"><logo></logo></mat-toolbar>
+    <mat-nav-list class="secondary-navigation">
+      <mat-list-item [activated]="true">
+        <a
+          matListItemTitle
+          routerLink="/memberships"
+          routerLinkActive="sn-active"
+          >Memberships</a
+        >
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>card_membership</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item [activated]="false">
+        <a matListItemTitle routerLink="/contributions">Contributions</a>
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>currency_exchange</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item [activated]="false">
+        <a matListItemTitle routerLink="/payments">Payments</a>
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>payments</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-nav-list>
+    <mat-toolbar class="footer">
+      <small class="mat-body-small">
+        RichTech ICT, Ltd. &copy; 2024
+      </small>
+    </mat-toolbar>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar id="toolbar">
+      <mat-toolbar-row class="container primary-toolbar">
+        @if (isHandset$ | async) {
+        <button
+          type="button"
+          aria-label="Toggle sidenav"
+          mat-icon-button
+          (click)="drawer.toggle()"
+        >
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+        }
+        <header class="app-header app-name">
+          <span class="start">IW</span><span class="end">MS</span>
+        </header>
+        <span class="spacer"></span>
+        <mat-nav-list class="primary-navigation">
+          <a
+            mat-flat-button
+            class="primary-nav-buttons"
+            href="https://www.google.com/"
+            target="_blank"
+            ><mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="home"
+            ></mat-icon>
+            Home</a
+          >
+
+          <a
+            mat-flat-button
+            class="primary-nav-buttons"
+            href="https://www.google.com/"
+            target="_blank"
+            ><mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="info"
+            ></mat-icon>
+            About Us</a
+          >
+          <a
+            mat-flat-button
+            class="primary-nav-buttons"
+            href="https://www.google.com/"
+            target="_blank"
+            ><mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              fontIcon="phone"
+            ></mat-icon>
+            Contact Us</a
+          >
+
+          <a
+            mat-button
+            class="account-menu-button"
+            [matMenuTriggerFor]="profileMenu"
+            aria-label="Example icon button with a vertical three dot icon"
+          >
+            <mat-icon fontIcon="account_circle"></mat-icon
+            ><span style="color: white">Jared Bada</span>
+          </a>
+
+          <mat-menu #profileMenu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>person</mat-icon>
+              <span>My Profile</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>manage_accounts</mat-icon>
+              <span>Account Settings</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>logout</mat-icon>
+              <span>Logout</span>
+            </button>
+          </mat-menu>
+        </mat-nav-list>
+      </mat-toolbar-row>
+      <mat-toolbar-row class="secondary-toolbar">
+      </mat-toolbar-row>
+    </mat-toolbar>
+
+    <header class="container filter-header" id="header">
+      <h1 class="page-title mat-headline-large">{{ pageTitle }}</h1>
+      <section class="filter">
+        <!-- <button
+          mat-icon-button
+          color="primary"
+          aria-label="Example icon button with a vertical three dot icon"
+        >
+          <mat-icon class="add-icon">add</mat-icon>
+        </button> -->
+        <mat-form-field
+          appearance="outline"
+          class="selector-control reduced-size"
+        >
+          <mat-label>Select Option</mat-label>
+          <mat-select (selectionChange)="onSelectTypeOfHouse($event)">
+            @for (type of houseTypes; track type) {
+            <mat-option [value]="type?.id">{{ type?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matPrefix>tune</mat-icon>
+        </mat-form-field>
+
+        <!-- <mat-form-field appearance="outline" class="reduced-size range-field">
+          <mat-label>Is</mat-label>
+          <input matInput type="text" [formControl]="minRentCtrl" />
+          <mat-icon matPrefix>money</mat-icon>
+        </mat-form-field> -->
+        <mat-form-field
+          appearance="outline"
+          class="selector-control reduced-size"
+        >
+          <mat-label>Is</mat-label>
+          <mat-select (selectionChange)="onSelectTypeOfHouse($event)">
+            @for (type of houseTypes; track type) {
+            <mat-option [value]="type?.id">{{ type?.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matPrefix>tune</mat-icon>
+        </mat-form-field>
+        <button
+          mat-flat-button
+          color="primary"
+          aria-label="Example icon button with a vertical three dot icon"
+          [matMenuTriggerFor]="filterMenu"
+        >
+          <mat-icon matPrefix>filter_alt</mat-icon>Filter
+        </button>
+
+        <mat-menu #filterMenu="matMenu">
+          <mat-list>
+            <mat-list-item>Pepper</mat-list-item>
+            <mat-list-item>Salt</mat-list-item>
+            <mat-list-item>Paprika</mat-list-item>
+          </mat-list>
+        </mat-menu>
+      </section>
+    </header>
+    <section class="container" id="container">
+      <router-outlet></router-outlet>
+    </section>
+  </mat-sidenav-content>
+</mat-sidenav-container>

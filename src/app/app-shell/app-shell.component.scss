@@ -1,0 +1,32 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+@supports (-webkit-text-stroke: 1px #00458f) {
+    .name {
+        position: relative;
+        top: -10%;
+        font-family: 'Poppins' sans-serif;
+        font-size: 8em !important;
+
+        .start {
+            color: #00458f;
+            font-weight: bolder;
+        }
+
+        .end {
+            font-weight: bold;
+            -webkit-text-stroke: 2px #00458f;
+            -webkit-text-fill-color: white;
+            -webkit-text-stroke-width: 2px;
+
+        }
+    }
+}

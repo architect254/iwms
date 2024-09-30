@@ -1,0 +1,22 @@
+<form class="reduced-size">
+  <mat-form-field appearance="outline">
+    <mat-label>Select Option</mat-label>
+    <mat-select (selectionChange)="($event.value)">
+      @for (option of searchOptions; track $index) {
+      <mat-option [value]="option?.value">{{ option?.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Is</mat-label>
+    <mat-select (selectionChange)="($event.value)">
+      @for (option of searchOptions; track $index) {
+      <mat-option [value]="option?.value">{{ option?.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Is</mat-label>
+    <input matInput />
+  </mat-form-field>
+</form>

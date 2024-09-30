@@ -1,0 +1,47 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($yow-hood-theme) {
+  .mat-toolbar {
+    background-color: mat.get-theme-color($yow-hood-theme, primary, 30);
+  }
+
+  .secondary-toolbar{
+    background-color: mat.get-theme-color($yow-hood-theme, primary, 95);
+  }
+
+  .footer{
+    background-color: lighten(mat.get-theme-color($yow-hood-theme, primary, 30), 10) !important;
+    color: mat.get-theme-color($yow-hood-theme, primary, 99) !important;
+  }
+
+  .add-icon{
+    color: mat.get-theme-color($yow-hood-theme, primary, 30);
+  }
+}
+
+@mixin typography($yow-hood-theme) {
+  .app-name {
+    font: mat.get-theme-typography($yow-hood-theme, display-small, font);
+    color: mat.get-theme-color($yow-hood-theme, secondary, 100);
+  }
+
+  .page-title{
+    font: mat.get-theme-typography($yow-hood-theme, title-large, font);
+    color: mat.get-theme-color($yow-hood-theme, primary, 30);
+  }
+}
+
+@mixin theme($yow-hood-theme) {
+  @if mat.theme-has($yow-hood-theme, color) {
+    @include color($yow-hood-theme);
+  }
+
+  @if mat.theme-has($yow-hood-theme, typography) {
+    @include typography($yow-hood-theme);
+  }
+}
+
+.reduced-size {
+  @include mat.all-component-densities(-8);
+}

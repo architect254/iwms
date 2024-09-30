@@ -1,0 +1,15 @@
+    <svg [style.display]="animating ? 'initial' : 'none'" [attr.width]="200" [attr.height]="200" viewBox="0 0 400 400" class="logo" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" class="logo-container"/>
+        <path d="M42 232V22H106V148H148V22H190V378H42V316H148V232H42Z" class="main-logo"/>
+        <path d="M358 378V22H294V148H252V22H210V378H252V232H294V378H358Z" class="main-logo"/>
+        <path d="M190 378V22H210V378H190Z" class="main-logo-separator"/>
+    </svg>
+
+    <svg [style.display]="!animating ? 'initial' : 'none'" [attr.width]="size" [attr.height]="size" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"  [@logo]="animated ? 'end' : 'start'">
+        <mask id="path-1-outside-1_17_23" maskUnits="userSpaceOnUse" x="149" y="149" width="214" height="214" fill="black">
+        <rect fill="white" x="149" y="149" width="214" height="214"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M195.316 154H154V190.101V226.202V274.337H188.215H222.43V322.472H188.215H154V358H187.892H221.785H236.875V154H222.43V190.101V226.202H195.316V190.101V154ZM275.125 154V358H289.57V316.169V274.337H316.684V316.169V358H358V307V256V205V154H316.684V190.101V226.202H289.57V190.101V154H275.125Z"/>
+        </mask>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M195.316 154H154V190.101V226.202V274.337H188.215H222.43V322.472H188.215H154V358H187.892H221.785H236.875V154H222.43V190.101V226.202H195.316V190.101V154ZM275.125 154V358H289.57V316.169V274.337H316.684V316.169V358H358V307V256V205V154H316.684V190.101V226.202H289.57V190.101V154H275.125Z" fill="#0074E9" class="logo"/>
+        <path d="M249.625 149H244.625V154V358V363H249.625H262.536H267.536V358V154V149H262.536H249.625Z" fill="#004183" stroke="#FAFAFA" stroke-width="10"  class="logo-separator" />
+    </svg>

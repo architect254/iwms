@@ -1,0 +1,9 @@
+.form {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
+    .form-row {
+        width: 45%;
+    }
+}

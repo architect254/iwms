@@ -1,0 +1,35 @@
+.logo,
+.logo-separator {
+  stroke-width: 3;
+  stroke-dasharray: 1500;
+}
+
+.logo {
+  fill: #0074e9;
+  stroke: #00458f;
+}
+
+.logo-separator {
+  fill: #00458f;
+  stroke: #007bff8a;
+  stroke-width: 5;
+}
+
+.logo-container {
+  fill: white;
+  stroke-dasharray: 0;
+}
+
+.main-logo {
+  fill: #0074e9;
+  stroke-dasharray: 0;
+  stroke: #00458f;
+  stroke-width: 5;
+}
+
+.main-logo-separator {
+  fill: #00458f;
+  stroke: #fafafa;
+  stroke-dasharray: 0;
+  stroke-width: 6;
+}

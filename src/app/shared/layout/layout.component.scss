@@ -1,0 +1,118 @@
+.sidenav-container {
+  height: 100%;
+
+  .sidenav {
+    width: 300px;
+    border-radius: 0;
+
+    .mobile-navigation {
+      height: 320px;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+
+      small {
+        margin: auto;
+      }
+    }
+
+    .mat-toolbar {
+      background: inherit;
+
+      &.mat-primary {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+    }
+  }
+
+  .app-header {
+    @supports (-webkit-text-stroke: 1px #00458f) {
+      &.app-name {
+        font-family: 'Poppins' sans-serif;
+
+        .start {
+          color: white;
+          font-weight: bold;
+        }
+
+        .end {
+          color: #00458f;
+          font-weight: bolder;
+          -webkit-text-stroke: 1px white;
+          -webkit-text-fill-color: #00458f;
+          -webkit-text-stroke-width: 1px;
+        }
+      }
+    }
+  }
+
+  .primary-navigation {
+    display: flex;
+
+    .primary-nav-buttons {
+      margin: 4px;
+    }
+
+    .account-menu-button {
+      color: white;
+      margin: 4px;
+    }
+  }
+}
+
+.filter,
+.filter-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-header {
+  justify-content: space-between;
+
+  .filter {
+    gap: 16px;
+
+  }
+}
+
+h1.page-title {
+  margin: 16px 0 !important;
+  font-weight: 500 !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+:host {
+  ::ng-deep {
+    .mat-mdc-list-item {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .mdc-list {
+      margin: 16px;
+      margin-left: 0;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none !important;
+    }
+  }
+}
+
+:host ::ng-deep {
+  .range-field .mat-mdc-text-field-wrapper {
+    width: 130px;
+  }
+}
