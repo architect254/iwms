@@ -13,8 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { ActivatedRoute, Data, RouterOutlet } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { LogoComponent } from '../logo/logo.component';
 
 @Component({
@@ -48,20 +48,5 @@ export class LayoutComponent implements OnInit {
       shareReplay()
     );
 
-  pageTitle: string = ``;
-
-  houseTypes = [{id:0, name:'Any'}];
-  minRentCtrl: FormControl = new FormControl();
-  maxRentCtrl: FormControl = new FormControl();
-
-
-  constructor(private route: ActivatedRoute) {}
-
-  ngOnInit(): void {
-    this.route.firstChild?.data.subscribe((data: Data) => {
-      this.pageTitle = data['title'];
-    });
-  }
-
-  onSelectTypeOfHouse(type: any) {}
+  ngOnInit(): void {}
 }

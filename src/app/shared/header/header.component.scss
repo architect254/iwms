@@ -1,0 +1,13 @@
+.filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 0;
+}
+
+h1.page-title {
+    margin: 16px 0 !important;
+    font-weight: 500 !important;
+}

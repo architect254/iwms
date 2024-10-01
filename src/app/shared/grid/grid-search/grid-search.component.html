@@ -1,22 +1,40 @@
-<form class="reduced-size">
-  <mat-form-field appearance="outline">
+<section class="filter">
+  <!-- <button
+      mat-icon-button
+      color="primary"
+      aria-label="Example icon button with a vertical three dot icon"
+    >
+      <mat-icon class="add-icon">add</mat-icon>
+    </button> -->
+  <mat-form-field appearance="outline" class="selector-control reduced-size">
     <mat-label>Select Option</mat-label>
-    <mat-select (selectionChange)="($event.value)">
-      @for (option of searchOptions; track $index) {
-      <mat-option [value]="option?.value">{{ option?.label }}</mat-option>
+    <mat-select (selectionChange)="onSelectFilterOption($event)">
+      @for (option of filterOptions; track option) {
+      <mat-option [value]="option?.key">{{ option?.label }}</mat-option>
       }
     </mat-select>
+    <mat-icon matPrefix>tune</mat-icon>
   </mat-form-field>
-  <mat-form-field appearance="outline">
+
+  <!-- <mat-form-field appearance="outline" class="reduced-size range-field">
+      <mat-label>Is</mat-label>
+      <input matInput type="text" [formControl]="minRentCtrl" />
+      <mat-icon matPrefix>money</mat-icon>
+    </mat-form-field> -->
+  <mat-form-field appearance="outline" class="selector-control reduced-size">
     <mat-label>Is</mat-label>
-    <mat-select (selectionChange)="($event.value)">
-      @for (option of searchOptions; track $index) {
-      <mat-option [value]="option?.value">{{ option?.label }}</mat-option>
+    <mat-select (selectionChange)="onSelectFilterOption($event)">
+      @for (type of filterOptions; track type) {
+      <mat-option [value]="type?.key">{{ type?.label }}</mat-option>
       }
     </mat-select>
+    <mat-icon matPrefix>tune</mat-icon>
   </mat-form-field>
-  <mat-form-field>
-    <mat-label>Is</mat-label>
-    <input matInput />
-  </mat-form-field>
-</form>
+  <button
+    mat-flat-button
+    color="primary"
+    aria-label="Example icon button with a vertical three dot icon"
+  >
+    <mat-icon matPrefix>filter_alt</mat-icon>Apply filter
+  </button>
+</section>

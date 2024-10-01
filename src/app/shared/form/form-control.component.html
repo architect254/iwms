@@ -1,6 +1,6 @@
 <div [formGroup]="form">
   @switch (control.controlType) { @case ('textbox') {
-  <mat-form-field appearance="outline" class="reduced-size">
+  <mat-form-field appearance="outline" class="form-field reduced-size">
     <mat-label>{{ control.label }}</mat-label>
     <input
       matInput
@@ -8,17 +8,20 @@
       [type]="control.type"
       [formControlName]="control.key"
     />
-    <mat-icon matPrefix>money</mat-icon>
+    <mat-icon matPrefix>{{ control.icon }}</mat-icon>
   </mat-form-field>
   } @case ('dropdown') {
-  <mat-form-field appearance="outline" class="selector-control reduced-size">
+  <mat-form-field
+    appearance="outline"
+    class="form-field selector-control reduced-size"
+  >
     <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
     <mat-select [id]="control.key" [formControlName]="control.key">
       @for (type of control.options; track type) {
       <mat-option [value]="type?.key">{{ type?.value }}</mat-option>
       }
     </mat-select>
-    <mat-icon matPrefix>tune</mat-icon>
+    <mat-icon matPrefix>{{ control.icon }}</mat-icon>
   </mat-form-field>
   } }
 </div>

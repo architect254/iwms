@@ -1,9 +1,7 @@
 import { Routes } from '@angular/router';
 
-import { MembershipComponent } from './pages/membership/membership.component';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
-import { MembershipUpsertComponent } from './pages/membership-upsert/membership-upsert.component';
 
 export const routes: Routes = [
   {
@@ -12,13 +10,10 @@ export const routes: Routes = [
     children: [
       {
         path: 'memberships',
-        component: MembershipComponent,
-        data: { title: 'Welfare Memberships' },
-      },
-      {
-        path: 'membership-details',
-        component: MembershipUpsertComponent,
-        data: { title: 'Welfare Membership Details' },
+        loadChildren: () =>
+          import('./pages/memberships/memberships.routes').then(
+            (memberships) => memberships.routes
+          ),
       },
       { path: '', redirectTo: '/memberships', pathMatch: 'full' },
       { path: '**', component: NotFoundComponent },

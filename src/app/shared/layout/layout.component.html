@@ -124,65 +124,6 @@
       <mat-toolbar-row class="secondary-toolbar">
       </mat-toolbar-row>
     </mat-toolbar>
-
-    <header class="container filter-header" id="header">
-      <h1 class="page-title mat-headline-large">{{ pageTitle }}</h1>
-      <section class="filter">
-        <!-- <button
-          mat-icon-button
-          color="primary"
-          aria-label="Example icon button with a vertical three dot icon"
-        >
-          <mat-icon class="add-icon">add</mat-icon>
-        </button> -->
-        <mat-form-field
-          appearance="outline"
-          class="selector-control reduced-size"
-        >
-          <mat-label>Select Option</mat-label>
-          <mat-select (selectionChange)="onSelectTypeOfHouse($event)">
-            @for (type of houseTypes; track type) {
-            <mat-option [value]="type?.id">{{ type?.name }}</mat-option>
-            }
-          </mat-select>
-          <mat-icon matPrefix>tune</mat-icon>
-        </mat-form-field>
-
-        <!-- <mat-form-field appearance="outline" class="reduced-size range-field">
-          <mat-label>Is</mat-label>
-          <input matInput type="text" [formControl]="minRentCtrl" />
-          <mat-icon matPrefix>money</mat-icon>
-        </mat-form-field> -->
-        <mat-form-field
-          appearance="outline"
-          class="selector-control reduced-size"
-        >
-          <mat-label>Is</mat-label>
-          <mat-select (selectionChange)="onSelectTypeOfHouse($event)">
-            @for (type of houseTypes; track type) {
-            <mat-option [value]="type?.id">{{ type?.name }}</mat-option>
-            }
-          </mat-select>
-          <mat-icon matPrefix>tune</mat-icon>
-        </mat-form-field>
-        <button
-          mat-flat-button
-          color="primary"
-          aria-label="Example icon button with a vertical three dot icon"
-          [matMenuTriggerFor]="filterMenu"
-        >
-          <mat-icon matPrefix>filter_alt</mat-icon>Filter
-        </button>
-
-        <mat-menu #filterMenu="matMenu">
-          <mat-list>
-            <mat-list-item>Pepper</mat-list-item>
-            <mat-list-item>Salt</mat-list-item>
-            <mat-list-item>Paprika</mat-list-item>
-          </mat-list>
-        </mat-menu>
-      </section>
-    </header>
     <section class="container" id="container">
       <router-outlet></router-outlet>
     </section>

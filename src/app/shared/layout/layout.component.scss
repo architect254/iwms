@@ -67,28 +67,6 @@
   }
 }
 
-.filter,
-.filter-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.filter-header {
-  justify-content: space-between;
-
-  .filter {
-    gap: 16px;
-
-  }
-}
-
-h1.page-title {
-  margin: 16px 0 !important;
-  font-weight: 500 !important;
-}
-
 a {
   text-decoration: none;
 }

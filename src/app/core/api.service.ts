@@ -1,5 +1,9 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { inject, Injectable, OnDestroy } from '@angular/core';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
@@ -10,7 +14,7 @@ import { Subscription, throwError } from 'rxjs';
 })
 export class ApiService implements OnDestroy {
   BASE_URL: string = `${environment.apiUrl}`;
-
+  http: HttpClient = inject(HttpClient);
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -19,7 +23,7 @@ export class ApiService implements OnDestroy {
 
   $subscriptions$: Subscription = new Subscription();
 
-  constructor(public http: HttpClient) {}
+  constructor() {}
 
   errorHandler(error: HttpErrorResponse) {
     let errorMessage = '';

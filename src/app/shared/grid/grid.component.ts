@@ -10,9 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'lh-grid',
+  selector: 'iwms-grid',
   standalone: true,
   imports: [
     MatTableModule,
@@ -25,6 +26,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatPaginatorModule,
     MatCheckboxModule,
     CommonModule,
+    RouterModule,
   ],
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.scss',
@@ -95,13 +97,14 @@ export class GridComponent {
   //     });
   // }
 }
-export type DataType = 'string' | 'number' | 'status' | 'action';
+export type DataType = 'select' | 'string' | 'number' | 'status' | 'action';
 
 export interface ColumnProperties {
   key: string;
   label: string;
   type: DataType;
   position: number;
+  width: string;
 }
 export interface StatusProperties {
   [columnKey: string]: {

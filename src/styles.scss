@@ -5,6 +5,7 @@
 // Plus imports for other components in your app.
 
 @use './app/shared/layout/layout.theme' as layout;
+@use './app/shared/grid/grid.theme' as grid;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -33,6 +34,7 @@ $iwms-theme: mat.define-theme((
   @include mat.color-variants-backwards-compatibility($iwms-theme);
 
   @include layout.theme($iwms-theme);
+  @include grid.theme($iwms-theme);
 
   .reduced-size {
     @include mat.all-component-densities(-8);
@@ -48,6 +50,6 @@ body { margin: 0; font-family: "Poppins", sans-serif; }
   flex: 1 1 auto;
 }
 
-::-webkit-scrollbar {
-  scrollbar-width: none;
-}
+// ::-webkit-scrollbar {
+//   scrollbar-width: none;
+// }

@@ -3,18 +3,29 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule, } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'lh-grid-search',
+  selector: 'iwms-grid-search',
   standalone: true,
-  imports: [ReactiveFormsModule, MatSelectModule, MatInputModule],
+  imports: [
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: './grid-search.component.html',
   styleUrl: './grid-search.component.scss',
 })
 export class GridSearchComponent {
-  @Input() searchOptions: any = [{ label: 'Name', value: 'name' }];
+  @Input() title: string = '';
+  @Input() filterOptions: any = [{ label: 'Name', value: 'name' }];
   @Output() search: EventEmitter<SearchEvent> = new EventEmitter();
+
+  onSelectFilterOption(option: any) {}
 }
 export interface SearchEvent {
   options: SearchOption[];

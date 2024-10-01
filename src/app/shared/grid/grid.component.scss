@@ -1,48 +1,110 @@
-.grid.container {
-    padding: 0;
-}
-
-.table-container {
+.grid-container {
     border-radius: 24px;
+    padding-bottom: 36px;
 
-    .table-header {
+    .grid-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 16px;
+        padding: 8px 16px;
 
+        .data-count {
+            position: relative;
+            right: -9%;
+        }
 
         .action-btns {
             display: flex;
-            gap: 16px;
-        }
-    }
+            position: relative;
+            right: -20px;
 
-    .table {
-        --mat-table-header-container-height: 10px !important;
-        --mat-table-row-item-container-height: 10px !important;
+            button[mat-flat-button].basic-btn {
+                font-weight: bold;
 
-        .column-header {
-            font-weight: bold;
-        }
+                &:hover {
+                    text-decoration: underline;
+                }
 
-        .header-row {
-            background-color: rgb(233, 233, 233);
-        }
-
-        .cell {
-
-            &.status-cell {
-                font-weight: 900;
-
-            }
-
-            &.action-cell {
-                text-align: right;
-                padding: 0;
+                .btn-icon {
+                    font-size: 1.75rem;
+                    width: 1.75rem;
+                    height: 1.75rem;
+                }
             }
         }
     }
+
+    .grid-scroll {
+        width: 100%;
+        display: block;
+        max-height: 56vh;
+        overflow: auto;
+
+        table[mat-table] {
+            --mat-table-header-container-height: 10px !important;
+
+            margin-bottom: 1rem;
+            display: table;
+            border-collapse: collapse;
+            margin: 0px;
+            white-space: nowrap;
+            overflow: auto;
+            width: 200px;
+            max-width: 200px;
+
+            .mat-row,
+            .mat-header-row {
+                display: table-row;
+            }
+
+            .mat-cell,
+            .mat-header-cell {
+                word-wrap: initial;
+                display: table-cell;
+                padding: 0px 5px;
+                line-break: unset;
+                width: auto;
+                white-space: nowrap;
+                overflow: hidden;
+                vertical-align: middle;
+            }
+
+            tbody {}
+
+            .column-header {
+                font-weight: lighter;
+                padding: 0 8px;
+
+                &.select-column-header {
+                    width: 0;
+                    padding: 1px 8px;
+                }
+            }
+
+            .header-row {
+                background-color: rgb(233, 233, 233);
+            }
+
+            .cell {
+                vertical-align: baseline;
+                font-weight: bold;
+                padding: 0 8px;
+
+                &.select-cell {
+                    padding: 0 8px;
+                }
+
+                &.status-cell {
+                    font-weight: 900;
+
+                }
+
+                &.action-cell {
+                    text-align: right;
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+
 }
-
-.avg-btn {}

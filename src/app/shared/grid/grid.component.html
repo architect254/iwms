@@ -1,37 +1,29 @@
-<div class="grid container">
-  <!-- @if (isLoadingResults || isLimitReached) {
-  <div class="loading-shade">
-    @if (isLoadingResults) {
-    <mat-spinner></mat-spinner>
-    } @if (isLimitReached) {
-    <div class="limit-reached">Reached documents limit</div>
-    }
-  </div>
-  } -->
-
-  <div class="table-container mat-elevation-z1">
-    <div class="table-header">
-      <span class="dataset-name mat-title-large">Members</span>
-      <div class="action-btns">
-        <button mat-flat-button class="avg-btn" aria-label="">
-          <mat-icon fontIcon="add"></mat-icon><span>Add Member</span>
-        </button>
-        <button mat-flat-button [matMenuTriggerFor]="menu">
-          <span>Actions </span>
-          <mat-icon fontIcon="keyboard_arrow_down"></mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="(0)">action</button>
-        </mat-menu>
-        <button mat-flat-button class="avg-btn" aria-label="">
-          <mat-icon fontIcon="refresh"></mat-icon><span>Refresh</span>
-        </button>
-      </div>
+<div class="grid-container mat-elevation-z8">
+  <div class="grid-header">
+    <span class="dataset-name mat-title-large">Members</span>
+    <small class="data-count">Viewing <strong>70 </strong>Results</small>
+    <div class="action-btns">
+      <button mat-flat-button class="basic-btn" aria-label="" routerLink="add">
+        <mat-icon fontIcon="add" class="btn-icon"></mat-icon
+        ><span>Add Member</span>
+      </button>
+      <button mat-flat-button [matMenuTriggerFor]="menu">
+        <span>Actions </span>
+        <mat-icon fontIcon="keyboard_arrow_down" class="btn-icon"></mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="(0)">action</button>
+      </mat-menu>
+      <button mat-flat-button class="basic-btn" aria-label="">
+        <mat-icon fontIcon="refresh" class="btn-icon"></mat-icon
+        ><span>Refresh</span>
+      </button>
     </div>
+  </div>
+  <div class="grid-scroll">
     <table
       mat-table
       [dataSource]="dataSource"
-      class="table mat-elevation-z1"
       matSort
       [matSortActive]="defaultSortColumn"
       matSortDisableClear
@@ -48,7 +40,12 @@
         >
           {{ column.label }}
         </th>
-        <td mat-cell *matCellDef="let row" class="cell status-cell">
+        <td
+          mat-cell
+          *matCellDef="let row"
+          class="cell status-cell"
+          [style.min-width]="column.width"
+        >
           <strong
             [style.color]="
               statusProperties[column.key]!.colors[row[column.key]]
@@ -63,7 +60,7 @@
           *matHeaderCellDef
           mat-sort-header
         ></th>
-        <td class="cell action-cell" mat-cell *matCellDef="let row">
+        <td mat-cell *matCellDef="let row" class="cell action-cell">
           <button mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -75,7 +72,18 @@
             >}
           </mat-menu>
         </td>
-        } @default {
+        } @case('select'){
+        <th
+          class="column-header select-column-header"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <mat-checkbox></mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="cell select-cell">
+          <mat-checkbox></mat-checkbox>
+        </td>
+        }@default {
         <th
           class="column-header mat-body-large"
           mat-header-cell
@@ -84,21 +92,24 @@
         >
           {{ column.label }}
         </th>
-        <td class="cell  mat-body-large" mat-cell *matCellDef="let row">
+        <td
+          class="cell mat-body-large"
+          mat-cell
+          *matCellDef="let row"
+          [style.min-width]="column.width"
+        >
           {{ row[column.key] }}
         </td>
         }}
       </ng-container>
       }
 
-      <tr class="header-row" mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr
+        class="header-row"
+        mat-header-row
+        *matHeaderRowDef="displayedColumns; sticky: true"
+      ></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
-
-  <mat-paginator
-    [length]="resultsLength"
-    [pageSize]="30"
-    aria-label="Select page of entities"
-  ></mat-paginator>
 </div>

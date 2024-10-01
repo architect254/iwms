@@ -1,15 +1,7 @@
-<form class="form" (ngSubmit)="onSubmit()" [formGroup]="form">
+<form class="form" [formGroup]="form">
   @for (control of controls; track control) {
   <div class="form-row">
     <iwms-control [control]="control" [form]="form"></iwms-control>
   </div>
   }
-  <div class="form-row submit-btn">
-    <button mat-flat-button type="submit" [disabled]="!form.valid">Save</button>
-  </div>
 </form>
-@if (payLoad) {
-<div class="form-row">
-  <strong>Saved the following values</strong><br />{{ payLoad }}
-</div>
-}

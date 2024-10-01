@@ -1,9 +1,8 @@
 .form {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-gap: 18px;
 
-    .form-row {
-        width: 45%;
-    }
 }

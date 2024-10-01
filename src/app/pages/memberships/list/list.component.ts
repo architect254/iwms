@@ -1,30 +1,42 @@
 import { Component, Inject, OnInit } from '@angular/core';
-
-import { Observable, of } from 'rxjs';
+import { Title, Meta } from '@angular/platform-browser';
+import { AsyncPipe, DOCUMENT } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-import { PageDirective } from '../../shared/page/page.directive';
-import { MembershipService } from './membership.service';
-import { Membership } from '../membership-upsert/membership';
-import { Title, Meta } from '@angular/platform-browser';
-import { AsyncPipe, DOCUMENT } from '@angular/common';
-import { GridContainerDirective } from '../../shared/grid-container/grid-container.directive';
+import { Observable, of } from 'rxjs';
+
+import { MembershipsService } from '../memberships.service';
+import { Membership } from '../membership';
+
+import { GridContainerDirective } from '../../../shared/grid-container/grid-container.directive';
 import {
   ColumnProperties,
   StatusProperties,
   ActionProperties,
   GridComponent,
-} from '../../shared/grid/grid.component';
+} from '../../../shared/grid/grid.component';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Data } from '@angular/router';
+import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
+import { HeaderComponent } from '../../../shared/header/header.component';
 
 @Component({
-  selector: 'iwms-membership',
+  selector: 'iwms-list',
   standalone: true,
-  imports: [ScrollingModule, AsyncPipe, GridComponent],
-  templateUrl: './membership.component.html',
-  styleUrl: './membership.component.scss',
+  imports: [
+    ScrollingModule,
+    AsyncPipe,
+    HeaderComponent,
+    GridComponent,
+    GridSearchComponent,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './list.component.html',
+  styleUrl: './list.component.scss',
 })
-export class MembershipComponent extends GridContainerDirective {
+export class ListComponent extends GridContainerDirective {
+  pageTitle: string = '';
   columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
   statusProperties: StatusProperties = MOCK.STATUS;
   actionProperties: ActionProperties = MOCK.ACTIONS;
@@ -37,36 +49,59 @@ export class MembershipComponent extends GridContainerDirective {
     {
       name: 'jared',
       age: 21,
+      age1: 21,
+      age2: 21,
+      age3: 21,
+      age4: 21,
       status: 'stopped',
       action: 'run',
     },
     {
       name: 'jared',
       age: 21,
+      age1: 21,
+      age2: 21,
+      age3: 21,
+      age4: 21,
       status: 'waiting',
       action: 'run',
     },
     {
       name: 'jared',
       age: 21,
+      age1: 21,
+      age2: 21,
+      age3: 21,
+      age4: 21,
       status: 'running',
       action: 'stop',
     },
   ];
 
+  minRentCtrl: FormControl = new FormControl();
+
+  filterOptions = [{ key: 1, label: 'option' }];
+
   constructor(
     _title: Title,
     _meta: Meta,
     @Inject(DOCUMENT) _document: Document,
-    private _membershipService: MembershipService
+    private route: ActivatedRoute,
+    private _membershipService: MembershipsService
   ) {
     super(_title, _meta, _document);
+    this.route.data.subscribe((data: Data) => {
+      this.pageTitle = data['title'];
+    });
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
+
     this._membershipService.selectAllMembershipsDummy();
   }
+
+  onSelectFilterOption(type: any) {}
 
   override setTwitterCardMeta(): void {
     this.setMeta([
@@ -164,10 +199,37 @@ export class MembershipComponent extends GridContainerDirective {
 }
 export const MOCK = {
   COLUMNS: [
-    { key: 'name', label: 'Name', position: 1, type: 'string' },
-    { key: 'age', label: 'Age', position: 2, type: 'number' },
-    { key: 'status', label: 'Status', position: 3, type: 'status' },
-    { key: 'action', label: 'Action', position: 4, type: 'action' },
+    {
+      key: 'select',
+      label: 'Select',
+      position: 0,
+      type: 'select',
+      width: '250px',
+    },
+    { key: 'name', label: 'Name', position: 1, type: 'string', width: '250px' },
+    { key: 'age1', label: 'Age', position: 2, type: 'number', width: '250px' },
+    { key: 'age2', label: 'Age', position: 7, type: 'number', width: '250px' },
+    { key: 'age3', label: 'Age', position: 8, type: 'number', width: '250px' },
+    { key: 'age4', label: 'Age', position: 9, type: 'number', width: '250px' },
+    { key: 'age5', label: 'Age', position: 10, type: 'number', width: '250px' },
+    { key: 'age6', label: 'Age', position: 11, type: 'number', width: '250px' },
+    { key: 'age7', label: 'Age', position: 12, type: 'number', width: '250px' },
+    { key: 'age8', label: 'Age', position: 13, type: 'number', width: '250px' },
+    { key: 'age9', label: 'Age', position: 14, type: 'number', width: '250px' },
+    {
+      key: 'status',
+      label: 'Status',
+      position: 20,
+      type: 'status',
+      width: '250px',
+    },
+    {
+      key: 'action',
+      label: 'Action',
+      position: 21,
+      type: 'action',
+      width: '250px',
+    },
   ],
   STATUS: {
     status: {
