@@ -10,11 +10,12 @@ import { jwtDecode } from 'jwt-decode';
 
 import { environment } from '../../environments/environment';
 import { JwtPayload } from './jwt.payload';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(
-    localStorage.getItem(`accessToken`)
+    this._storage.get(`accessToken`)
   );
   public currentToken$: Observable<any> =
     this.currentTokenSubject.asObservable();
@@ -23,7 +24,8 @@ export class AuthService {
   constructor(
     private _http: HttpClient,
     private _router: Router,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _storage: LocalStorageService
   ) {}
 
   public get currentTokenUserValue$(): Observable<any> {
@@ -48,7 +50,7 @@ export class AuthService {
         tap({
           next: ({ accessToken }) => {
             this.currentTokenSubject.next(accessToken);
-            localStorage.setItem('accessToken', accessToken);
+            this._storage.set('accessToken', accessToken);
           },
         })
       );
@@ -58,16 +60,13 @@ export class AuthService {
     return this.currentToken$.pipe(
       map((token) => {
         const isAuthenticated = !this.jwtHelper.isTokenExpired(token);
-        console.log(`isAuth`, isAuthenticated);
-
         return isAuthenticated;
       })
     );
   }
 
   logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('accessToken');
+    this._storage.remove('accessToken');
     this.currentTokenSubject.next(null);
     this._router.navigate(['../sign-in'], { relativeTo: this._route });
   }
