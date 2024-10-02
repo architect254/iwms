@@ -39,13 +39,10 @@
                 matInput
               />
             </mat-form-field>
-            <small
-              class="is-danger"
-              *ngIf="
-                email?.invalid && email?.touched && email?.errors?.required
-              "
-              >email is required</small
-            >
+            @if ( email?.invalid && email?.touched &&
+            email?.errors?.['required'] ) {
+            <small class="is-danger">email is required</small>
+            }
             <mat-form-field class="full-width">
               <mat-label>Password</mat-label>
               <input
@@ -58,15 +55,9 @@
                 matInput
               />
             </mat-form-field>
-            <small
-              class="is-danger"
-              *ngIf="
-                password?.invalid &&
-                password?.touched &&
-                password?.errors?.required
-              "
-              >password is required</small
-            >
+            @if ( password?.invalid && password?.touched &&
+            password?.errors?.['required']) {
+            <small class="is-danger">password is required</small>}
             <!-- <small
                 class="is-danger"
                 *ngIf="
@@ -76,15 +67,10 @@
                 "
                 >password is weak</small
               > -->
-            <small
-              class="is-danger"
-              *ngIf="
-                password?.invalid &&
-                password?.touched &&
-                password?.errors?.minLength
-              "
-              >password is too short</small
-            >
+            @if ( password?.invalid && password?.touched &&
+            password?.errors?.['minLength']) {
+            <small class="is-danger">password is too short</small>}
+
             <button
               mat-raised-button
               color="primary"

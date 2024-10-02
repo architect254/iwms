@@ -98,23 +98,23 @@ export class AppComponent extends PageDirective {
     this.setMeta([
       {
         name: `twitter:title`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `twitter:description`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `twitter:card`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `twitter:image`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `twitter:site`,
-        content: `https://www.yowhood.com`,
+        content: `https://www.iwms.com`,
       },
       {
         name: `twitter:creator`,
@@ -131,15 +131,15 @@ export class AppComponent extends PageDirective {
       },
       {
         name: `og:title`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `og:description`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `og:url`,
-        content: `https://www.yowhood.com`,
+        content: `https://www.iwms.com`,
       },
       {
         name: `og:site_name`,
@@ -151,7 +151,7 @@ export class AppComponent extends PageDirective {
       },
       {
         name: `og:image`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `og:image:type`,
@@ -167,23 +167,23 @@ export class AppComponent extends PageDirective {
       },
       {
         name: `og:image:secure_url`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
     ]);
   }
 
   override setDefaultMetaAndTitle(): void {
     this.setTitle(
-      `Integrated Welfare Management System - Wholesome Services For Integrated Welfare Management System`
+      `Integrated Welfare Management System - Managing Your Welfare`
     );
     this.setMeta([
       {
         name: `description`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
       {
         name: `keywords`,
-        content: `@LoremIpsum`,
+        content: `IWMS - Integrated Welfare Management System`,
       },
     ]);
   }

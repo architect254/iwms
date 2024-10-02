@@ -13,15 +13,17 @@ import { AuthService } from '../../core/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    MatInputModule,
-    MatFormFieldModule,
-    MatCardModule,
     ReactiveFormsModule,
+    MatInputModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
