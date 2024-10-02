@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sign-in',
@@ -27,6 +28,8 @@ import { CommonModule } from '@angular/common';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatIconModule,
+    RouterModule,
     CommonModule,
   ],
   templateUrl: './sign-in.component.html',

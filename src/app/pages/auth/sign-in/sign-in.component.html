@@ -1,10 +1,14 @@
 <mat-toolbar>
-  <span>BookingApp</span>
+  <header class="app-header app-name">
+    <span class="start">IW</span><span class="end">MS</span>
+  </header>
 </mat-toolbar>
-<header><h1 class="mat-headline-5 text-center ">Sign In To <strong>BookingApp</strong></h1></header>
+<header class="auth-header">
+  <h1 class="mat-headline-5 text-center">Sign In To <strong>IWMS</strong></h1>
+</header>
 <section class="form-container">
   <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="signInForm">
-    <mat-form-field appearance="outline" class="w-100 ">
+    <mat-form-field appearance="outline" class="w-100">
       <mat-label>Phone Number</mat-label>
       <input
         type="phone"
@@ -57,7 +61,6 @@
       >Don't have an account?
       <a class="icon-link text-primary" routerLink="../sign-up"
         >Create One <i class="bi bi-box-arrow-in-right"></i></a
-      ></small
-    >
+    ></small>
   </form>
 </section>

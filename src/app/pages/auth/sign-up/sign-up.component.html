@@ -1,9 +1,11 @@
 <mat-toolbar>
-  <span>BookingApp</span>
+  <header class="app-header app-name">
+    <span class="start">IW</span><span class="end">MS</span>
+  </header>
 </mat-toolbar>
-<header>
-  <h1 class="mat-headline-5 text-center " *ngIf="!isSigningIn">
-    Sign Up For <strong>BookingApp</strong>
+<header class="auth-header">
+  <h1 class="mat-headline-5 text-center" *ngIf="!isSigningIn">
+    Sign Up For <strong>IWMS</strong>
   </h1>
 </header>
 
@@ -13,7 +15,7 @@
 <section class="form-container mat-typography" *ngIf="!isSigningIn">
   <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="signUpForm">
     <section class="user-name">
-      <mat-form-field appearance="outline" class="w-100 ">
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>Firstname</mat-label>
         <input
           type="text"
@@ -22,15 +24,13 @@
           matInput
           placeholder="Ex. John"
         />
-        <mat-icon matPrefix class="material-icons-two-toned"
-          >contacts</mat-icon
-        >
+        <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
         <mat-error *ngIf="firstname?.hasError('required')">
           First Name is required
         </mat-error>
       </mat-form-field>
-  
-      <mat-form-field appearance="outline" class="w-100 ">
+
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>Lastname</mat-label>
         <input
           type="text"
@@ -39,16 +39,14 @@
           matInput
           placeholder="Ex. Doe"
         />
-        <mat-icon matPrefix class="material-icons-two-toned"
-          >contacts</mat-icon
-        >
+        <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
         <mat-error *ngIf="lastname?.hasError('required')">
           Lastname is required
         </mat-error>
       </mat-form-field>
     </section>
 
-    <mat-form-field appearance="outline" class="w-100 ">
+    <mat-form-field appearance="outline" class="w-100">
       <mat-label>Phone Number</mat-label>
       <input
         type="phone"
@@ -57,9 +55,7 @@
         matInput
         placeholder="Ex. 0712312312"
       />
-      <mat-icon matPrefix class="material-icons-two-toned"
-        >phone</mat-icon
-      >
+      <mat-icon matPrefix class="material-icons-two-toned">phone</mat-icon>
       <mat-error *ngIf="phoneNo?.hasError('required')">
         Phone Number is required
       </mat-error>
@@ -75,7 +71,9 @@
         placeholder="Ex. #123&AbC"
       />
       <mat-icon matPrefix class="material-icons-outlined">password</mat-icon>
-      <mat-error *ngIf="password?.hasError('required')"> Password is required </mat-error>
+      <mat-error *ngIf="password?.hasError('required')">
+        Password is required
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-100">
@@ -91,7 +89,6 @@
       <mat-error *ngIf="confirmPassword?.hasError('passwordMatch')">
         Confirm Password is <strong>required</strong>
       </mat-error>
-
     </mat-form-field>
     <button
       mat-raised-button
@@ -110,10 +107,9 @@
     </button>
     <small
       >Already have an account?
-      <a class="icon-link text-primary" routerLink="../sign-in"
+      <a class="icon-link text-primary" routerLink="./sign-in"
         >Sign in <i class="bi bi-box-arrow-in-right"></i></a
-      ></small
-    >
+    ></small>
   </form>
 </section>
 
@@ -128,5 +124,5 @@
   <section class="loader">
     <mat-spinner color="accent"></mat-spinner>
   </section>
-  <header class="mat-small text-center ">Signing In</header>
+  <header class="mat-small text-center">Signing In</header>
 </section>

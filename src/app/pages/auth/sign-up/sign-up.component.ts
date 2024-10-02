@@ -15,8 +15,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { Subscription, concatMap, catchError, throwError } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole, User } from '../../users/user.model';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sign-up',
@@ -28,6 +29,8 @@ import { CommonModule } from '@angular/common';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatIconModule,
+    RouterModule,
     CommonModule,
   ],
   templateUrl: './sign-up.component.html',
@@ -35,7 +38,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SignUpComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
-  
+
   signUpForm: FormGroup = this.fb.group({
     firstname: [``, Validators.required],
     lastname: [``, Validators.required],
