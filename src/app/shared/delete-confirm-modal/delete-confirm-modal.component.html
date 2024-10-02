@@ -1,0 +1,11 @@
+<div class="dialog-header">
+  <mat-icon color="warn" fontSet="material-icons-outlined">cancel</mat-icon>
+  <h1 mat-dialog-title>Are You Sure?</h1>
+</div>
+<div mat-dialog-content>Do you really want to delete {{ data.name }}?</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">No Thanks</button>
+  <button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial color="primary">
+    Ok
+  </button>
+</div>

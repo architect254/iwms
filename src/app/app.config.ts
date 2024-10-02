@@ -14,10 +14,17 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
 import {
+  HTTP_INTERCEPTORS,
   HttpRequest,
   provideHttpClient,
   withFetch,
 } from '@angular/common/http';
+import {
+  JwtHelperService,
+  JWT_OPTIONS,
+  JwtInterceptor,
+} from '@auth0/angular-jwt';
+import { AuthService } from './core/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,5 +45,9 @@ export const appConfig: ApplicationConfig = {
       registrationStrategy: 'registerWhenStable:30000',
     }),
     provideHttpClient(withFetch()),
+    AuthService,
+    JwtHelperService,
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
 };

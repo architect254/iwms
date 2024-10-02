@@ -6,7 +6,7 @@ import {
   NgZone,
   PLATFORM_ID,
 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 
 import { PageDirective } from './shared/page/page.directive';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -40,11 +40,13 @@ export class AppComponent extends PageDirective {
   private readonly document = inject(DOCUMENT);
 
   constructor(
+    override activatedRoute: ActivatedRoute,
+    override router: Router,
+    private swUpdate: SwUpdate,
     appRef: ApplicationRef,
-    zone: NgZone,
-    private swUpdate: SwUpdate
+    zone: NgZone
   ) {
-    super();
+    super(activatedRoute, router);
     if (isPlatformBrowser(this.platform)) {
       console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)
@@ -91,6 +93,7 @@ export class AppComponent extends PageDirective {
       window.location.reload();
     }
   };
+
   override setTwitterCardMeta(): void {
     this.setMeta([
       {

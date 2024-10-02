@@ -17,7 +17,7 @@ import {
   GridComponent,
 } from '../../../shared/grid/grid.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Data } from '@angular/router';
+import { ActivatedRoute, Data, Router } from '@angular/router';
 import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 
@@ -69,13 +69,14 @@ export class ListComponent extends GridContainerDirective {
   minRentCtrl: FormControl = new FormControl();
 
   filterOptions = [{ key: 1, label: 'option' }];
-
+  
   constructor(
-    private route: ActivatedRoute,
+    override activatedRoute: ActivatedRoute,
+    override router: Router,
     private _usersService: AccountsService
   ) {
-    super();
-    this.route.data.subscribe((data: Data) => {
+    super(activatedRoute, router);
+    this.activatedRoute.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });
   }
