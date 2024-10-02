@@ -6,16 +6,16 @@
     background-color: mat.get-theme-color($iwms-theme, primary, 30);
   }
 
-  .secondary-toolbar{
+  .secondary-toolbar {
     background-color: mat.get-theme-color($iwms-theme, primary, 95);
   }
 
-  .footer{
+  .footer {
     background-color: lighten(mat.get-theme-color($iwms-theme, primary, 30), 10) !important;
     color: mat.get-theme-color($iwms-theme, primary, 99) !important;
   }
 
-  .add-icon{
+  .add-icon {
     color: mat.get-theme-color($iwms-theme, primary, 30);
   }
 }
@@ -26,7 +26,7 @@
     color: mat.get-theme-color($iwms-theme, secondary, 100);
   }
 
-  .page-title{
+  .page-title {
     font: mat.get-theme-typography($iwms-theme, title-large, font);
     color: mat.get-theme-color($iwms-theme, primary, 30);
   }
@@ -40,8 +40,4 @@
   @if mat.theme-has($iwms-theme, typography) {
     @include typography($iwms-theme);
   }
-}
-
-.reduced-size {
-  @include mat.all-component-densities(-8);
 }

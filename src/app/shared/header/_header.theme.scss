@@ -26,7 +26,3 @@
     @include typography($iwms-theme);
   }
 }
-
-.reduced-size {
-  @include mat.all-component-densities(-8);
-}
