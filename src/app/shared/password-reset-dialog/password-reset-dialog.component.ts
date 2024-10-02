@@ -1,14 +1,36 @@
-import { Component, Inject } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component, inject, Inject } from '@angular/core';
+import {
+  FormGroup,
+  Validators,
+  FormBuilder,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { User } from 'src/app/misc/models/user.model';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-password-reset-dialog',
+  standalone: true,
+  imports: [
+    MatCardModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatProgressBarModule,
+    CommonModule,
+  ],
   templateUrl: './password-reset-dialog.component.html',
   styleUrls: ['./password-reset-dialog.component.scss'],
 })
 export class PasswordResetDialogComponent {
+  private fb = inject(FormBuilder);
+
   resetPasswordForm: FormGroup = this.fb.group({
     password: [``, Validators.required],
     newPassword: [``, Validators.required],
@@ -17,7 +39,6 @@ export class PasswordResetDialogComponent {
   isSubmitting = false;
 
   constructor(
-    private fb: FormBuilder,
     public dialogRef: MatDialogRef<PasswordResetDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: { password: string; newPassword: string }
@@ -35,6 +56,6 @@ export class PasswordResetDialogComponent {
   }
 
   submitForm() {
-    this.data = {...this.resetPasswordForm.getRawValue()};
+    this.data = { ...this.resetPasswordForm.getRawValue() };
   }
 }

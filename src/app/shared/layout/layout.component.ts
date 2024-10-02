@@ -21,6 +21,8 @@ import {
 } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LogoComponent } from '../logo/logo.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PasswordResetDialogComponent } from '../password-reset-dialog/password-reset-dialog.component';
 
 @Component({
   selector: 'layout',
@@ -60,6 +62,20 @@ export class LayoutComponent implements OnInit {
     this.configureBreadCrumbs();
   }
   ngOnInit(): void {}
+
+  changePassword() {
+    const dialog = inject(MatDialog);
+
+    const dialogRef = dialog.open(PasswordResetDialogComponent, {
+      data: { password: '', newPassword: '' },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result !== undefined) {
+      }
+    });
+  }
+
   configureBreadCrumbs() {
     this.router.events
       .pipe(
