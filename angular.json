@@ -42,12 +42,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1MB",
+                  "maximumWarning": "2MB",
                   "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
+                  "maximumWarning": "8kB",
                   "maximumError": "8kB"
                 }
               ],
@@ -63,7 +63,10 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json",
+              "appShell": true,
+              "subresourceIntegrity": true
             },
             "development": {
               "optimization": false,
@@ -102,6 +105,31 @@
             ],
             "styles": ["src/styles.scss"],
             "scripts": []
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/welfare-management-system-server",
+            "main": "src/main.server.ts",
+            "tsConfig": "tsconfig.server.json"
+          }
+        },
+        "app-shell": {
+          "builder": "@angular-devkit/build-angular:app-shell",
+          "defaultConfiguration": "production",
+          "options": {
+            "route": "shell"
+          },
+          "configurations": {
+            "development": {
+              "browserTarget": "welfare-management-system:build:development",
+              "serverTarget": "welfare-management-system:server:development"
+            },
+            "production": {
+              "browserTarget": "welfare-management-system:build:production",
+              "serverTarget": "welfare-management-system:server:production"
+            }
           }
         }
       }

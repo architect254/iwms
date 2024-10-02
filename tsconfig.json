@@ -22,10 +22,8 @@
     "lib": ["ES2022", "dom"],
     "paths": {
       "core": ["./app/core/*"],
-      "model": ["./app/model/*"],
       "pages": ["./app/pages/*"],
-      "shared": ["./app/shared/*"],
-      "feature": ["./app/feature/*"]
+      "shared": ["./app/shared/*"]
     }
   },
   "angularCompilerOptions": {
