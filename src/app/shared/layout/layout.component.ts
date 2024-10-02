@@ -58,15 +58,16 @@ export class LayoutComponent implements OnInit {
 
   breadcrumbs: breadCrumb[] = [];
   route: ActivatedRoute | null | undefined;
+
+  dialog = inject(MatDialog);
+
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {
     this.configureBreadCrumbs();
   }
   ngOnInit(): void {}
 
   changePassword() {
-    const dialog = inject(MatDialog);
-
-    const dialogRef = dialog.open(PasswordResetDialogComponent, {
+    const dialogRef = this.dialog.open(PasswordResetDialogComponent, {
       data: { password: '', newPassword: '' },
     });
 
