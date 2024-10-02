@@ -1,4 +1,4 @@
-import { Directive, Inject, OnInit } from '@angular/core';
+import { Directive, inject, Inject, OnInit } from '@angular/core';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 import { PageDirective } from '../page/page.directive';
 import { DOCUMENT } from '@angular/common';
@@ -7,16 +7,10 @@ import { DOCUMENT } from '@angular/common';
   standalone: true,
 })
 export abstract class GridContainerDirective extends PageDirective {
+  private document: Document = inject(DOCUMENT);
+
   gridHeight: number = 0;
   gridWidth: number = 0;
-
-  constructor(
-    _title: Title,
-    _meta: Meta,
-    @Inject(DOCUMENT) private document: Document
-  ) {
-    super(_title, _meta);
-  }
 
   override ngOnInit(): void {
     super.ngOnInit();

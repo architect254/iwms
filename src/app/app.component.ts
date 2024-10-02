@@ -1,8 +1,10 @@
 import {
   ApplicationRef,
   Component,
+  inject,
   InjectionToken,
   NgZone,
+  PLATFORM_ID,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
@@ -13,6 +15,7 @@ import { Title, Meta } from '@angular/platform-browser';
 import { SwUpdate } from '@angular/service-worker';
 import { Subscription, first } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
+import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
 
 export const API_BASE_URL = new InjectionToken('Dynamic API Base Url');
 
@@ -33,15 +36,27 @@ const apiFactory = () => {
   styleUrl: './app.component.scss',
 })
 export class AppComponent extends PageDirective {
+  private readonly platform = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
 
   constructor(
-    _title: Title,
-    _meta: Meta,
     appRef: ApplicationRef,
     zone: NgZone,
     private swUpdate: SwUpdate
   ) {
-    super(_title, _meta);
+    super();
+    if (isPlatformBrowser(this.platform)) {
+      console.warn('browser');
+      // Safe to use document, window, localStorage, etc. :-)
+      // console.log(document);
+    }
+
+    if (isPlatformServer(this.platform)) {
+      console.warn('server');
+      // Not smart to use document here, however, we can inject it ;-)
+      // console.log(this.document);
+    }
+
     this.$subscription$.add(
       appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
         zone.run(() => {
@@ -155,7 +170,9 @@ export class AppComponent extends PageDirective {
   }
 
   override setDefaultMetaAndTitle(): void {
-    this.setTitle(`Integrated Welfare Management System - Wholesome Services For Integrated Welfare Management System`);
+    this.setTitle(
+      `Integrated Welfare Management System - Wholesome Services For Integrated Welfare Management System`
+    );
     this.setMeta([
       {
         name: `description`,

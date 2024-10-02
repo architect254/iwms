@@ -1,4 +1,4 @@
-import { Directive, OnDestroy, OnInit } from '@angular/core';
+import { Directive, inject, OnDestroy, OnInit } from '@angular/core';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
@@ -6,8 +6,10 @@ import { Subscription } from 'rxjs';
   standalone: true,
 })
 export abstract class PageDirective implements OnInit, OnDestroy {
+  private _title = inject(Title);
+  private _meta = inject(Meta);
+
   $subscription$: Subscription = new Subscription();
-  constructor(private _title: Title, private _meta: Meta) {}
 
   setTitle(_title: string) {
     this._title.setTitle(_title);

@@ -56,11 +56,7 @@ export class LayoutComponent implements OnInit {
 
   breadcrumbs: breadCrumb[] = [];
   route: ActivatedRoute | null | undefined;
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    @Inject(DOCUMENT) private document: Document
-  ) {
+  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
     this.configureBreadCrumbs();
   }
   ngOnInit(): void {}
