@@ -11,7 +11,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 
-import { DynamicFormControlComponent } from './form-control.component';
+import { DynamicFormControlComponent } from './control.component';
 import {
   DynamicCustomFormControlBase,
   DynamicCustomFormControlService,
@@ -40,10 +40,10 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
 
   formData = '';
 
-  constructor(private qcs: DynamicCustomFormControlService) {}
+  constructor(private fcs: DynamicCustomFormControlService) {}
 
   ngOnInit() {
-    this.form = this.qcs.toFormGroup(
+    this.form = this.fcs.toFormGroup(
       this.controls as DynamicCustomFormControlBase<string>[]
     );
     this.formStatusSubscription = this.form.statusChanges

@@ -32,6 +32,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './grid.component.scss',
 })
 export class GridComponent {
+  @Input() name: string = '';
   @Input() set data(data: any[]) {
     this.dataSource = new MatTableDataSource(data);
   }

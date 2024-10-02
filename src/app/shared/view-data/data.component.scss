@@ -1,0 +1,15 @@
+.text-data {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+
+    .data-label {
+        // color: rgba(31, 37, 41, .75);
+        color: rgba(0, 69, 143, 0.85);
+    }
+
+    &>* {
+        flex: 1 1 100%;
+    }
+}

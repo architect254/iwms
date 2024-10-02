@@ -6,7 +6,12 @@ import {
   CustomDropdownControl,
   CustomTextboxControl,
   DynamicCustomFormControlBase,
-} from '../../shared/form/form.service';
+} from '../../shared/form-control/form.service';
+import {
+  CustomListData,
+  CustomTextData,
+  DynamicCustomDataBase,
+} from '../../shared/view-data/view.service';
 
 @Injectable({
   providedIn: 'root',
@@ -211,6 +216,60 @@ export class MembershipsService extends ApiService {
       }),
     ];
     return of(controls.sort((a, b) => a.order - b.order));
+  }
+
+  getViewData() {
+    const data: DynamicCustomDataBase<string>[] = [
+      new CustomTextData({
+        key: 'firstName',
+        label: 'First name',
+        value: 'John',
+        icon: 'badge',
+        order: 1,
+      }),
+      new CustomTextData({
+        key: 'surname',
+        label: 'Surname',
+        value: 'Doe',
+        icon: 'badge',
+        order: 2,
+      }),
+      new CustomTextData({
+        key: 'idNumber',
+        label: 'National ID No.',
+        value: '12345678',
+        icon: 'fingerprint',
+        order: 3,
+      }),
+      new CustomTextData({
+        key: 'phoneNo',
+        label: 'Phone No.',
+        value: '0712345678',
+        icon: 'call_log',
+        order: 4,
+      }),
+      new CustomTextData({
+        key: 'emailAddress',
+        label: 'Email',
+        value: 'a@a.com',
+        icon: 'contact_mail',
+        type: 'email',
+        order: 5,
+      }),
+      new CustomListData({
+        key: 'favoriteAnimal',
+        label: 'Favorite Animal',
+        options: [
+          { label: 'cat', value: 'Cat' },
+          { label: 'dog', value: 'Dog' },
+          { label: 'horse', value: 'Horse' },
+          { label: 'capybara', value: 'Capybara' },
+        ],
+        icon: 'checklist',
+        order: 3,
+      }),
+    ];
+    return of(data.sort((a, b) => a.order - b.order));
   }
 
   getAllMemberships(): Observable<Membership[]> {

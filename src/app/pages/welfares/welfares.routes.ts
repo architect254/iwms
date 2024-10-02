@@ -1,0 +1,37 @@
+import { Routes } from '@angular/router';
+import { ContainerLayoutComponent } from './container-layout.component';
+import { ListComponent } from './list/list.component';
+import { ViewComponent } from './view/view.component';
+import { UpsertComponent } from './upsert/upsert.component';
+import { NotFoundComponent } from '../../shared/not-found/not-found.component';
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: ContainerLayoutComponent,
+    children: [
+      {
+        path: 'view/:id',
+        component: ViewComponent,
+        data: { title: 'View Welfare Group Details' },
+      },
+      {
+        path: 'edit/:id',
+        component: UpsertComponent,
+        data: { title: 'Edit Welfare Group Details' },
+      },
+      {
+        path: 'add',
+        component: UpsertComponent,
+        data: { title: 'Add Welfare Group Details' },
+      },
+      {
+        path: '',
+        component: ListComponent,
+        data: { title: 'Welfare Groups List' },
+      },
+      { path: '**', component: NotFoundComponent },
+    ],
+  },
+  { path: '**', component: NotFoundComponent },
+];

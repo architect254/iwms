@@ -9,10 +9,57 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       {
+        path: 'users',
+        data: { title: 'Welfare Users' },
+        loadChildren: () =>
+          import('./pages/users/users.routes').then((users) => users.routes),
+      },
+      {
+        path: 'welfares',
+        data: { title: 'Welfare Groups' },
+        loadChildren: () =>
+          import('./pages/welfares/welfares.routes').then(
+            (welfares) => welfares.routes
+          ),
+      },
+      {
         path: 'memberships',
+        data: { title: 'Welfare Memberships' },
         loadChildren: () =>
           import('./pages/memberships/memberships.routes').then(
             (memberships) => memberships.routes
+          ),
+      },
+      {
+        path: 'contributions',
+        data: { title: 'Welfare Member Contributions' },
+        loadChildren: () =>
+          import('./pages/contributions/contributions.routes').then(
+            (contributions) => contributions.routes
+          ),
+      },
+      {
+        path: 'accounts',
+        data: { title: 'Welfare Financial Accounts' },
+        loadChildren: () =>
+          import('./pages/accounts/accounts.routes').then(
+            (accounts) => accounts.routes
+          ),
+      },
+      {
+        path: 'transactions',
+        data: { title: 'Welfare Financal Transactions' },
+        loadChildren: () =>
+          import('./pages/transactions/transactions.routes').then(
+            (transactions) => transactions.routes
+          ),
+      },
+      {
+        path: 'notifications',
+        data: { title: 'Welfare Message Notification' },
+        loadChildren: () =>
+          import('./pages/notifications/notifications.routes').then(
+            (notifications) => notifications.routes
           ),
       },
       { path: '', redirectTo: '/memberships', pathMatch: 'full' },

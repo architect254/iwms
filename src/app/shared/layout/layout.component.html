@@ -9,6 +9,22 @@
   >
     <mat-toolbar class="mobile-navigation"><logo></logo></mat-toolbar>
     <mat-nav-list class="secondary-navigation">
+      <mat-list-item [activated]="false">
+        <a matListItemTitle routerLink="/users" routerLinkActive="sn-active"
+          >Users</a
+        >
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>group</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item [activated]="false">
+        <a matListItemTitle routerLink="/welfares" routerLinkActive="sn-active"
+          >Welfares</a
+        >
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>accessibility_new</mat-icon>
+        </button>
+      </mat-list-item>
       <mat-list-item [activated]="true">
         <a
           matListItemTitle
@@ -17,7 +33,7 @@
           >Memberships</a
         >
         <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>card_membership</mat-icon>
+          <mat-icon>contacts</mat-icon>
         </button>
       </mat-list-item>
       <mat-list-item [activated]="false">
@@ -27,16 +43,26 @@
         </button>
       </mat-list-item>
       <mat-list-item [activated]="false">
-        <a matListItemTitle routerLink="/payments">Payments</a>
+        <a matListItemTitle routerLink="/accounts">Accounts</a>
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>account_balance</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item [activated]="false">
+        <a matListItemTitle routerLink="/transactions">Transactions</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>payments</mat-icon>
         </button>
       </mat-list-item>
+      <mat-list-item [activated]="false">
+        <a matListItemTitle routerLink="/notifications">Notifications</a>
+        <button mat-icon-button (click)="(0)" matListItemMeta>
+          <mat-icon>campaign</mat-icon>
+        </button>
+      </mat-list-item>
     </mat-nav-list>
     <mat-toolbar class="footer">
-      <small class="mat-body-small">
-        RichTech ICT, Ltd. &copy; 2024
-      </small>
+      <small class="mat-body-small"> RichTech ICT, Ltd. &copy; 2024 </small>
     </mat-toolbar>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -122,6 +148,23 @@
         </mat-nav-list>
       </mat-toolbar-row>
       <mat-toolbar-row class="secondary-toolbar">
+        <nav aria-label="breadcrumb" class="container">
+          <ol class="breadcrumb mat-body-medium">
+            @for (breadcrumb of breadcrumbs; track $index) {
+            <li
+              class="breadcrumb-item"
+              [class.active]="$index == breadcrumbs.length - 1"
+              [attr.aria-current]="
+                $index == breadcrumbs.length - 1 ? 'page' : undefined
+              "
+            >
+              <a [routerLink]="buildBreadcrumbRouteingUrl($index)">{{
+                breadcrumb.label
+              }}</a>
+            </li>
+            }
+          </ol>
+        </nav>
       </mat-toolbar-row>
     </mat-toolbar>
     <section class="container" id="container">

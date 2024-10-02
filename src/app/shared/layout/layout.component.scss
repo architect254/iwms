@@ -65,10 +65,23 @@
       margin: 4px;
     }
   }
-}
 
-a {
-  text-decoration: none;
+  #toolbar {
+    .secondary-toolbar {
+      .breadcrumb {
+        margin: 0;
+
+        .breadcrumb-item {
+          &.active {
+            a {
+              color: var(--bs-breadcrumb-item-active-color);
+              text-decoration: none;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 :host {

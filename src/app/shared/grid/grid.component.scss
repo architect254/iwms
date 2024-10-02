@@ -8,6 +8,10 @@
         align-items: center;
         padding: 8px 16px;
 
+        // .dataset-name {
+        //     // color: rgb(0, 69, 143);
+        // }
+
         .data-count {
             position: relative;
             right: -9%;
@@ -82,12 +86,12 @@
             }
 
             .header-row {
-                background-color: rgb(233, 233, 233);
+                background-color: rgba(0, 69, 143, 0.85);
+                color: white;
             }
 
             .cell {
                 vertical-align: baseline;
-                font-weight: bold;
                 padding: 0 8px;
 
                 &.select-cell {

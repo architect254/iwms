@@ -11,8 +11,8 @@ import { DynamicCustomFormControlBase } from './form.service';
 @Component({
   standalone: true,
   selector: 'iwms-control',
-  templateUrl: './form-control.component.html',
-  styleUrls: ['./form-control.component.scss'],
+  templateUrl: './control.component.html',
+  styleUrls: ['./control.component.scss'],
   imports: [
     CommonModule,
     ReactiveFormsModule,

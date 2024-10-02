@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
 
-import { DynamicFormComponent } from '../../../shared/form/form.component';
+import { DynamicFormComponent } from '../../../shared/form-control/form.component';
 
-import { DynamicCustomFormControlBase } from '../../../shared/form/form.service';
+import { DynamicCustomFormControlBase } from '../../../shared/form-control/form.service';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { MembershipsService } from '../memberships.service';
 
@@ -33,6 +33,18 @@ export class UpsertComponent {
   maritalDetailsFormControls$: Observable<DynamicCustomFormControlBase<any>[]>;
   familyDetailsFormControls$: Observable<DynamicCustomFormControlBase<any>[]>;
 
+  isProceedAllowed: { [key: string]: boolean } = {
+    'Personal Details': false,
+    'Marital Details': false,
+    'Family Details': false,
+  };
+
+  formData: { [key: string]: string } = {
+    'Personal Details': '',
+    'Marital Details': '',
+    'Family Details': '',
+  };
+
   constructor(private route: ActivatedRoute, service: MembershipsService) {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
@@ -44,6 +56,7 @@ export class UpsertComponent {
   }
 
   onValidityNotified(formData: string, section: string) {
-    console.log(section, formData);
+    this.isProceedAllowed[section] = true;
+    this.formData[section] = formData;
   }
 }

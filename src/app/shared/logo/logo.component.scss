@@ -1,35 +1,31 @@
-.logo,
-.logo-separator {
-  stroke-width: 3;
-  stroke-dasharray: 1500;
-}
-
-.logo {
-  fill: #0074e9;
-  stroke: #00458f;
-}
-
-.logo-separator {
-  fill: #00458f;
-  stroke: #007bff8a;
-  stroke-width: 5;
-}
-
 .logo-container {
-  fill: white;
-  stroke-dasharray: 0;
-}
+  width: 200px;
+  height: 200px;
+  border: 1px solid #00458f;
 
-.main-logo {
-  fill: #0074e9;
-  stroke-dasharray: 0;
-  stroke: #00458f;
-  stroke-width: 5;
-}
+  background-color: white;
 
-.main-logo-separator {
-  fill: #00458f;
-  stroke: #fafafa;
-  stroke-dasharray: 0;
-  stroke-width: 6;
+  position: relative;
+
+  .logo-text {
+    margin: auto;
+    padding: 4px;
+    text-align: center;
+    border-radius: 8px;
+
+    position: absolute;
+    top: 60px;
+    left: -20px;
+
+    color: #0074e9;
+    background-color: white;
+    font-size: 5rem;
+    font-weight: 900;
+
+    -webkit-text-stroke: 3px #00458f;
+    -webkit-text-fill-color: #0074e9;
+
+    text-shadow:
+      6px 8px 10px #001b3b8c
+  }
 }
