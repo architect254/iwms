@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-password-reset-dialog',
@@ -24,6 +25,7 @@ import { MatInputModule } from '@angular/material/input';
     MatProgressSpinnerModule,
     MatButtonModule,
     ReactiveFormsModule,
+    MatIconModule,
     MatProgressBarModule,
     CommonModule,
   ],
