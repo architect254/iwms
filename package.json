@@ -9,8 +9,6 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:welfare-management-system": "node dist/welfare-management-system/server/server.mjs",
-    "app-shell:dev": "ng run welfare-management-system:app-shell:development",
-    "app-shell:prod": "ng run welfare-management-system:app-shell:production",
     "insert": "node --max-old-space-size=8000 ./mock_DB/insert-into-db.js",
     "server": "json-server ./mock_DB/database.json",
     "http-server": "http-server dist -p 8080"

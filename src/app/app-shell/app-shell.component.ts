@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { LogoComponent } from '../shared/logo/logo.component';
 
 @Component({
-  selector: 'app-shell',
+  selector: 'iwms-app-shell',
   standalone: true,
   imports: [LogoComponent],
   templateUrl: './app-shell.component.html',
