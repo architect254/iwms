@@ -1,0 +1,85 @@
+<h2 mat-dialog-title>{{ action$ | async }}</h2>
+<mat-dialog-content>
+  <form id="auth-form" [formGroup]="authForm">
+    @if ((action$ | async) == 'Login') {
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput type="text" name="username" formControlName="username" />
+      <mat-icon matPrefix>account_circle</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="password"
+        formControlName="password"
+      />
+      <mat-icon matPrefix>password</mat-icon>
+    </mat-form-field>
+    <mat-hint
+      >No account?
+      <a mat-button (click)="$action.next('Sign Up')">Sign up</a></mat-hint
+    >
+    } @else {
+    <mat-form-field>
+      <mat-label>Full Name</mat-label>
+      <input matInput type="text" name="name" formControlName="name" />
+      <mat-icon matPrefix>person</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput type="text" name="username" formControlName="username" />
+      <mat-icon matPrefix>account_circle</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput type="email" name="email" formControlName="email" />
+      <mat-icon matPrefix>mail</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="password"
+        formControlName="password"
+      />
+      <mat-icon matPrefix>password</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Confirm Password</mat-label>
+      <input
+        matInput
+        type="password"
+        name="confim_password"
+        formControlName="confirm_password"
+      />
+      <mat-icon matPrefix>password</mat-icon>
+    </mat-form-field>
+    <mat-hint
+      >Already have an account?
+      <a mat-button (click)="$action.next('Login')">Sign in</a></mat-hint
+    >
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    mat-button
+    class="login-btn"
+    type="submit"
+    (click)="submit()"
+    cdkFocusInitial
+    [disabled]="!authForm.valid || loading"
+  >
+    @if(!loading){
+    <mat-icon matPrefix>login</mat-icon>
+    }@else{
+    <mat-spinner diameter="20" mode="indeterminate"></mat-spinner>
+    }
+    <span>{{ action$ | async }}</span>
+  </button>
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

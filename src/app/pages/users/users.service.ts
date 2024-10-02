@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
-import { ApiService } from '../../core/api.service';
-import { User } from './user';
+import { User } from './user.model';
 import {
   CustomDropdownControl,
   CustomTextboxControl,
@@ -12,12 +11,13 @@ import {
   CustomTextData,
   DynamicCustomDataBase,
 } from '../../shared/view-data/view.service';
+import { ApiService } from '../../core/services/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService extends ApiService {
-  API_URL: string = `${this.BASE_URL}/users`;
+  protected override endpoint: string = `${this.BASE_URL}/users`;
 
   $users: BehaviorSubject<User[]> = new BehaviorSubject<
     User[]
@@ -272,28 +272,31 @@ export class UsersService extends ApiService {
     return of(data.sort((a, b) => a.order - b.order));
   }
 
-  getAllMemberships(): Observable<User[]> {
+  getAllUsers(): Observable<User[]> {
     return this.http
-      .get<User[]>(this.API_URL, this.httpOptions)
+      .get<User[]>(this.endpoint, this.httpOptions)
       .pipe(catchError(this.errorHandler));
   }
 
-  getMembershipById(membershipId: number | string) {
+  getUserById(userId: number | string) {
     this.$subscriptions$.add(
       this.http
-        .get<User>(this.API_URL)
+        .get<User>(this.endpoint,this.httpOptions)
         .pipe(catchError(this.errorHandler))
-        .subscribe((membership: User) => {
-          this.$users.next([...this.$users.getValue(), membership]);
+        .subscribe((user: User) => {
+          this.$users.next([...this.$users.getValue(), user]);
         })
     );
   }
 
-  selectAllMembershipsDummy(): void {
+ selectAllUsersDummy(): void {
     this.$subscriptions$.add(
-      this.getAllMemberships().subscribe((memberships: User[]) => {
-        this.$users.next(memberships);
+      this.getAllUsers().subscribe((users: User[]) => {
+        this.$users.next(users);
       })
     );
   }
+
+  
+
 }

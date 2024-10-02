@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
-import { ApiService } from '../../core/api.service';
 import { User } from './user';
 import {
   CustomDropdownControl,
@@ -12,6 +11,7 @@ import {
   CustomTextData,
   DynamicCustomDataBase,
 } from '../../shared/view-data/view.service';
+import { ApiService } from '../../core/services/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,9 +19,7 @@ import {
 export class UsersService extends ApiService {
   API_URL: string = `${this.BASE_URL}/users`;
 
-  $users: BehaviorSubject<User[]> = new BehaviorSubject<
-    User[]
-  >([]);
+  $users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
 
   constructor() {
     super();

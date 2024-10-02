@@ -2,13 +2,13 @@ import { Routes } from '@angular/router';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
-import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
   {
-    path: 'login',
-    component: LoginComponent,
-    data: { title: 'Welfare Management System Login Portal' },
+    path: 'auth',
+    data: { title: 'Welfare Management System Auth Portal' },
+    loadChildren: () =>
+      import('./pages/auth/auth.routes').then((auth) => auth.routes),
   },
   {
     path: '',

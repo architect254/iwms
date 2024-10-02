@@ -7,7 +7,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Observable, of } from 'rxjs';
 
 import { UsersService } from '../users.service';
-import { User } from '../user';
+import { User } from '../user.model';
 
 import { GridContainerDirective } from '../../../shared/grid-container/grid-container.directive';
 import {
@@ -84,7 +84,7 @@ export class ListComponent extends GridContainerDirective {
   override ngOnInit(): void {
     super.ngOnInit();
 
-    this._usersService.selectAllMembershipsDummy();
+    this._usersService.selectAllUsersDummy();
   }
 
   onSelectFilterOption(type: any) {}

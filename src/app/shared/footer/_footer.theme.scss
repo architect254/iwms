@@ -1,0 +1,86 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($atika-dominic-theme) {
+  footer {
+    background-color: mat.get-theme-color($atika-dominic-theme, primary, 30) !important;
+    color: mat.get-theme-color($atika-dominic-theme, primary, 90) !important;
+
+    .newsletter-form {
+      .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: mat.get-theme-color($atika-dominic-theme, primary, 10) !important;
+
+        .mdc-text-field__input {
+          color: mat.get-theme-color($atika-dominic-theme, primary, 90) !important;
+        }
+      }
+
+
+      button[mat-button].mat-subscribe {
+        color: mat.get-theme-color($atika-dominic-theme, primary, 95) !important;
+        background-color: mat.get-theme-color($atika-dominic-theme, primary, 50) !important;
+
+        &:hover {
+          background-color: mat.get-theme-color($atika-dominic-theme, primary, 40) !important;
+        }
+      }
+    }
+
+    .links {
+      background-color: mat.get-theme-color($atika-dominic-theme, primary, 20) !important;
+
+    }
+
+    .developed-by {
+      background-color: mat.get-theme-color($atika-dominic-theme, primary, 10) !important;
+    }
+
+    .author-name {
+      color: mat.get-theme-color($atika-dominic-theme, primary, 70) !important;
+      -webkit-text-stroke-width: 2px;
+      -webkit-text-stroke-color: mat.get-theme-color($atika-dominic-theme, primary, 10) !important;
+    }
+
+    a[mat-button] {
+      color: mat.get-theme-color($atika-dominic-theme, primary, 90) !important;
+    }
+  }
+}
+
+@mixin typography($atika-dominic-theme) {
+  footer {
+    h5.newsletter-title {
+      font: mat.get-theme-typography($atika-dominic-theme, title-large, font);
+    }
+
+    p.newsletter-info {
+      font: mat.get-theme-typography($atika-dominic-theme, body-small, font);
+    }
+
+    small.atikas-description {
+      font: mat.get-theme-typography($atika-dominic-theme, body-small, font);
+    }
+
+    small.copy-right {
+      font: mat.get-theme-typography($atika-dominic-theme, label-small, font);
+    }
+
+    .developed-by-text {
+      font: mat.get-theme-typography($atika-dominic-theme, label-small, font);
+    }
+
+    .author-name {
+      font: mat.get-theme-typography($atika-dominic-theme, display-small, font);
+    }
+  }
+}
+
+@mixin theme($atika-dominic-theme) {
+  @if mat.theme-has($atika-dominic-theme, color) {
+    @include color($atika-dominic-theme);
+  }
+
+  @if mat.theme-has($atika-dominic-theme, typography) {
+    @include typography($atika-dominic-theme);
+  }
+}

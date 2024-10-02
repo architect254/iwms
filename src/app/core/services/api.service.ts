@@ -5,21 +5,28 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 
-import { environment } from '../../environments/environment';
-
 import { Subscription, throwError } from 'rxjs';
+
+import { environment } from '../../../environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService implements OnDestroy {
-  BASE_URL: string = `${environment.apiUrl}`;
-  http: HttpClient = inject(HttpClient);
-  httpOptions = {
+  readonly #API_URL: string = `${environment.apiUrl}`;
+  readonly BASE_URL = `${this.#API_URL}/api`;
+
+  protected endpoint = `${this.BASE_URL}`;
+
+  protected http = inject(HttpClient);
+  protected httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
     }),
   };
+  protected snackBar = inject(MatSnackBar);
+
 
   $subscriptions$: Subscription = new Subscription();
 

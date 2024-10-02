@@ -1,0 +1,78 @@
+<footer>
+  <section class="newsletter">
+    <div class="container">
+      <h5 class="newsletter-title">Sign Up For Atika Dominic's NewsLetter</h5>
+      <p class="newsletter-info">
+        Receive Atika Dominic's quarterly updates with the latest articles,
+        books and insights from this site
+      </p>
+      <form
+        [formGroup]="newsLetterForm"
+        (submit)="submitForm()"
+        class="newsletter-form"
+      >
+        <mat-form-field>
+          <input
+            matInput
+            formControlName="email"
+            placeholder="Email"
+            color="email-input"
+          />
+        </mat-form-field>
+
+        <button
+          mat-button
+          type="submit"
+          color="subscribe"
+          [disabled]="!newsLetterForm.valid"
+        >
+          Subscribe
+        </button>
+      </form>
+    </div>
+  </section>
+  <section class="links">
+    <div class="container">
+      <div class="site-links">
+        <a mat-button routerLink="/articles">Atika's Artices</a>
+        <a mat-button routerLink="/books">Atika's Books</a>
+        <a
+          mat-button
+          routerLink="/"
+          fragment="about-atika"
+          routerLinkOptions="{anchorScrolling:'enabled'}"
+          >About Atika</a
+        >
+        <a
+          mat-button
+          routerLink="/"
+          fragment="contact-atika"
+          routerLinkOptions="{anchorScrolling:'enabled'}"
+          >Contact Atika</a
+        >
+      </div>
+      <div class="external-links">
+        <p routerLink="" class="author-name">Atika Dominic</p>
+        <small class="atikas-description">
+          Atika Dominic is a great great great greatgreat great great great
+          great great writer
+        </small>
+
+        <small class="copy-right">
+          &copy;{{ year }} Atika Dominic. All rights reserved
+        </small>
+
+        <div class="social-links">
+          <i class="bi bi-facebook"></i>
+          <i class="bi bi-twitter"></i>
+          <i class="bi bi-whatsapp"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="developed-by">
+    <p class="container developed-by-text">
+      Designed & Developed by Code Links Industries, Ltd
+    </p>
+  </section>
+</footer>

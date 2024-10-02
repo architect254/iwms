@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User } from "../users/user.model";
 
 export interface JwtPayload {
   user: User;

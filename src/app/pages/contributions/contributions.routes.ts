@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { ContainerLayoutComponent } from './container-layout.component';
+import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
