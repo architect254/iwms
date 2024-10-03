@@ -47,19 +47,19 @@ export class ListComponent extends GridContainerDirective {
 
   data = [
     {
-      name: 'jared',
+      name: 'Jared Bada',
       age: 21,
       status: 'stopped',
       action: 'run',
     },
     {
-      name: 'jared',
+      name: 'Jared Bada',
       age: 21,
       status: 'waiting',
       action: 'run',
     },
     {
-      name: 'jared',
+      name: 'Jared Bada',
       age: 21,
       status: 'running',
       action: 'stop',
@@ -169,7 +169,7 @@ export class ListComponent extends GridContainerDirective {
 
   override setDefaultMetaAndTitle(): void {
     this.setTitle(
-      `Integrated Welfare Management System - Home Rentals | Integrated Welfare Management System`
+      `Integrated Welfare Management System - Welfare Management Information System | Integrated Welfare Management System`
     );
     this.setMeta([
       {
