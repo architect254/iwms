@@ -109,7 +109,7 @@ export class ListComponent extends GridContainerDirective {
       },
       {
         name: `twitter:site`,
-        content: `https://www.yowhood.com`,
+        content: `https://www.iwms.com`,
       },
       {
         name: `twitter:creator`,
@@ -134,7 +134,7 @@ export class ListComponent extends GridContainerDirective {
       },
       {
         name: `og:url`,
-        content: `https://www.yowhood.com`,
+        content: `https://www.iwms.com`,
       },
       {
         name: `og:site_name`,
