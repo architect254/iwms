@@ -22,7 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class GridSearchComponent {
   @Input() title: string = '';
-  @Input() filterOptions: any = [{ label: 'Name', value: 'name' }];
+  @Input() filterOptions: any = [{ label: 'Name', value: 'name' },{ label: 'Age', value: 'age' },{ label: 'Status', value: 'status' }];
   @Output() search: EventEmitter<SearchEvent> = new EventEmitter();
 
   onSelectFilterOption(option: any) {}

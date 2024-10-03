@@ -47,13 +47,28 @@
     </section>
 
     <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Email</mat-label>
+      <input
+        type="email"
+        name="email"
+        formControlName="email"
+        matInput
+        placeholder="Ex. john@server.com"
+      />
+      <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
+      <mat-error *ngIf="email?.hasError('required')">
+        Email is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
       <mat-label>Phone Number</mat-label>
       <input
         type="phone"
         name="phone_number"
         formControlName="phone_number"
         matInput
-        placeholder="Ex. 0712312312"
+        placeholder="Ex. 07123 12312"
       />
       <mat-icon matPrefix class="material-icons-two-toned">phone</mat-icon>
       <mat-error *ngIf="phoneNo?.hasError('required')">
@@ -91,17 +106,16 @@
       </mat-error>
     </mat-form-field>
     <button
-      mat-raised-button
+      mat-flat-button
       [disabled]="signUpForm.invalid || isSubmitting"
       type="submit"
-      color="accent"
       class="w-100 mt-4 mb-1"
     >
       <mat-icon matSuffix *ngIf="!isSubmitting; else submitting"
         >how_to_reg</mat-icon
       >
       <ng-template #submitting
-        ><mat-spinner diameter="30" strokeWidth="4" color="accent"></mat-spinner
+        ><mat-spinner diameter="30" strokeWidth="4"></mat-spinner
       ></ng-template>
       <span *ngIf="!isSubmitting">Sign Up</span>
     </button>

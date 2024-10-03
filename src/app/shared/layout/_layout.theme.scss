@@ -10,13 +10,23 @@
     background-color: mat.get-theme-color($iwms-theme, primary, 95);
   }
 
-  .footer {
-    background-color: lighten(mat.get-theme-color($iwms-theme, primary, 30), 10) !important;
-    color: mat.get-theme-color($iwms-theme, primary, 99) !important;
+  iwms-sign-up,
+  iwms-sign-in {
+    background-color: mat.get-theme-color($iwms-theme, primary, 95);
+
+    .auth-header{
+      color: mat.get-theme-color($iwms-theme, primary, 30);
+    }
+
   }
 
   .add-icon {
     color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+  .footer {
+    background-color: lighten(mat.get-theme-color($iwms-theme, primary, 30), 10) !important;
+    color: mat.get-theme-color($iwms-theme, primary, 99) !important;
   }
 }
 

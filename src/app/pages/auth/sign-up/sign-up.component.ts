@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-sign-up',
+  selector: 'iwms-sign-up',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -42,6 +42,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   signUpForm: FormGroup = this.fb.group({
     firstname: [``, Validators.required],
     lastname: [``, Validators.required],
+    email: [``, [Validators.email, Validators.required]],
     phone_number: [``, Validators.required],
     password: [``, Validators.required],
     confirmPassword: [``, Validators.required],
@@ -68,6 +69,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
   get lastname() {
     return this.signUpForm.get(`lastname`);
+  }
+  get email() {
+    return this.signUpForm.get(`email`);
   }
   get phoneNo() {
     return this.signUpForm.get(`phone_number`);

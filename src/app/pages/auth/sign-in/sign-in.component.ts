@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-sign-in',
+  selector: 'iwms-sign-in',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -39,7 +39,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
 
   signInForm: FormGroup = this.fb.group({
-    phone_number: [``, Validators.required],
+    email: [``, Validators.required],
     password: [``, Validators.required],
   });
   isSubmitting = false;
@@ -51,8 +51,8 @@ export class SignInComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  get phoneNo() {
-    return this.signInForm.get(`phone_number`);
+  get email() {
+    return this.signInForm.get(`email`);
   }
   get password() {
     return this.signInForm.get(`password`);

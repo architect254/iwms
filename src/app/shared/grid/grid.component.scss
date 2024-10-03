@@ -85,6 +85,27 @@
                 }
             }
 
+            .select-column-header {
+                ::ng-deep {
+                    .mat-mdc-checkbox {
+                        --mdc-checkbox-selected-pressed-icon-color: #34e1ff;
+                        --mdc-checkbox-selected-checkmark-color: #ffffff;
+                        --mdc-checkbox-selected-focus-icon-color: #34e1ff; 
+                        --mdc-checkbox-selected-hover-icon-color: #34e1ff; 
+                        --mdc-checkbox-selected-icon-color: #34e1ff;
+                        --mdc-checkbox-selected-focus-state-layer-color: #34e1ff; 
+                        --mdc-checkbox-selected-hover-state-layer-color: #34e1ff; 
+                        --mdc-checkbox-unselected-pressed-state-layer-color: #34e1ff;
+
+                        .mdc-checkbox {
+                            div.mdc-checkbox__background {
+                                border-color: white;
+                            }
+                        }
+                    }
+                }
+            }
+
             .header-row {
                 background-color: rgba(0, 69, 143, 0.85);
                 color: white;
