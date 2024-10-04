@@ -2,6 +2,12 @@
 @use '@angular/material' as mat;
 
 @mixin color($iwms-theme) {
+  .mat-sidenav {
+    &.mat-drawer.mat-drawer-side {
+      border-right-color: mat.get-theme-color($iwms-theme, primary, 95);
+    }
+  }
+
   .mat-toolbar {
     background-color: mat.get-theme-color($iwms-theme, primary, 30);
   }
@@ -14,7 +20,7 @@
   iwms-sign-in {
     background-color: mat.get-theme-color($iwms-theme, primary, 95);
 
-    .auth-header{
+    .auth-header {
       color: mat.get-theme-color($iwms-theme, primary, 30);
     }
 
