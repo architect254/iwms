@@ -20,8 +20,26 @@
   iwms-sign-in {
     background-color: mat.get-theme-color($iwms-theme, primary, 95);
 
-    .auth-header {
+    .header {
       color: mat.get-theme-color($iwms-theme, primary, 30);
+
+      .app-name {
+        box-shadow: mat.get-theme-color($iwms-theme, primary, 30) 0px 30px 60px -12px inset, mat.get-theme-color($iwms-theme, secondary, 10) 0px 18px 36px -18px inset;
+        padding: 16px 8px 0 8px;
+        border-radius: 4px;
+
+        .start {
+          color: mat.get-theme-color($iwms-theme, primary, 100);
+        }
+
+        .end {
+          @supports (-webkit-text-stroke: 1px mat.get-theme-color($iwms-theme, primary, 30)) {
+            -webkit-text-stroke: 1px mat.get-theme-color($iwms-theme, primary, 100);
+            -webkit-text-fill-color: mat.get-theme-color($iwms-theme, primary, 30);
+            -webkit-text-stroke-width: 1px;
+          }
+        }
+      }
     }
 
   }
@@ -39,12 +57,32 @@
 @mixin typography($iwms-theme) {
   .app-name {
     font: mat.get-theme-typography($iwms-theme, display-small, font);
-    color: mat.get-theme-color($iwms-theme, secondary, 100);
+    color: mat.get-theme-color($iwms-theme, primary, 100);
   }
 
   .page-title {
     font: mat.get-theme-typography($iwms-theme, title-large, font);
     color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+  iwms-sign-up,
+  iwms-sign-in {
+
+    .header {
+
+      .app-name {
+
+        .start {
+          font: mat.get-theme-typography($iwms-theme, display-large, font);
+        }
+
+        .end {
+          font: mat.get-theme-typography($iwms-theme, display-large, font);
+
+        }
+      }
+    }
+
   }
 }
 

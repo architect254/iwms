@@ -3,9 +3,18 @@
     height: 100%;
 }
 
+.header {
+    margin-top: 40px;
+}
+
 .form-container {
     max-width: 90%;
     margin: 0 auto;
+
+    .user-name {
+        display: flex;
+        gap: 12px;
+    }
 
     @media screen and (min-width: 960px) {
         max-width: 70%;
@@ -18,17 +27,5 @@
     @media screen and (min-width: 1200px) {
         max-width: 50%;
     }
-}
 
-.auth-header {
-    margin-top: 40px;
-}
-
-.warn {
-    color: red;
-}
-
-section.user-name {
-    display: flex;
-    gap: 12px;
 }
