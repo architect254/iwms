@@ -5,6 +5,11 @@ import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 export const routes: Routes = [
   {
+    path: 'not-found',
+    component: NotFoundComponent,
+    data: { title: 'Page Not Found' },
+  },
+  {
     path: 'auth',
     data: { title: 'Welfare Management System Auth Portal' },
     loadChildren: () =>
@@ -38,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'contributions',
-        data: { title: 'Welfare Member Contributions' },
+        data: { title: 'Welfare Members Contributions' },
         loadChildren: () =>
           import('./pages/contributions/contributions.routes').then(
             (contributions) => contributions.routes
@@ -62,15 +67,14 @@ export const routes: Routes = [
       },
       {
         path: 'notifications',
-        data: { title: 'Welfare Message Notification' },
+        data: { title: 'Welfare Message Notifications' },
         loadChildren: () =>
           import('./pages/notifications/notifications.routes').then(
             (notifications) => notifications.routes
           ),
       },
       { path: '', redirectTo: '/memberships', pathMatch: 'full' },
-      { path: '**', component: NotFoundComponent },
+      { path: '**', redirectTo: '/not-found' },
     ],
   },
-  { path: '**', component: NotFoundComponent },
 ];

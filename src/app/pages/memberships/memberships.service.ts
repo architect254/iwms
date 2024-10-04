@@ -17,7 +17,7 @@ import {
   providedIn: 'root',
 })
 export class MembershipsService extends ApiService {
-  API_URL: string = `${this.BASE_URL}/membership`;
+  protected override endpoint = `${this.API_URL}/memberships`;
 
   $memberships: BehaviorSubject<Membership[]> = new BehaviorSubject<
     Membership[]
@@ -274,14 +274,14 @@ export class MembershipsService extends ApiService {
 
   getAllMemberships(): Observable<Membership[]> {
     return this.http
-      .get<Membership[]>(this.API_URL, this.httpOptions)
+      .get<Membership[]>(this.endpoint, this.httpOptions)
       .pipe(catchError(this.errorHandler));
   }
 
   getMembershipById(membershipId: number | string) {
     this.$subscriptions$.add(
       this.http
-        .get<Membership>(this.API_URL)
+        .get<Membership>(this.endpoint)
         .pipe(catchError(this.errorHandler))
         .subscribe((membership: Membership) => {
           this.$memberships.next([...this.$memberships.getValue(), membership]);

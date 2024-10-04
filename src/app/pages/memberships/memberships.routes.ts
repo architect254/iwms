@@ -3,7 +3,6 @@ import { ContainerLayoutComponent } from './container-layout.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
-import { NotFoundComponent } from '../../shared/not-found/not-found.component';
 
 export const routes: Routes = [
   {
@@ -28,10 +27,10 @@ export const routes: Routes = [
       {
         path: '',
         component: ListComponent,
+        pathMatch: 'full',
         data: { title: 'Welfare Memberships List' },
       },
-      { path: '**', component: NotFoundComponent },
+      { path: '**', redirectTo: '/not-found' },
     ],
   },
-  { path: '**', component: NotFoundComponent },
 ];

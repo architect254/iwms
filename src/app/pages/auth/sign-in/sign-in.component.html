@@ -3,8 +3,13 @@
     <span class="start">IW</span><span class="end">MS</span>
   </header>
 </mat-toolbar>
-<header class="auth-header">
+<header class="header">
   <h1 class="mat-headline-5 text-center">Sign In To <strong>IWMS</strong></h1>
+
+  <!-- <h1 class="mat-headline-5 text-center">
+    Sign In To
+    <span class="app-name"> IWMS </span>
+  </h1> -->
 </header>
 <section class="form-container">
   <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="signInForm">
@@ -17,9 +22,7 @@
         matInput
         placeholder="Ex. john@server.com"
       />
-      <mat-icon matPrefix class="material-icons-two-toned"
-        >email</mat-icon
-      >
+      <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
 
       <mat-error *ngIf="email?.hasError('required')">
         Email is <strong>required</strong>

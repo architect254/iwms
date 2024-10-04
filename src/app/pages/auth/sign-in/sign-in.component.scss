@@ -2,6 +2,9 @@
     display: block;
     height: 100%;
 }
+.header {
+    margin-top: 40px;
+}
 .form-container {
     max-width: 90%;
     margin: 0 auto;
@@ -19,31 +22,3 @@
     }
 }
 
-.app-header {
-    @supports (-webkit-text-stroke: 1px #00458f) {
-        &.app-name {
-            font-family: 'Poppins' sans-serif;
-
-            .start {
-                color: white;
-                font-weight: bold;
-            }
-
-            .end {
-                color: #00458f;
-                font-weight: bolder;
-                -webkit-text-stroke: 1px white;
-                -webkit-text-fill-color: #00458f;
-                -webkit-text-stroke-width: 1px;
-            }
-        }
-    }
-}
-
-.auth-header {
-    margin-top: 40px;
-}
-
-a.icon-link {
-    cursor: pointer;
-}

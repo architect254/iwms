@@ -1,14 +1,17 @@
-<div class="container">
-  <img
-    alt="Not found"
-    src="assets/images/support/angular-404.svg"
-    height="300"
-    width="300"
-  />
-  <div class="text-center">
-    <h1 class="mat-title-larger">Page Not Found</h1>
-    <p>We're sorry. The page you are looking for cannot be found.</p>
-  </div>
+<mat-toolbar>
+  <header class="app-header app-name">
+    <span class="start">IW</span><span class="end">MS</span>
+  </header>
+</mat-toolbar>
+<div class="text-center">
+  <h1 class="mat-display-large">Page Not Found 🙃</h1>
+  <p class="mat-title-large">
+    We're sorry. The page you are looking for cannot be found.
+  </p>
+  <p class="mat-label-large">
+    Kindly,
+    <a class="icon-link text-primary" (click)="location.back()">Go Back</a>
+    or
+    <a class="icon-link text-primary" routerLink="/">Go Home!</a>
+  </p>
 </div>
-
-&#64;reviewed 2024-08-20

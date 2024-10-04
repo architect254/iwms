@@ -16,7 +16,7 @@ import { AuthDto } from '../../pages/auth/auth.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
-  protected override endpoint = `${this.BASE_URL}/auth`;
+  protected override endpoint = `${this.API_URL}/auth`;
 
   private _storageService = inject(LocalStorageService);
 
@@ -54,14 +54,14 @@ export class AuthService extends ApiService {
 
   signUp(credentials: AuthDto) {
     return this.http.post<void>(
-      `${environment.apiUrl}/auth/sign-up`,
+      `${this.API_URL}/auth/sign-up`,
       credentials
     );
   }
 
   signIn({ phone_number, password }: AuthDto) {
     return this.http
-      .post<any>(`${environment.apiUrl}/auth/sign-in`, {
+      .post<any>(`${this.API_URL}/auth/sign-in`, {
         phone_number,
         password,
       })
@@ -83,14 +83,14 @@ export class AuthService extends ApiService {
 
   resetPassword(payload: any) {
     return this.http.post<any>(
-      `${environment.apiUrl}/auth/reset-password`,
+      `${this.API_URL}/auth/reset-password`,
       payload
     );
   }
 
   login(email: string, password: string) {
     return this.http
-      .post<{ [key: string]: string }>(`${environment.apiUrl}/auth/sign-in`, {
+      .post<{ [key: string]: string }>(`${this.API_URL}/auth/sign-in`, {
         email,
         password,
       })
