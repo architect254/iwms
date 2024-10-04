@@ -27,11 +27,11 @@ export const routes: Routes = [
       },
       {
         path: '',
+        pathMatch: 'full',
         component: ListComponent,
         data: { title: 'Welfare Financial Transactions List' },
       },
-      { path: '**', component: NotFoundComponent },
+      { path: '**', redirectTo: '/not-found' },
     ],
   },
-  { path: '**', component: NotFoundComponent },
 ];

@@ -1,10 +1,10 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
 
 @use './app/shared/layout/layout.theme' as layout;
+@use './app/shared/not-found/not-found.theme' as not-found;
 @use './app/shared/grid/grid.theme' as grid;
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -13,20 +13,14 @@
 @include mat.core();
 
 // Define the theme object.
-$iwms-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  typography: (
-    brand-family: 'Poppins',
-    bold-weight: 900
-  ),
-  density: (
-    scale: 0,
-  )
-));
+$iwms-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: (brand-family: 'Poppins',
+        bold-weight: 900),
+      density: (scale: 0,
+      )));
 
 :root {
   @include mat.all-component-themes($iwms-theme);
@@ -34,6 +28,7 @@ $iwms-theme: mat.define-theme((
   @include mat.color-variants-backwards-compatibility($iwms-theme);
 
   @include layout.theme($iwms-theme);
+  @include not-found.theme($iwms-theme);
   @include grid.theme($iwms-theme);
 
   .reduced-size {
@@ -43,11 +38,41 @@ $iwms-theme: mat.define-theme((
 
 @import 'bootstrap/scss/bootstrap';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: "Poppins", sans-serif; }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
 
-.spacer{
-  flex: 1 1 auto;
+
+  .app-header {
+    @supports (-webkit-text-stroke: 1px #00458f) {
+      &.app-name {
+        font-family: 'Poppins' sans-serif;
+
+        .start {
+          color: white;
+          font-weight: bold;
+        }
+
+        .end {
+          color: #00458f;
+          font-weight: bolder;
+          -webkit-text-stroke: 1px white;
+          -webkit-text-fill-color: #00458f;
+          -webkit-text-stroke-width: 1px;
+        }
+      }
+    }
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  a.icon-link {
+    cursor: pointer;
+  }
 }
 
 // ::-webkit-scrollbar {

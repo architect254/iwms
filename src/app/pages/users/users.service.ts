@@ -17,7 +17,7 @@ import { ApiService } from '../../core/services/api.service';
   providedIn: 'root',
 })
 export class UsersService extends ApiService {
-  protected override endpoint: string = `${this.BASE_URL}/users`;
+  protected override endpoint = `${this.API_URL}/users`;
 
   $users: BehaviorSubject<User[]> = new BehaviorSubject<
     User[]

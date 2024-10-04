@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
-import { NotFoundComponent } from '../../shared/not-found/not-found.component';
 import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
 
 export const routes: Routes = [
@@ -27,11 +26,11 @@ export const routes: Routes = [
       },
       {
         path: '',
+        pathMatch: 'full',
         component: ListComponent,
         data: { title: 'Welfare Financial Accounts List' },
       },
-      { path: '**', component: NotFoundComponent },
+      { path: '**', redirectTo: '/not-found' },
     ],
   },
-  { path: '**', component: NotFoundComponent },
 ];

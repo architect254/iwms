@@ -14,10 +14,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root',
 })
 export class ApiService implements OnDestroy {
-  readonly #API_URL: string = `${environment.apiUrl}`;
-  readonly BASE_URL = `${this.#API_URL}/api`;
+  readonly #SERVER_URL: string = `${environment.serverUrl}`;
+  readonly API_URL = `${this.#SERVER_URL}/api`;
 
-  protected endpoint = `${this.BASE_URL}`;
+  protected endpoint = `${this.API_URL}/`;
 
   protected http = inject(HttpClient);
   protected httpOptions = {
