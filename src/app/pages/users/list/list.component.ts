@@ -20,6 +20,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
+import { Console } from 'node:console';
 
 @Component({
   selector: 'iwms-list',
@@ -83,8 +84,10 @@ export class ListComponent extends GridContainerDirective {
 
   override ngOnInit(): void {
     super.ngOnInit();
-
-    this._usersService.selectAllUsersDummy();
+    console.log('users init');
+    this._usersService
+      .getUsers()
+      .subscribe((users) => console.log('users now', users));
   }
 
   onSelectFilterOption(type: any) {}
@@ -193,19 +196,13 @@ export const MOCK = {
       width: '250px',
     },
     { key: 'name', label: 'Name', position: 1, type: 'string', width: '250px' },
-    { key: 'age', label: 'Age', position: 2, type: 'number', width: '250px' },
+    { key: 'phoneNumber', label: 'Phone Number', position: 2, type: 'number', width: '250px' },
+    { key: 'email', label: 'Email', position: 3, type: 'string', width: '250px' },
     {
-      key: 'status',
-      label: 'Status',
-      position: 20,
+      key: 'role',
+      label: 'User Role',
+      position: 4,
       type: 'status',
-      width: '250px',
-    },
-    {
-      key: 'action',
-      label: 'Action',
-      position: 21,
-      type: 'action',
       width: '250px',
     },
   ],

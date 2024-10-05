@@ -65,9 +65,9 @@
         >
           <strong
             [style.color]="
-              statusProperties[column.key]!.colors[row[column.key]]
+              statusProperties[column.type]!.colors[row[column.type]]
             "
-            >{{ statusProperties[column.key]!.labels[row[column.key]] }}</strong
+            >{{ statusProperties[column.type]!.labels[row[column.type]] }}</strong
           >
         </td>
         }@case ('action') {

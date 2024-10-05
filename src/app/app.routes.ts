@@ -73,7 +73,7 @@ export const routes: Routes = [
             (notifications) => notifications.routes
           ),
       },
-      { path: '', redirectTo: '/memberships', pathMatch: 'full' },
+      { path: '', redirectTo: '/users', pathMatch: 'full' },
       { path: '**', redirectTo: '/not-found' },
     ],
   },
