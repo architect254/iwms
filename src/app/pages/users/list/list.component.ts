@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
-import { AsyncPipe, DOCUMENT } from '@angular/common';
+import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
@@ -17,10 +17,19 @@ import {
   GridComponent,
 } from '../../../shared/grid/grid.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Data, Router } from '@angular/router';
+import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
 import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { Console } from 'node:console';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'iwms-list',
@@ -32,6 +41,17 @@ import { Console } from 'node:console';
     GridComponent,
     GridSearchComponent,
     ReactiveFormsModule,
+    MatTableModule,
+    MatButtonModule,
+     MatMenuModule,
+     MatIconModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    CommonModule,
+    RouterModule,
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
@@ -44,28 +64,7 @@ export class ListComponent extends GridContainerDirective {
   defaultSortColumn!: string;
   defaultSortColumnDirection!: 'asc' | 'desc';
 
-  users$: Observable<User[]> = of([]);
-
-  data = [
-    {
-      name: 'Jared Bada',
-      age: 21,
-      status: 'stopped',
-      action: 'run',
-    },
-    {
-      name: 'Jared Bada',
-      age: 21,
-      status: 'waiting',
-      action: 'run',
-    },
-    {
-      name: 'Jared Bada',
-      age: 21,
-      status: 'running',
-      action: 'stop',
-    },
-  ];
+  data: any[] = [];
 
   minRentCtrl: FormControl = new FormControl();
 
@@ -85,9 +84,25 @@ export class ListComponent extends GridContainerDirective {
   override ngOnInit(): void {
     super.ngOnInit();
     console.log('users init');
-    this._usersService
-      .getUsers()
-      .subscribe((users) => console.log('users now', users));
+    this._usersService.getUsers().subscribe((users) => {
+      this.data = users.map((user) => {
+        return {
+          id: user.id,
+          name: `${user.first_name} ${user.last_name}`,
+          id_number: user.id_number,
+          phone_number: user.phone_number,
+          email: user.email,
+          profile_image: user.profile_image,
+          role: user.role,
+          group_id: user.group_id,
+          create_date: user.create_date,
+          creator_id: user.creator_id,
+          update_date: user.update_date,
+          updator_id: user.updator_id,
+        };
+      });
+      console.log('users now', this.data, users);
+    });
   }
 
   onSelectFilterOption(type: any) {}
@@ -195,21 +210,81 @@ export const MOCK = {
       type: 'select',
       width: '250px',
     },
-    { key: 'name', label: 'Name', position: 1, type: 'string', width: '250px' },
-    { key: 'phoneNumber', label: 'Phone Number', position: 2, type: 'number', width: '250px' },
-    { key: 'email', label: 'Email', position: 3, type: 'string', width: '250px' },
+    {
+      key: 'name',
+      label: 'Full Name',
+      position: 1,
+      type: 'string',
+      width: '250px',
+    },
+    {
+      key: 'id_number',
+      label: 'National ID Number',
+      position: 2,
+      type: 'number',
+      width: '250px',
+    },
+    {
+      key: 'phone_number',
+      label: 'Phone Number',
+      position: 3,
+      type: 'number',
+      width: '250px',
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      position: 4,
+      type: 'string',
+      width: '250px',
+    },
     {
       key: 'role',
       label: 'User Role',
-      position: 4,
+      position: 5,
       type: 'status',
+      width: '250px',
+    },
+    {
+      key: 'group_id',
+      label: 'Welfare Group ID',
+      position: 6,
+      type: 'string',
+      width: '250px',
+    },
+    {
+      key: 'create_date',
+      label: 'First Created Date',
+      position: 7,
+      type: 'date',
+      width: '250px',
+    },
+    {
+      key: 'creator_id',
+      label: 'First Creator ID',
+      position: 8,
+      type: 'string',
+      width: '250px',
+    },
+    {
+      key: 'update_date',
+      label: 'Last Updated Date',
+      position: 9,
+      type: 'date',
+      width: '250px',
+    },
+    {
+      key: 'updator_id',
+      label: 'Last Updator ID',
+      position: 10,
+      type: 'string',
       width: '250px',
     },
   ],
   STATUS: {
     status: {
-      labels: { stopped: 'STOPPED', waiting: 'WAITING', running: 'RUNNING' },
-      colors: { stopped: 'red', waiting: 'orange', running: 'green' },
+      labels: { Client: 'Client', 'Site Admin': 'Site Admin' },
+      colors: { Client: 'green', 'Site Admin': 'red' },
     },
   },
   ACTIONS: {

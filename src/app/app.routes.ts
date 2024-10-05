@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -11,13 +12,13 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    data: { title: 'Welfare Management System Auth Portal' },
     loadChildren: () =>
       import('./pages/auth/auth.routes').then((auth) => auth.routes),
   },
   {
     path: '',
     component: LayoutComponent,
+    canActivateChild: [authGuard],
     children: [
       {
         path: 'users',

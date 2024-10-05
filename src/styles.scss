@@ -70,6 +70,14 @@ body {
   a.icon-link {
     cursor: pointer;
   }
+
+  mat-form-field {
+    padding-bottom: 4px;
+  }
+}
+
+.alert-dialog {
+  color: red;
 }
 
 // ::-webkit-scrollbar {

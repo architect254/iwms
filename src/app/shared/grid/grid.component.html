@@ -47,30 +47,33 @@
       [matSortDirection]="defaultSortColumnDirection"
     >
       @for (column of columnProperties; track column.position) {
-      <ng-container [matColumnDef]="column.key">
-        @switch (column.type) { @case ('status') {
+      <ng-container [matColumnDef]="column!.key">
+        @switch (column?.type) { @case ('status') {
         <th
           class="column-header mat-body-medium"
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
         >
-          {{ column.label }}
+          {{ column!.label }}
         </th>
         <td
           mat-cell
           *matCellDef="let row"
           class="cell status-cell"
-          [style.min-width]="column.width"
+          [style.min-width]="column!.width"
         >
           <strong
             [style.color]="
-              statusProperties[column.type]!.colors[row[column.type]]
+              statusProperties[column!.type]!.colors[row[column!.key]]
             "
-            >{{ statusProperties[column.type]!.labels[row[column.type]] }}</strong
+            >{{
+              statusProperties[column!.type]!.labels[row[column!.key]]
+            }}</strong
           >
         </td>
-        }@case ('action') {
+        }
+        <!-- @case ('action') {
         <th
           class="column-header mat-body-medium"
           mat-header-cell
@@ -89,7 +92,8 @@
             >}
           </mat-menu>
         </td>
-        } @case('select'){
+        } -->
+         @case('select'){
         <th
           class="column-header select-column-header"
           mat-header-cell
@@ -107,15 +111,15 @@
           *matHeaderCellDef
           mat-sort-header
         >
-          {{ column.label }}
+          {{ column!.label }}
         </th>
         <td
           class="cell mat-body-medium"
           mat-cell
           *matCellDef="let row"
-          [style.min-width]="column.width"
+          [style.min-width]="column?.width"
         >
-          {{ row[column.key] }}
+          {{ row[column!.key] }}
         </td>
         }}
       </ng-container>

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Data } from '@angular/router';
+import { ActivatedRoute, Data, Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
@@ -28,7 +28,11 @@ export class UpsertComponent {
 
   payload: any;
 
-  constructor(private route: ActivatedRoute, private service: UsersService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private service: UsersService
+  ) {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });
@@ -44,6 +48,7 @@ export class UpsertComponent {
     this.service.createUser(this.payload).subscribe({
       next: (value) => {
         console.log('saved', value);
+        this.router.navigate(['../']);
       },
       error: (err) => {
         console.error('not saved', err);

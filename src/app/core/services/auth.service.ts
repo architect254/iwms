@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BehaviorSubject, map, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, tap, throwError } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -28,7 +28,7 @@ export class AuthService extends ApiService {
 
   private jwtHelper = new JwtHelperService();
 
-  constructor(private _router: Router, private _route: ActivatedRoute) {
+  constructor(private _router: Router) {
     super();
   }
 
@@ -47,66 +47,45 @@ export class AuthService extends ApiService {
   get isAuthenticated$(): Observable<boolean> {
     return this.currentToken$.pipe(
       map((token) => {
-        return !this.jwtHelper.isTokenExpired(token);
+        // return !this.jwtHelper
+        //   .isTokenExpired(token, Date.now())
+        //   .valueOf() as boolean;
+        return !!token;
       })
     );
   }
 
   signUp(credentials: AuthDto) {
-    return this.http.post<void>(
-      `${this.API_URL}/auth/sign-up`,
-      credentials
-    );
+    return this.http.post<void>(`${this.API_URL}/auth/sign-up`, credentials);
   }
 
-  signIn({ phone_number, password }: AuthDto) {
+  signIn(credentials: AuthDto) {
     return this.http
-      .post<any>(`${this.API_URL}/auth/sign-in`, {
-        phone_number,
-        password,
-      })
+      .post<any>(`${this.API_URL}/auth/sign-in`, credentials)
       .pipe(
         tap({
           next: ({ token }) => {
             this.currentTokenSubject.next(token);
-            localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
+            this._storageService.set(STORAGE_KEYS.ACCESS_TOKEN, token);
           },
         })
       );
   }
 
-  signOut() {
-    // remove user from local storage to log user out
-    this.currentTokenSubject.next(null);
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+  checkUser() {
+    const token = this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN);
+    if (token) {
+      this.currentTokenSubject.next(token);
+    }
   }
 
   resetPassword(payload: any) {
-    return this.http.post<any>(
-      `${this.API_URL}/auth/reset-password`,
-      payload
-    );
-  }
-
-  login(email: string, password: string) {
-    return this.http
-      .post<{ [key: string]: string }>(`${this.API_URL}/auth/sign-in`, {
-        email,
-        password,
-      })
-      .pipe(
-        tap({
-          next: ({ accessToken }) => {
-            this.currentTokenSubject.next(accessToken);
-            this._storageService.set('accessToken', accessToken);
-          },
-        })
-      );
+    return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload);
   }
 
   logout() {
-    this._storageService.remove('accessToken');
+    this._storageService.remove(STORAGE_KEYS.ACCESS_TOKEN);
     this.currentTokenSubject.next(null);
-    this._router.navigate(['../sign-in'], { relativeTo: this._route });
+    this._router.navigate(['/auth/sign-in']);
   }
 }

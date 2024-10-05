@@ -23,7 +23,7 @@ export class UsersService extends ApiService {
   getUserDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomTextboxControl({
-        key: 'firstname',
+        key: 'first_name',
         label: 'First Name',
         value: '',
         placeholder: 'John',
@@ -32,7 +32,7 @@ export class UsersService extends ApiService {
         order: 1,
       }),
       new CustomTextboxControl({
-        key: 'lastname',
+        key: 'last_name',
         label: 'Last Name',
         value: '',
         placeholder: 'Doe',
@@ -41,7 +41,7 @@ export class UsersService extends ApiService {
         order: 2,
       }),
       new CustomTextboxControl({
-        key: 'idNumber',
+        key: 'id_number',
         label: 'National ID No.',
         value: '',
         placeholder: '12345678',
@@ -50,7 +50,7 @@ export class UsersService extends ApiService {
         order: 3,
       }),
       new CustomTextboxControl({
-        key: 'emailAddress',
+        key: 'email',
         label: 'Email',
         value: '',
         placeholder: 'a@a.com',
@@ -59,7 +59,7 @@ export class UsersService extends ApiService {
         order: 4,
       }),
       new CustomTextboxControl({
-        key: 'phoneNumber',
+        key: 'phone_number',
         label: 'Phone No.',
         value: '',
         placeholder: '0712345678',
@@ -84,35 +84,35 @@ export class UsersService extends ApiService {
   getViewData() {
     const data: DynamicCustomDataBase<string>[] = [
       new CustomTextData({
-        key: 'firstName',
+        key: 'first_name',
         label: 'First name',
         value: 'John',
         icon: 'badge',
         order: 1,
       }),
       new CustomTextData({
-        key: 'surname',
-        label: 'Surname',
+        key: 'last_name',
+        label: 'Last Name',
         value: 'Doe',
         icon: 'badge',
         order: 2,
       }),
       new CustomTextData({
-        key: 'idNumber',
+        key: 'id_number',
         label: 'National ID No.',
         value: '12345678',
         icon: 'fingerprint',
         order: 3,
       }),
       new CustomTextData({
-        key: 'phoneNo',
+        key: 'phone_number',
         label: 'Phone No.',
         value: '0712345678',
         icon: 'call_log',
         order: 4,
       }),
       new CustomTextData({
-        key: 'emailAddress',
+        key: 'email',
         label: 'Email',
         value: 'a@a.com',
         icon: 'contact_mail',
@@ -120,13 +120,11 @@ export class UsersService extends ApiService {
         order: 5,
       }),
       new CustomListData({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
+        key: 'role',
+        label: 'User Role',
         options: [
-          { label: 'cat', value: 'Cat' },
-          { label: 'dog', value: 'Dog' },
-          { label: 'horse', value: 'Horse' },
-          { label: 'capybara', value: 'Capybara' },
+          { label: 'Site Admin', value: 'site admin' },
+          { label: 'Client', value: 'Client' },
         ],
         icon: 'checklist',
         order: 3,
