@@ -253,14 +253,14 @@ export const MOCK = {
     },
     {
       key: 'create_date',
-      label: 'First Created Date',
+      label: 'First Created',
       position: 7,
       type: 'date',
       width: '250px',
     },
     {
       key: 'update_date',
-      label: 'Last Updated Date',
+      label: 'Last Updated',
       position: 9,
       type: 'date',
       width: '250px',

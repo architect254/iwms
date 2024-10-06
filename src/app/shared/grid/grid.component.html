@@ -106,13 +106,18 @@
         </td>
         }@case('date'){
         <th
-          class="column-header select-column-header"
+          class="column-header date-column-header"
           mat-header-cell
           *matHeaderCellDef
         >
           {{ column!.label }}
         </th>
-        <td mat-cell *matCellDef="let row" class="cell date-cell">
+        <td
+          mat-cell
+          *matCellDef="let row"
+          class="cell date-cell"
+          [style.min-width]="column?.width"
+        >
           {{ row[column!.key] | date }}
         </td>
         }@default {
