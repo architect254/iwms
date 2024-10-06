@@ -55,7 +55,7 @@ export class UsersService extends ApiService {
         label: 'Birth Date',
         value: '',
         placeholder: '11/07/2000',
-        icon: 'pregnancy',
+        icon: 'badge',
         required: true,
         order: 4,
       }),

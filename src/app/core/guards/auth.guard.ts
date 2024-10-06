@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -15,9 +15,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   return authService.isAuthenticated$.pipe(
     map((isAuthenticated) => {
       if (!isAuthenticated) {
-        return router.parseUrl(`/auth/sign-in`);
+        router.navigateByUrl(`/auth/sign-in`);
       }
       return isAuthenticated;
-    })
+    }), take(1)
   );
 };
