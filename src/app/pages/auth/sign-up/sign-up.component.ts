@@ -107,7 +107,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
       if (
         confirm_password?.errors &&
-        !confirm_password.errors[`passwordsDontMatch`]
+        !confirm_password?.errors[`passwordsDontMatch`]
       ) {
         return;
       }
@@ -158,7 +158,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
             if (error instanceof HttpErrorResponse) {
               return throwError(
-                new Error(`${error.statusText}. ${error.error.message}`)
+                new Error(`${error?.statusText}. ${error?.error?.message}`)
               );
             } else {
               return throwError(
@@ -178,7 +178,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
             this.isSigningIn = false;
             this.signUpForm.enable();
 
-            const snackBarRef = this._snackBar.open(error.message, `Retry`, {
+            const snackBarRef = this._snackBar.open(error?.message, `Retry`, {
               panelClass: `alert-dialog`,
             });
 
