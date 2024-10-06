@@ -51,7 +51,11 @@ export class AuthService extends ApiService {
         // return !this.jwtHelper
         //   .isTokenExpired(token, Date.now())
         //   .valueOf() as boolean;
-        return !!token;
+        if (token) {
+          return true;
+        } else {
+          return false;
+        }
       })
     );
   }
