@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { Membership } from './membership';
 import {
+  CustomDateControl,
   CustomDropdownControl,
   CustomTextboxControl,
   DynamicCustomFormControlBase,
@@ -93,11 +94,11 @@ export class MembershipsService extends ApiService {
     ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
-  getMaritalDetailsFormControls() {
+  getSpouseDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomTextboxControl({
-        key: 'firstName',
-        label: 'First name',
+        key: 'first_name',
+        label: 'First Name',
         value: '',
         placeholder: 'John',
         icon: 'badge',
@@ -105,8 +106,8 @@ export class MembershipsService extends ApiService {
         order: 1,
       }),
       new CustomTextboxControl({
-        key: 'surname',
-        label: 'Surname',
+        key: 'last_name',
+        label: 'Last Name',
         value: '',
         placeholder: 'Doe',
         icon: 'badge',
@@ -114,7 +115,7 @@ export class MembershipsService extends ApiService {
         order: 2,
       }),
       new CustomTextboxControl({
-        key: 'idNumber',
+        key: 'id_number',
         label: 'National ID No.',
         value: '',
         placeholder: '12345678',
@@ -122,44 +123,42 @@ export class MembershipsService extends ApiService {
         required: true,
         order: 3,
       }),
+      new CustomDateControl({
+        key: 'birth_date',
+        label: 'Birth Date',
+        value: '',
+        placeholder: '11/07/2000',
+        icon: 'badge',
+        required: true,
+        order: 4,
+      }),
       new CustomTextboxControl({
-        key: 'phoneNo',
+        key: 'phone_number',
         label: 'Phone No.',
         value: '',
         placeholder: '0712345678',
         icon: 'call_log',
         required: true,
-        order: 4,
+        order: 5,
       }),
       new CustomTextboxControl({
-        key: 'emailAddress',
+        key: 'email',
         label: 'Email',
         value: '',
         placeholder: 'a@a.com',
         icon: 'contact_mail',
         type: 'email',
-        order: 5,
-      }),
-      new CustomDropdownControl({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
-        options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
-        ],
-        icon: 'checklist',
-        order: 3,
+        required: true,
+        order: 6,
       }),
     ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
-  getFamiyDetailsFormControls() {
+  getFamilyDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomTextboxControl({
-        key: 'firstName',
-        label: 'First name',
+        key: 'first_name',
+        label: 'First Name',
         value: '',
         placeholder: 'John',
         icon: 'badge',
@@ -167,51 +166,21 @@ export class MembershipsService extends ApiService {
         order: 1,
       }),
       new CustomTextboxControl({
-        key: 'surname',
-        label: 'Surname',
+        key: 'last_name',
+        label: 'Last Name',
         value: '',
         placeholder: 'Doe',
         icon: 'badge',
         required: true,
         order: 2,
       }),
-      new CustomTextboxControl({
-        key: 'idNumber',
-        label: 'National ID No.',
+      new CustomDateControl({
+        key: 'birth_date',
+        label: 'Birth Date',
         value: '',
-        placeholder: '12345678',
-        icon: 'fingerprint',
+        placeholder: '11/07/2000',
+        icon: 'badge',
         required: true,
-        order: 3,
-      }),
-      new CustomTextboxControl({
-        key: 'phoneNo',
-        label: 'Phone No.',
-        value: '',
-        placeholder: '0712345678',
-        icon: 'call_log',
-        required: true,
-        order: 4,
-      }),
-      new CustomTextboxControl({
-        key: 'emailAddress',
-        label: 'Email',
-        value: '',
-        placeholder: 'a@a.com',
-        icon: 'contact_mail',
-        type: 'email',
-        order: 5,
-      }),
-      new CustomDropdownControl({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
-        options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
-        ],
-        icon: 'checklist',
         order: 3,
       }),
     ];

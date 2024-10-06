@@ -21,6 +21,7 @@ export class DynamicCustomFormControlBase<T> {
   label: string;
   icon: string;
   required: boolean;
+  visible: boolean = true;
   order: number;
   controlType: string;
   type: string;
@@ -37,6 +38,7 @@ export class DynamicCustomFormControlBase<T> {
       controlType?: string;
       type?: string;
       options?: { key: string; value: string }[];
+      visible?: boolean;
     } = {}
   ) {
     this.value = options.value;
@@ -45,6 +47,7 @@ export class DynamicCustomFormControlBase<T> {
     this.label = options.label || '';
     this.icon = options.icon || '';
     this.required = !!options.required;
+    this.visible = options.visible ?? true;
     this.order = options.order === undefined ? 1 : options.order;
     this.controlType = options.controlType || '';
     this.type = options.type || '';
@@ -56,4 +59,7 @@ export class CustomTextboxControl extends DynamicCustomFormControlBase<string> {
 }
 export class CustomDropdownControl extends DynamicCustomFormControlBase<string> {
   override controlType = 'dropdown';
+}
+export class CustomDateControl extends DynamicCustomFormControlBase<string> {
+  override controlType = 'date';
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
 import { User } from './user.model';
 import {
+  CustomDateControl,
   CustomDropdownControl,
   CustomTextboxControl,
   DynamicCustomFormControlBase,
@@ -49,13 +50,13 @@ export class UsersService extends ApiService {
         required: true,
         order: 3,
       }),
-      new CustomTextboxControl({
-        key: 'email',
-        label: 'Email',
+      new CustomDateControl({
+        key: 'birth_date',
+        label: 'Birth Date',
         value: '',
-        placeholder: 'a@a.com',
-        icon: 'contact_mail',
-        type: 'email',
+        placeholder: '11/07/2000',
+        icon: 'badge',
+        required: true,
         order: 4,
       }),
       new CustomTextboxControl({
@@ -67,17 +68,54 @@ export class UsersService extends ApiService {
         required: true,
         order: 5,
       }),
+      new CustomTextboxControl({
+        key: 'email',
+        label: 'Email',
+        value: '',
+        placeholder: 'a@a.com',
+        icon: 'contact_mail',
+        type: 'email',
+        required: true,
+        order: 6,
+      }),
       new CustomDropdownControl({
         key: 'role',
         label: 'User Role',
         options: [
-          { key: 'site admin', value: 'Site Admin' },
-          { key: 'client', value: 'Client' },
+          { key: 'Site Admin', value: 'Site Admin' },
+          { key: 'Welfare Manager', value: 'Welfare Manager' },
+          { key: 'Welfare Accountant', value: 'Welfare Accountant' },
+          { key: 'Welfare Secretary', value: 'Welfare Secretary' },
+          { key: 'Welfare Client Member', value: 'Welfare Client Member' },
         ],
         icon: 'checklist',
-        order: 3,
+        required: true,
+        order: 7,
+      }),
+      new CustomDropdownControl({
+        key: 'group',
+        label: 'Group Name',
+        options: [
+          { key: 'Mzedu', value: 'Mzedu' },
+          { key: 'Wumweri', value: 'Wumweri' },
+          { key: 'Mzinyi', value: 'Mzinyi' },
+          { key: 'Mbololo Sacco', value: 'Mbololo Sacco' },
+          {
+            key: 'Wundanyi Pedu Self-help',
+            value: 'Wundanyi Pedu Self-help',
+          },
+        ],
+        icon: 'checklist',
+        required: false,
+        visible: false,
+        order: 8,
       }),
     ];
+    return of(controls.sort((a, b) => a.order - b.order));
+  }
+
+  getMembershipDetailsFormControls() {
+    const controls: DynamicCustomFormControlBase<string>[] = [];
     return of(controls.sort((a, b) => a.order - b.order));
   }
 

@@ -1,0 +1,17 @@
+.checkbox{
+    display: flex;
+    margin: 24px 8px;
+}
+button {
+    &.add-child-btn {
+        margin-bottom: 32px;
+    }
+
+    &.save-btn:not(.admin-save) {
+        margin-left: 24px;
+    }
+}
+
+.child-header {
+    font-weight: bold !important;
+    margin-left: 16px !important;}
