@@ -63,25 +63,22 @@
   }
 }
 
-:host {
-  ::ng-deep {
-    .mat-mdc-list-item {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-
-    .mdc-list {
-      margin: 16px;
-      margin-left: 0;
-    }
-
-    .mat-mdc-form-field-subscript-wrapper {
-      display: none !important;
-    }
-  }
-}
-
 :host ::ng-deep {
+  .mat-mdc-nav-list .mat-mdc-list-item {
+    border-radius: var(--mat-list-active-indicator-shape, var(--mat-app-corner-full));
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .mdc-list {
+    margin: 16px;
+    margin-left: 0;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
   .range-field .mat-mdc-text-field-wrapper {
     width: 130px;
   }
