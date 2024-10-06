@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  serverUrl: 'http://iwms.com',
+  // serverUrl: 'http://iwms.com',
+  serverUrl: 'https://iwms-be-api.onrender.com',
 };
 
 /*
