@@ -16,6 +16,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { Subscription, first } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
 import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { AuthService } from './core/services/auth.service';
 
 export const API_BASE_URL = new InjectionToken('Dynamic API Base Url');
 
@@ -44,7 +45,8 @@ export class AppComponent extends PageDirective {
     override router: Router,
     private swUpdate: SwUpdate,
     appRef: ApplicationRef,
-    zone: NgZone
+    zone: NgZone,
+    private authSrvice: AuthService
   ) {
     super(activatedRoute, router);
     if (isPlatformBrowser(this.platform)) {
@@ -72,6 +74,7 @@ export class AppComponent extends PageDirective {
   }
 
   checkForNewVersion = async () => {
+    this.authSrvice.checkUser();
     try {
       // Check if Service Worker is supported by the Browser
       if (this.swUpdate.isEnabled) {

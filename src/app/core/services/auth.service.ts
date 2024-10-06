@@ -21,7 +21,7 @@ export class AuthService extends ApiService {
   private _storageService = inject(LocalStorageService);
 
   private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(
-    this._storageService.get(`accessToken`)
+    this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN)
   );
   public currentToken$: Observable<any> =
     this.currentTokenSubject.asObservable();
@@ -30,6 +30,7 @@ export class AuthService extends ApiService {
 
   constructor(private _router: Router) {
     super();
+    this.checkUser();
   }
 
   get currentTokenUserValue$(): Observable<any> {
