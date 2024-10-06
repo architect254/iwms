@@ -79,7 +79,7 @@ export class SignInComponent implements OnInit, OnDestroy {
           catchError((error: Error) => {
             if (error instanceof HttpErrorResponse) {
               return throwError(
-                () => new Error(`${error.statusText}. ${error.error.message}`)
+                () => new Error(`${error?.statusText}. ${error?.error?.message}`)
               );
             } else {
               return throwError(
@@ -98,7 +98,7 @@ export class SignInComponent implements OnInit, OnDestroy {
             this.isSubmitting = false;
             this.signInForm.enable();
 
-            const snackBarRef = this._snackBar.open(error.message, `Retry`, {
+            const snackBarRef = this._snackBar.open(error?.message, `Retry`, {
               panelClass: `alert-dialog`,
             });
 
