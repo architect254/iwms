@@ -10,9 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Subscription, concatMap, catchError, throwError } from 'rxjs';
+import { Subscription, concatMap, catchError, throwError, first } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole, User } from '../../users/user.model';
 import { Router, RouterModule } from '@angular/router';
@@ -29,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatIconModule,
     RouterModule,
     CommonModule,
@@ -39,69 +40,88 @@ import { MatIconModule } from '@angular/material/icon';
 export class SignUpComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
 
-  signUpForm: FormGroup = this.fb.group({
-    firstname: [``, Validators.required],
-    lastname: [``, Validators.required],
-    email: [``, [Validators.email, Validators.required]],
-    phone_number: [``, Validators.required],
-    password: [``, Validators.required],
-    confirmPassword: [``, Validators.required],
-  });
+  signUpForm: FormGroup = this.fb.group(
+    {
+      first_name: [``, Validators.required],
+      last_name: [``, Validators.required],
+      id_number: [``, Validators.required],
+      phone_number: [``, Validators.required],
+      email: [``, [Validators.required, Validators.email]],
+      password: [
+        ``,
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(25),
+          // Validators.pattern('^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$'),
+        ],
+      ],
+      confirm_password: [``, Validators.required],
+    },
+  );
 
   isSubmitting = false;
 
   isSigningIn = false;
 
-  passwordMismatch: boolean = false;
-
   $subscriptions: Subscription = new Subscription();
+
   constructor(
     private authService: AuthService,
     private _snackBar: MatSnackBar,
     private router: Router
   ) {
-    this.signUpForm.setValidators(this.passwordMisMatch);
+    this.signUpForm.setValidators(this.passwordMisMatchValidator);
     this.signUpForm.updateValueAndValidity();
   }
 
-  get firstname() {
-    return this.signUpForm.get(`firstname`);
+  get first_name() {
+    return this.signUpForm.get(`first_name`);
   }
-  get lastname() {
-    return this.signUpForm.get(`lastname`);
+  get last_name() {
+    return this.signUpForm.get(`last_name`);
+  }
+  get id_number() {
+    return this.signUpForm.get(`id_number`);
+  }
+  get phone_number() {
+    return this.signUpForm.get(`phone_number`);
   }
   get email() {
     return this.signUpForm.get(`email`);
   }
-  get phoneNo() {
-    return this.signUpForm.get(`phone_number`);
-  }
   get password() {
     return this.signUpForm.get(`password`);
   }
-  get confirmPassword() {
-    return this.signUpForm.get(`confirmPassword`);
+  get confirm_password() {
+    return this.signUpForm.get(`confirm_password`);
   }
 
   ngOnInit(): void {}
 
-  passwordMisMatch() {
+  passwordMisMatchValidator() {
     return (form: FormGroup) => {
       const password = form.get(`password`);
-      const confirmPassword = form.get(`confirmPassword`);
+      const confirm_password = form.get(`confirm_password`);
+      console.log('validated');
 
       if (
-        confirmPassword?.errors &&
-        !confirmPassword.errors[`passwordMismatch`]
+        confirm_password?.errors &&
+        !confirm_password.errors[`passwordsDontMatch`]
       ) {
         return;
       }
 
-      if (password?.value !== confirmPassword?.value) {
-        form.setErrors({ pinMatch: true });
+      if (password?.value !== confirm_password?.value) {
+        form?.setErrors({ passwordsDontMatch: true });
+        password?.setErrors({ passwordsDontMatch: true });
+        confirm_password?.setErrors({ passwordsDontMatch: true });
       } else {
         form?.setErrors(null);
+        password?.setErrors(null);
+        confirm_password?.setErrors(null);
       }
+      console.log('validated');
     };
   }
 
@@ -111,22 +131,23 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
     const signUpPayload = {
       ...this.signUpForm.getRawValue(),
-      role: UserRole.ADMIN,
+      role: UserRole.SITE_ADMIN,
     };
-    delete signUpPayload.confirmPassword;
+    delete signUpPayload.confirm_password;
 
     this.$subscriptions.add(
       this.authService
         .signUp(signUpPayload)
         .pipe(
+          first(),
           concatMap(() => {
             this.isSubmitting = false;
             this.isSigningIn = true;
             const signInPayload = {
               ...this.signUpForm.getRawValue(),
-              password: this.signUpForm.getRawValue().confirmPassword,
+              password: this.signUpForm.getRawValue().confirm_password,
             };
-            delete signInPayload.confirmPassword;
+            delete signInPayload.confirm_password;
             delete signInPayload.role;
             return this.authService.signIn(signInPayload);
           }),
@@ -162,10 +183,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
             });
 
             snackBarRef.onAction().subscribe(() => {
+              snackBarRef.dismiss();
               this.submitForm();
             });
-
-            snackBarRef.dismiss();
           }
         )
     );

@@ -6,8 +6,8 @@ import {
   FormBuilder,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, catchError, throwError } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Subscription, catchError, first, throwError } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatIconModule,
     RouterModule,
     CommonModule,
@@ -46,9 +47,9 @@ export class SignInComponent implements OnInit, OnDestroy {
 
   $subscriptions!: Subscription;
   constructor(
+    private router: Router,
     private authService: AuthService,
-    private _snackBar: MatSnackBar,
-    private router: Router
+    private _snackBar: MatSnackBar
   ) {}
 
   get email() {
@@ -74,14 +75,16 @@ export class SignInComponent implements OnInit, OnDestroy {
       this.authService
         .signIn(this.signInForm.getRawValue())
         .pipe(
+          first(),
           catchError((error: Error) => {
             if (error instanceof HttpErrorResponse) {
               return throwError(
-                new Error(`${error.statusText}. ${error.error.message}`)
+                () => new Error(`${error.statusText}. ${error.error.message}`)
               );
             } else {
               return throwError(
-                new Error(`Something Went Wrong. Please try again later..`)
+                () =>
+                  new Error(`Something Went Wrong. Please try again later..`)
               );
             }
           })
@@ -100,10 +103,9 @@ export class SignInComponent implements OnInit, OnDestroy {
             });
 
             snackBarRef.onAction().subscribe(() => {
+              snackBarRef.dismiss();
               this.submitForm();
             });
-
-            snackBarRef.dismiss();
           }
         )
     );

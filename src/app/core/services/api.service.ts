@@ -23,10 +23,12 @@ export class ApiService implements OnDestroy {
   protected httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Origin: 'http://iwms.com',
+      Host: '127.0.0.1:3000',
     }),
   };
   protected snackBar = inject(MatSnackBar);
-
 
   $subscriptions$: Subscription = new Subscription();
 

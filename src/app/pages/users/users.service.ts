@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
 import { User } from './user.model';
 import {
+  CustomDateControl,
   CustomDropdownControl,
   CustomTextboxControl,
   DynamicCustomFormControlBase,
@@ -12,6 +13,7 @@ import {
   DynamicCustomDataBase,
 } from '../../shared/view-data/view.service';
 import { ApiService } from '../../core/services/api.service';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -19,23 +21,11 @@ import { ApiService } from '../../core/services/api.service';
 export class UsersService extends ApiService {
   protected override endpoint = `${this.API_URL}/users`;
 
-  $users: BehaviorSubject<User[]> = new BehaviorSubject<
-    User[]
-  >([]);
-
-  constructor() {
-    super();
-  }
-
-  get users$(): Observable<User[]> {
-    return this.$users.asObservable();
-  }
-
-  getPersonalDetailsFormControls() {
+  getUserDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomTextboxControl({
-        key: 'firstName',
-        label: 'First name',
+        key: 'first_name',
+        label: 'First Name',
         value: '',
         placeholder: 'John',
         icon: 'badge',
@@ -43,8 +33,8 @@ export class UsersService extends ApiService {
         order: 1,
       }),
       new CustomTextboxControl({
-        key: 'surname',
-        label: 'Surname',
+        key: 'last_name',
+        label: 'Last Name',
         value: '',
         placeholder: 'Doe',
         icon: 'badge',
@@ -52,7 +42,7 @@ export class UsersService extends ApiService {
         order: 2,
       }),
       new CustomTextboxControl({
-        key: 'idNumber',
+        key: 'id_number',
         label: 'National ID No.',
         value: '',
         placeholder: '12345678',
@@ -60,196 +50,107 @@ export class UsersService extends ApiService {
         required: true,
         order: 3,
       }),
+      new CustomDateControl({
+        key: 'birth_date',
+        label: 'Birth Date',
+        value: '',
+        placeholder: '11/07/2000',
+        icon: 'cake',
+        required: true,
+        order: 4,
+      }),
       new CustomTextboxControl({
-        key: 'phoneNo',
+        key: 'phone_number',
         label: 'Phone No.',
         value: '',
         placeholder: '0712345678',
         icon: 'call_log',
         required: true,
-        order: 4,
+        order: 5,
       }),
       new CustomTextboxControl({
-        key: 'emailAddress',
+        key: 'email',
         label: 'Email',
         value: '',
         placeholder: 'a@a.com',
         icon: 'contact_mail',
         type: 'email',
-        order: 5,
+        required: true,
+        order: 6,
       }),
       new CustomDropdownControl({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
+        key: 'role',
+        label: 'User Role',
         options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
+          { key: 'Site Admin', value: 'Site Admin' },
+          { key: 'Welfare Manager', value: 'Welfare Manager' },
+          { key: 'Welfare Accountant', value: 'Welfare Accountant' },
+          { key: 'Welfare Secretary', value: 'Welfare Secretary' },
+          { key: 'Welfare Client Member', value: 'Welfare Client Member' },
         ],
         icon: 'checklist',
-        order: 3,
+        required: true,
+        order: 7,
+      }),
+      new CustomDropdownControl({
+        key: 'group',
+        label: 'Group Name',
+        options: [
+          { key: 'Mzedu', value: 'Mzedu' },
+          { key: 'Wumweri', value: 'Wumweri' },
+          { key: 'Mzinyi', value: 'Mzinyi' },
+          { key: 'Mbololo Sacco', value: 'Mbololo Sacco' },
+          {
+            key: 'Wundanyi Pedu Self-help',
+            value: 'Wundanyi Pedu Self-help',
+          },
+        ],
+        icon: 'groups',
+        required: false,
+        visible: false,
+        order: 8,
       }),
     ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
-  getMaritalDetailsFormControls() {
-    const controls: DynamicCustomFormControlBase<string>[] = [
-      new CustomTextboxControl({
-        key: 'firstName',
-        label: 'First name',
-        value: '',
-        placeholder: 'John',
-        icon: 'badge',
-        required: true,
-        order: 1,
-      }),
-      new CustomTextboxControl({
-        key: 'surname',
-        label: 'Surname',
-        value: '',
-        placeholder: 'Doe',
-        icon: 'badge',
-        required: true,
-        order: 2,
-      }),
-      new CustomTextboxControl({
-        key: 'idNumber',
-        label: 'National ID No.',
-        value: '',
-        placeholder: '12345678',
-        icon: 'fingerprint',
-        required: true,
-        order: 3,
-      }),
-      new CustomTextboxControl({
-        key: 'phoneNo',
-        label: 'Phone No.',
-        value: '',
-        placeholder: '0712345678',
-        icon: 'call_log',
-        required: true,
-        order: 4,
-      }),
-      new CustomTextboxControl({
-        key: 'emailAddress',
-        label: 'Email',
-        value: '',
-        placeholder: 'a@a.com',
-        icon: 'contact_mail',
-        type: 'email',
-        order: 5,
-      }),
-      new CustomDropdownControl({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
-        options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
-        ],
-        icon: 'checklist',
-        order: 3,
-      }),
-    ];
-    return of(controls.sort((a, b) => a.order - b.order));
-  }
-  getFamiyDetailsFormControls() {
-    const controls: DynamicCustomFormControlBase<string>[] = [
-      new CustomTextboxControl({
-        key: 'firstName',
-        label: 'First name',
-        value: '',
-        placeholder: 'John',
-        icon: 'badge',
-        required: true,
-        order: 1,
-      }),
-      new CustomTextboxControl({
-        key: 'surname',
-        label: 'Surname',
-        value: '',
-        placeholder: 'Doe',
-        icon: 'badge',
-        required: true,
-        order: 2,
-      }),
-      new CustomTextboxControl({
-        key: 'idNumber',
-        label: 'National ID No.',
-        value: '',
-        placeholder: '12345678',
-        icon: 'fingerprint',
-        required: true,
-        order: 3,
-      }),
-      new CustomTextboxControl({
-        key: 'phoneNo',
-        label: 'Phone No.',
-        value: '',
-        placeholder: '0712345678',
-        icon: 'call_log',
-        required: true,
-        order: 4,
-      }),
-      new CustomTextboxControl({
-        key: 'emailAddress',
-        label: 'Email',
-        value: '',
-        placeholder: 'a@a.com',
-        icon: 'contact_mail',
-        type: 'email',
-        order: 5,
-      }),
-      new CustomDropdownControl({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
-        options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
-        ],
-        icon: 'checklist',
-        order: 3,
-      }),
-    ];
+
+  getMembershipDetailsFormControls() {
+    const controls: DynamicCustomFormControlBase<string>[] = [];
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
   getViewData() {
     const data: DynamicCustomDataBase<string>[] = [
       new CustomTextData({
-        key: 'firstName',
+        key: 'first_name',
         label: 'First name',
         value: 'John',
         icon: 'badge',
         order: 1,
       }),
       new CustomTextData({
-        key: 'surname',
-        label: 'Surname',
+        key: 'last_name',
+        label: 'Last Name',
         value: 'Doe',
         icon: 'badge',
         order: 2,
       }),
       new CustomTextData({
-        key: 'idNumber',
+        key: 'id_number',
         label: 'National ID No.',
         value: '12345678',
         icon: 'fingerprint',
         order: 3,
       }),
       new CustomTextData({
-        key: 'phoneNo',
+        key: 'phone_number',
         label: 'Phone No.',
         value: '0712345678',
         icon: 'call_log',
         order: 4,
       }),
       new CustomTextData({
-        key: 'emailAddress',
+        key: 'email',
         label: 'Email',
         value: 'a@a.com',
         icon: 'contact_mail',
@@ -257,13 +158,11 @@ export class UsersService extends ApiService {
         order: 5,
       }),
       new CustomListData({
-        key: 'favoriteAnimal',
-        label: 'Favorite Animal',
+        key: 'role',
+        label: 'User Role',
         options: [
-          { label: 'cat', value: 'Cat' },
-          { label: 'dog', value: 'Dog' },
-          { label: 'horse', value: 'Horse' },
-          { label: 'capybara', value: 'Capybara' },
+          { label: 'Site Admin', value: 'site admin' },
+          { label: 'Client', value: 'Client' },
         ],
         icon: 'checklist',
         order: 3,
@@ -272,31 +171,22 @@ export class UsersService extends ApiService {
     return of(data.sort((a, b) => a.order - b.order));
   }
 
-  getAllUsers(): Observable<User[]> {
+  createUser(payload: any) {
     return this.http
-      .get<User[]>(this.endpoint, this.httpOptions)
+      .post(this.endpoint, payload)
+      .pipe(catchError(this.errorHandler));
+  }
+  getUsers(page: number = 1, take: number = 10): Observable<User[]> {
+    return this.http
+      .get<User[]>(this.endpoint, {
+        params: new HttpParams().set('page', page).set('take', take),
+      })
       .pipe(catchError(this.errorHandler));
   }
 
-  getUserById(userId: number | string) {
-    this.$subscriptions$.add(
-      this.http
-        .get<User>(this.endpoint,this.httpOptions)
-        .pipe(catchError(this.errorHandler))
-        .subscribe((user: User) => {
-          this.$users.next([...this.$users.getValue(), user]);
-        })
-    );
+  getUserById(id: number | string) {
+    this.http
+      .get<User>(this.endpoint, this.httpOptions)
+      .pipe(catchError(this.errorHandler));
   }
-
- selectAllUsersDummy(): void {
-    this.$subscriptions$.add(
-      this.getAllUsers().subscribe((users: User[]) => {
-        this.$users.next(users);
-      })
-    );
-  }
-
-  
-
 }

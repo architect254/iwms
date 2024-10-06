@@ -18,35 +18,108 @@
   Default Sign Up Layout
 -->
 <section class="form-container mat-typography" *ngIf="!isSigningIn">
-  <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="signUpForm">
-    <section class="user-name">
+  <form
+    class="mt-4"
+    novalidate
+    (ngSubmit)="submitForm()"
+    [formGroup]="signUpForm"
+  >
+    <section class="double-column">
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Firstname</mat-label>
+        <mat-label>First Name</mat-label>
         <input
           type="text"
-          name="firstname"
-          formControlName="firstname"
+          name="first_name"
+          formControlName="first_name"
           matInput
           placeholder="Ex. John"
         />
         <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
-        <mat-error *ngIf="firstname?.hasError('required')">
-          First Name is required
+        <mat-error *ngIf="first_name?.errors">
+          <span
+            class="is-danger"
+            *ngIf="
+              first_name?.invalid &&
+              first_name?.touched &&
+              first_name?.hasError('required')
+            "
+          >
+            First Name is <strong>required*</strong>
+          </span>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Lastname</mat-label>
+        <mat-label>Last Name</mat-label>
         <input
           type="text"
-          name="lastname"
-          formControlName="lastname"
+          name="last_name"
+          formControlName="last_name"
           matInput
           placeholder="Ex. Doe"
         />
         <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
-        <mat-error *ngIf="lastname?.hasError('required')">
-          Lastname is required
+        <mat-error *ngIf="last_name?.errors">
+          <span
+            class="is-danger"
+            *ngIf="
+              last_name?.invalid &&
+              last_name?.touched &&
+              last_name?.hasError('required')
+            "
+          >
+            Last Name is <strong>required*</strong>
+          </span>
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="double-column">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>National ID No.</mat-label>
+        <input
+          type="text"
+          name="id_number"
+          formControlName="id_number"
+          matInput
+          placeholder="36124568"
+        />
+        <mat-icon matPrefix class="material-icons-two-toned">badge</mat-icon>
+        <mat-error *ngIf="id_number?.errors">
+          <span
+            class="is-danger"
+            *ngIf="
+              id_number?.invalid &&
+              id_number?.touched &&
+              id_number?.hasError('required')
+            "
+          >
+            National ID No. is <strong>required*</strong>
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Phone Number</mat-label>
+        <input
+          type="phone"
+          name="phone_number"
+          formControlName="phone_number"
+          matInput
+          placeholder="Ex. 07123 12312"
+        />
+        <mat-icon matPrefix class="material-icons-two-toned">phone</mat-icon>
+        <mat-error *ngIf="phone_number?.errors">
+          <span
+            class="is-danger"
+            *ngIf="
+              phone_number?.invalid &&
+              phone_number?.touched &&
+              phone_number?.hasError('required')
+            "
+          >
+            Phone Number is <strong>required*</strong>
+          </span>
         </mat-error>
       </mat-form-field>
     </section>
@@ -61,23 +134,19 @@
         placeholder="Ex. john@server.com"
       />
       <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
-      <mat-error *ngIf="email?.hasError('required')">
-        Email is required
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Phone Number</mat-label>
-      <input
-        type="phone"
-        name="phone_number"
-        formControlName="phone_number"
-        matInput
-        placeholder="Ex. 07123 12312"
-      />
-      <mat-icon matPrefix class="material-icons-two-toned">phone</mat-icon>
-      <mat-error *ngIf="phoneNo?.hasError('required')">
-        Phone Number is required
+      <mat-error *ngIf="email?.errors">
+        <span
+          class="is-danger"
+          *ngIf="
+            email?.invalid && email?.touched && email?.hasError('required')
+          "
+          >Email is <strong>required*</strong></span
+        >
+        <span
+          class="is-danger"
+          *ngIf="email?.invalid && email?.touched && email?.hasError('email')"
+          >Email is invalid</span
+        >
       </mat-error>
     </mat-form-field>
 
@@ -91,8 +160,34 @@
         placeholder="Ex. #123&AbC"
       />
       <mat-icon matPrefix class="material-icons-outlined">password</mat-icon>
-      <mat-error *ngIf="password?.hasError('required')">
-        Password is required
+      <mat-error *ngIf="password?.errors">
+        <span
+          class="is-danger"
+          *ngIf="
+            password?.invalid &&
+            password?.touched &&
+            password?.hasError('required')
+          "
+          >Password is <strong>required*</strong></span
+        >
+        <span
+          class="is-danger"
+          *ngIf="
+            password?.invalid &&
+            password?.touched &&
+            password?.hasError('pattern')
+          "
+          >Password is weak</span
+        >
+        <span
+          class="is-danger"
+          *ngIf="
+            password?.invalid &&
+            password?.touched &&
+            password?.hasError('minlength')
+          "
+          >Password is too short</span
+        >
       </mat-error>
     </mat-form-field>
 
@@ -100,14 +195,33 @@
       <mat-label>Confirm Password</mat-label>
       <input
         type="password"
-        name="confirmPassword"
-        formControlName="confirmPassword"
+        name="confirm_password"
+        formControlName="confirm_password"
         matInput
         placeholder="Ex. #123&AbC"
       />
       <mat-icon matPrefix class="material-icons-outlined">password</mat-icon>
-      <mat-error *ngIf="confirmPassword?.hasError('passwordMatch')">
-        Confirm Password is <strong>required</strong>
+      <mat-error *ngIf="confirm_password?.errors">
+        <span
+          class="is-danger"
+          *ngIf="
+            confirm_password?.invalid &&
+            confirm_password?.touched &&
+            confirm_password?.hasError('required')
+          "
+        >
+          Confirm Password is required
+        </span>
+        <span
+          class="is-danger"
+          *ngIf="
+            confirm_password?.invalid &&
+            confirm_password?.touched &&
+            confirm_password?.hasError('passwordsDontMatch')
+          "
+        >
+          Passwords Don't Match </span
+        >
       </mat-error>
     </mat-form-field>
     <button

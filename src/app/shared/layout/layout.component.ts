@@ -23,6 +23,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LogoComponent } from '../logo/logo.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PasswordResetDialogComponent } from '../password-reset-dialog/password-reset-dialog.component';
+import { AuthService } from '../../core/services/auth.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LoadingService } from '../../core/services/loading.service';
 
 @Component({
   selector: 'layout',
@@ -38,6 +41,7 @@ import { PasswordResetDialogComponent } from '../password-reset-dialog/password-
     MatMenuModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressBarModule,
     MatSelectModule,
     ReactiveFormsModule,
     AsyncPipe,
@@ -61,7 +65,18 @@ export class LayoutComponent implements OnInit {
 
   dialog = inject(MatDialog);
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
+  user$: Observable<any>;
+
+  isApiLoading$: Observable<boolean>;
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService,
+    private loadingService: LoadingService
+  ) {
+    this.user$ = this.authService.currentTokenUserValue$;
+    this.isApiLoading$ = this.loadingService.isLoading$;
     this.configureBreadCrumbs();
   }
   ngOnInit(): void {}
@@ -126,6 +141,10 @@ export class LayoutComponent implements OnInit {
       }
     }
     return [url];
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
 type breadCrumb = { label: string; url: string };

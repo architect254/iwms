@@ -11,8 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return authService.currentToken$.pipe(
     switchMap((token) => {
-      token = token;
-      const isApiUrl = req.url.startsWith(environment.apiUrl);
+      const isApiUrl = req.url.startsWith(environment.serverUrl);
 
       if (token && isApiUrl && !whiteListedUrls.includes(req.url)) {
         req = req.clone({

@@ -1,6 +1,18 @@
+@if (control.visible) {
 <div [formGroup]="form">
   @switch (control.controlType) { @case ('textbox') {
-  <mat-form-field appearance="outline" class="form-field reduced-size">
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>{{ control.label }}</mat-label>
+    <input
+      matInput
+      [id]="control.key"
+      [type]="control.type"
+      [formControlName]="control.key"
+    />
+    <mat-icon matPrefix>{{ control.icon }}</mat-icon>
+  </mat-form-field>
+  }@case ('date') {
+  <mat-form-field appearance="outline" class="form-field">
     <mat-label>{{ control.label }}</mat-label>
     <input
       matInput
@@ -11,10 +23,7 @@
     <mat-icon matPrefix>{{ control.icon }}</mat-icon>
   </mat-form-field>
   } @case ('dropdown') {
-  <mat-form-field
-    appearance="outline"
-    class="form-field selector-control reduced-size"
-  >
+  <mat-form-field appearance="outline" class="form-field selector-control">
     <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
     <mat-select [id]="control.key" [formControlName]="control.key">
       @for (type of control.options; track type) {
@@ -23,9 +32,9 @@
     </mat-select>
     <mat-icon matPrefix>{{ control.icon }}</mat-icon>
   </mat-form-field>
-  } }
+  } } @if (!isValid) {
+  <mat-error class="errorMessage">{{ control.label }} is required</mat-error>
+  }
 </div>
-<mat-hint>hint is here</mat-hint>
-@if (!isValid) {
-<mat-error class="errorMessage">{{ control.label }} is required</mat-error>
 }
+<!-- <mat-hint>hint is here</mat-hint> -->

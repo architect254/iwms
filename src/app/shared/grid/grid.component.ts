@@ -98,7 +98,13 @@ export class GridComponent {
   //     });
   // }
 }
-export type DataType = 'select' | 'string' | 'number' | 'status' | 'action';
+export type DataType =
+  | 'select'
+  | 'string'
+  | 'number'
+  | 'date'
+  | 'status'
+  | 'action';
 
 export interface ColumnProperties {
   key: string;

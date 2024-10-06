@@ -1,36 +1,103 @@
 <iwms-header [title]="pageTitle"></iwms-header>
-
 <mat-stepper orientation="vertical">
   <mat-step>
-    <ng-template matStepLabel>Personal Details</ng-template>
+    <ng-template matStepLabel>User Details</ng-template>
     <ng-template matStepContent>
       <iwms-dynamic-form
         [controls]="personalDetailsFormControls$ | async"
-        (notifyValidity)="onValidityNotified($event, 'Personal Details')"
+        (notifyValidity)="onValidityNotified($event, 'User Details')"
       ></iwms-dynamic-form>
-      <button [disabled]="!isProceedAllowed['Personal Details']" mat-button matStepperNext>Proceed</button>
-    </ng-template>
-  </mat-step>
+      @if (displayMembershipForm) {
+      <button
+        [disabled]="!isProceedAllowed['User Details']"
+        mat-button
+        matStepperNext
+      >
+        Proceed
+      </button>
+      }@else {
+      <button
+        mat-flat-button
+        class="admin-save save-btn"
+        [disabled]="
+          !checks['No Children'] &&
+          (checks['No Children'] || !isSaveAllowed)
+        "
+        (click)="save()"
+      >
+        Save User
+      </button>
+      }
+    </ng-template> </mat-step
+  >@if (displayMembershipForm) {
   <mat-step>
-    <ng-template matStepLabel>Marital Details</ng-template>
+    <ng-template matStepLabel>Spouse Details</ng-template>
     <ng-template matStepContent>
+      <div class="checkbox">
+        <mat-checkbox
+          [checked]="checks['Not Married']"
+          (change)="checkChange($event.checked, 'Not Married')"
+          >User is not married</mat-checkbox
+        >
+      </div>
+      @if (!checks['Not Married']) {
       <iwms-dynamic-form
         [controls]="maritalDetailsFormControls$ | async"
-        (notifyValidity)="onValidityNotified($event, 'Marital Details')"
+        (notifyValidity)="onValidityNotified($event, 'Spouse Details')"
       ></iwms-dynamic-form>
+      }
       <button mat-button matStepperPrevious>Back</button>
-      <button [disabled]="!isProceedAllowed['Marital Details']" mat-button matStepperNext>Proceed</button>
+      <button
+        [disabled]="
+          !checks['Not Married'] &&
+          (checks['Not Married'] || !isProceedAllowed['Spouse Details'])
+        "
+        mat-button
+        matStepperNext
+      >
+        Proceed
+      </button>
     </ng-template>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Family Details</ng-template>
     <ng-template matStepContent>
+      <div class="checkbox">
+        <mat-checkbox
+          [checked]="checks['No Children']"
+          (change)="checkChange($event.checked, 'No Children')"
+          >User has no offsprings</mat-checkbox
+        >
+      </div>
+      @if (!checks['No Children']) { @for (validOffspring of validChildren;
+      track $index) {
+      <h5 class="child-header mat-title-large">
+        Child Details[{{ $index + 1 }}]
+      </h5>
       <iwms-dynamic-form
         [controls]="familyDetailsFormControls$ | async"
-        (notifyValidity)="onValidityNotified($event, 'Family Details')"
-      ></iwms-dynamic-form>
+        (notifyValidity)="
+          onValidityNotified($event, 'Family Details', $index, true)
+        "
+      ></iwms-dynamic-form
+      >}
+      <button mat-stroked-button class="add-child-btn" (click)="addChild()">
+        Add Child Details
+      </button>
+      <br />}
+
       <button mat-button matStepperPrevious>Back</button>
-      <button [disabled]="!isProceedAllowed['Personal Details']" mat-flat-button matStepperNext>Save</button>
-    </ng-template>
-  </mat-step>
+      <button
+        mat-flat-button
+        class="save-btn"
+        [disabled]="
+          !checks['No Children'] &&
+          (checks['No Children'] || !isSaveAllowed)
+        "
+        (click)="save()"
+      >
+        Save User
+      </button>
+    </ng-template> </mat-step
+  >}
 </mat-stepper>

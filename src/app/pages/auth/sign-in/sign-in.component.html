@@ -24,8 +24,19 @@
       />
       <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
 
-      <mat-error *ngIf="email?.hasError('required')">
-        Email is <strong>required</strong>
+      <mat-error *ngIf="email?.errors">
+        <span
+          class="is-danger"
+          *ngIf="
+            email?.invalid && email?.touched && email?.hasError('required')
+          "
+          >Email is <strong>required*</strong></span
+        >
+        <span
+          class="is-danger"
+          *ngIf="email?.invalid && email?.touched && email?.hasError('email')"
+          >Email is invalid</span
+        >
       </mat-error>
     </mat-form-field>
 
@@ -40,8 +51,16 @@
       />
       <mat-icon matPrefix class="material-icons-outlined">password</mat-icon>
 
-      <mat-error *ngIf="password?.hasError('required')">
-        Password is <strong>required</strong>
+      <mat-error *ngIf="password?.errors">
+        <span
+          class="is-danger"
+          *ngIf="
+            password?.invalid &&
+            password?.touched &&
+            password?.hasError('required')
+          "
+          >Password is <strong>required*</strong></span
+        >
       </mat-error>
     </mat-form-field>
 
