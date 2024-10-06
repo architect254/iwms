@@ -112,7 +112,12 @@
         >
           {{ column!.label }}
         </th>
-        <td mat-cell *matCellDef="let row" class="cell date-cell">
+        <td
+          mat-cell
+          *matCellDef="let row"
+          class="cell date-cell"
+          [style.min-width]="column?.width"
+        >
           {{ row[column!.key] | date }}
         </td>
         }@default {
