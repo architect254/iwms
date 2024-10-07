@@ -13,5 +13,5 @@ import { DynamicCustomDataBase } from './view.service';
   ],
 })
 export class DynamicDataComponent {
-  @Input() data!: DynamicCustomDataBase<string>;
+  @Input() data!: DynamicCustomDataBase<any>;
 }

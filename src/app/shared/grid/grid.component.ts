@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'iwms-grid',
@@ -51,6 +51,8 @@ export class GridComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(private router: Router) {}
 
   get displayedColumns() {
     return this.columnProperties.map(
@@ -97,6 +99,11 @@ export class GridComponent {
   //       this.databkup = data;
   //     });
   // }
+
+  viewData(id: number) {
+    const url = `/${this.name}s/view/${id}`.toLocaleLowerCase();
+    this.router.navigateByUrl(url);
+  }
 }
 export type DataType =
   | 'select'

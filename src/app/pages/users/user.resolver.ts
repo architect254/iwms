@@ -1,8 +1,10 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
 import { User } from './user.model';
+import { UsersService } from './users.service';
+import { firstValueFrom } from 'rxjs';
 
-export const userResolver: ResolveFn<User | null> = (route, state) => {
-  return inject(AuthService).currentTokenUserValue$;
+export const userResolver: ResolveFn<User | null> = async (route, state) => {
+  const id = route.paramMap.get('id');
+  return await firstValueFrom(inject(UsersService).getUserById(id!));
 };
