@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Injectable()
 export class DynamicCustomViewDataService {
-  toFormGroup(controls: DynamicCustomDataBase<string>[]) {
+  toFormGroup(controls: DynamicCustomDataBase<string | number | Date>[]) {
     const group: any = {};
     controls?.forEach((control) => {
       group[control.key] = control.type
@@ -22,6 +22,7 @@ export class DynamicCustomDataBase<T> {
   dataType: string;
   type: string;
   options?: { label: string; value: string | number }[];
+  colors?: { [key: string]: string };
   constructor(
     options: {
       value?: T;
@@ -32,6 +33,7 @@ export class DynamicCustomDataBase<T> {
       dataType?: string;
       type?: string;
       options?: { label: string; value: string | number }[];
+      colors?: { [key: string]: string };
     } = {}
   ) {
     this.value = options.value;
@@ -42,10 +44,17 @@ export class DynamicCustomDataBase<T> {
     this.dataType = options.dataType || '';
     this.type = options.type || '';
     this.options = options.options || undefined;
+    this.colors = options.colors || {};
   }
 }
 export class CustomTextData extends DynamicCustomDataBase<string> {
   override dataType = 'text';
+}
+export class CustomDateData extends DynamicCustomDataBase<string> {
+  override dataType = 'date';
+}
+export class CustomStatusData extends DynamicCustomDataBase<string> {
+  override dataType = 'status';
 }
 export class CustomListData extends DynamicCustomDataBase<string> {
   override dataType = 'list';

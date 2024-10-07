@@ -3,4 +3,18 @@
   <dt class="data-label">{{ data.label }}</dt>
   <dd class="mat-body-large">{{ data.value }}</dd>
 </dl>
+}@case ('date') {
+<dl class="text-data">
+  <dt class="data-label">{{ data.label }}</dt>
+  <dd class="mat-body-large">{{ data.value | date }}</dd>
+</dl>
+}@case ('status') {
+<dl class="text-data">
+  <dt class="data-label">{{ data.label }}</dt>
+  <dd class="mat-body-large">
+    <strong [style.color]="data.colors?.[data.value]">{{
+      data.value | uppercase
+    }}</strong>
+  </dd>
+</dl>
 } }

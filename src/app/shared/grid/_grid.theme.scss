@@ -7,6 +7,13 @@
     color: mat.get-theme-color($iwms-theme, primary, 30);
   }
 
+  .table-row {
+    cursor: pointer;
+
+    &:hover {
+      background-color: mat.get-theme-color($iwms-theme, primary, 95);
+    }
+  }
 
 }
 

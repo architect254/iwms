@@ -3,6 +3,7 @@ import { ContainerLayoutComponent } from './container-layout.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
+import { userResolver } from './user.resolver';
 
 export const routes: Routes = [
   {
@@ -12,6 +13,7 @@ export const routes: Routes = [
       {
         path: 'view/:id',
         component: ViewComponent,
+        resolve: { user: userResolver },
         data: { title: 'View User Details' },
       },
       {

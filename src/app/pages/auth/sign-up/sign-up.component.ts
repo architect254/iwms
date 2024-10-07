@@ -184,12 +184,15 @@ export class SignUpComponent implements OnInit, OnDestroy {
             const signInPayload: SignInDto = {
               ...signUpPayload,
             };
-            return this.authService.signIn(signInPayload);
+            return this.authService
+              .signIn(signInPayload)
+              .pipe(catchError(this.authService.errorHandler));
           }),
           catchError(this.authService.errorHandler)
         )
         .subscribe({
           next: () => {
+            this.isSigningIn = false;
             this.authService.$subscriptions.add(
               this.authService.currentTokenUserValue$
                 .pipe(first())
@@ -216,7 +219,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
               snackBarRef.dismiss();
               this.submitForm();
             });
-
           },
         })
     );

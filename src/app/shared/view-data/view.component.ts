@@ -16,7 +16,7 @@ import {
   imports: [CommonModule, DynamicDataComponent],
 })
 export class DynamicViewComponent implements OnInit, OnDestroy {
-  @Input() dataset: DynamicCustomDataBase<string>[] | null = [];
+  @Input() dataset: DynamicCustomDataBase<any>[] | null = [];
 
   constructor(private vds: DynamicCustomViewDataService) {}
 

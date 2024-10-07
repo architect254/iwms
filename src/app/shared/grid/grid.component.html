@@ -1,6 +1,6 @@
 <div class="grid-container mat-elevation-z8">
   <div class="grid-header">
-    <span class="dataset-name mat-title-medium">{{ name }}</span>
+    <span class="dataset-name mat-title-medium">{{ name + "s" }}</span>
     <small class="data-count"
       >Viewing <strong>{{ dataSource.data.length }} </strong>Results</small
     >
@@ -69,6 +69,7 @@
             "
             >{{
               statusProperties[column!.type]!.labels[row[column!.key]]
+                | uppercase
             }}</strong
           >
         </td>
@@ -142,11 +143,16 @@
       }
 
       <tr
-        class="header-row"
         mat-header-row
         *matHeaderRowDef="displayedColumns; sticky: true"
+        class="header-row"
       ></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="viewData(row.id)"
+        class="table-row"
+      ></tr>
     </table>
   </div>
 </div>

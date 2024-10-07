@@ -8,7 +8,9 @@ import {
   DynamicCustomFormControlBase,
 } from '../../shared/form-control/form.service';
 import {
+  CustomDateData,
   CustomListData,
+  CustomStatusData,
   CustomTextData,
   DynamicCustomDataBase,
 } from '../../shared/view-data/view.service';
@@ -124,8 +126,8 @@ export class UsersService extends ApiService {
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
-  getViewData() {
-    const data: DynamicCustomDataBase<string>[] = [
+  getViewData(): Observable<DynamicCustomDataBase<string | number | Date>[]> {
+    const data: DynamicCustomDataBase<string | number | Date>[] = [
       new CustomTextData({
         key: 'first_name',
         label: 'First name',
@@ -147,12 +149,19 @@ export class UsersService extends ApiService {
         icon: 'fingerprint',
         order: 3,
       }),
+      new CustomDateData({
+        key: 'birth_date',
+        label: 'Date of Birth',
+        value: '07/06/1999',
+        icon: 'cake',
+        order: 4,
+      }),
       new CustomTextData({
         key: 'phone_number',
         label: 'Phone No.',
         value: '0712345678',
         icon: 'call_log',
-        order: 4,
+        order: 5,
       }),
       new CustomTextData({
         key: 'email',
@@ -160,17 +169,21 @@ export class UsersService extends ApiService {
         value: 'a@a.com',
         icon: 'contact_mail',
         type: 'email',
-        order: 5,
+        order: 6,
       }),
-      new CustomListData({
+      new CustomStatusData({
         key: 'role',
         label: 'User Role',
-        options: [
-          { label: 'Site Admin', value: 'site admin' },
-          { label: 'Client', value: 'Client' },
-        ],
+        value: 'Welfare Client Member',
+        colors: {
+          'Site Admin': 'red',
+          'Welfare Manager': 'orange',
+          'Welfare Accountant': 'blue',
+          'Welfare Secretary': 'purple',
+          'Welfare Client Member': 'green',
+        },
         icon: 'checklist',
-        order: 3,
+        order: 7,
       }),
     ];
     return of(data.sort((a, b) => a.order - b.order));
@@ -181,7 +194,7 @@ export class UsersService extends ApiService {
       .post(this.endpoint, payload)
       .pipe(catchError(this.errorHandler));
   }
-  getUsers(page: number = 1, take: number = 10): Observable<User[]> {
+  getUsers(page: number = 1, take: number = 100): Observable<User[]> {
     return this.http
       .get<User[]>(this.endpoint, {
         params: new HttpParams().set('page', page).set('take', take),
@@ -189,9 +202,8 @@ export class UsersService extends ApiService {
       .pipe(catchError(this.errorHandler));
   }
 
-  getUserById(id: number | string) {
-    this.http
-      .get<User>(this.endpoint, this.httpOptions)
-      .pipe(catchError(this.errorHandler));
+  getUserById(id: number | string): Observable<User> {
+    const endpoint = `${this.endpoint}/${id}`;
+    return this.http.get<User>(endpoint).pipe(catchError(this.errorHandler));
   }
 }
