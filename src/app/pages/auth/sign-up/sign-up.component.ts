@@ -56,16 +56,24 @@ export class SignUpComponent implements OnInit {
       email: [``, [Validators.required, Validators.email]],
       password: [
         ``,
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(25),
-          // Validators.pattern('^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$'),
-        ],
+        {
+          validators: [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.maxLength(25),
+            // Validators.pattern(
+            //   '^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$'
+            // ),
+          ],
+          updateOn: 'change',
+        },
       ],
-      confirm_password: [``, Validators.required],
+      confirm_password: [
+        ``,
+        { validators: [Validators.required], updateOn: 'change' },
+      ],
     },
-    { validator: this.passwordMisMatchValidator }
+    { validator: this.passwordMisMatchValidator() }
   );
 
   startDate = new Date(2000, 0, 1);
