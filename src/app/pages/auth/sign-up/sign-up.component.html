@@ -100,9 +100,44 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Date of Birth</mat-label>
+        <input
+          name="birth_date"
+          formControlName="birth_date"
+          matInput
+          [matDatepicker]="picker"
+          [min]="minDate"
+          [max]="maxDate"
+          placeholder="Choose a date"
+        />
+        <mat-icon matPrefix class="material-icons-two-toned">cake</mat-icon>
+
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker
+          #picker
+          startView="year"
+          [startAt]="startDate"
+        ></mat-datepicker>
+        <mat-error *ngIf="birth_date?.errors">
+          <span
+            class="is-danger"
+            *ngIf="
+              birth_date?.invalid &&
+              birth_date?.touched &&
+              birth_date?.hasError('required')
+            "
+          >
+            Date of Birth is <strong>required*</strong>
+          </span>
+        </mat-error>
+      </mat-form-field>
+    </section>
+
+    <section class="double-column">
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>Phone Number</mat-label>
         <input
-          type="phone"
+          type="tel"
           name="phone_number"
           formControlName="phone_number"
           matInput
@@ -122,34 +157,33 @@
           </span>
         </mat-error>
       </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Email</mat-label>
+        <input
+          type="email"
+          name="email"
+          formControlName="email"
+          matInput
+          placeholder="Ex. john@server.com"
+        />
+        <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
+        <mat-error *ngIf="email?.errors">
+          <span
+            class="is-danger"
+            *ngIf="
+              email?.invalid && email?.touched && email?.hasError('required')
+            "
+            >Email is <strong>required*</strong></span
+          >
+          <span
+            class="is-danger"
+            *ngIf="email?.invalid && email?.touched && email?.hasError('email')"
+            >Email is invalid</span
+          >
+        </mat-error>
+      </mat-form-field>
     </section>
-
-    <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Email</mat-label>
-      <input
-        type="email"
-        name="email"
-        formControlName="email"
-        matInput
-        placeholder="Ex. john@server.com"
-      />
-      <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
-      <mat-error *ngIf="email?.errors">
-        <span
-          class="is-danger"
-          *ngIf="
-            email?.invalid && email?.touched && email?.hasError('required')
-          "
-          >Email is <strong>required*</strong></span
-        >
-        <span
-          class="is-danger"
-          *ngIf="email?.invalid && email?.touched && email?.hasError('email')"
-          >Email is invalid</span
-        >
-      </mat-error>
-    </mat-form-field>
-
     <mat-form-field appearance="outline" class="w-100">
       <mat-label>Password</mat-label>
       <input
@@ -220,29 +254,30 @@
             confirm_password?.hasError('passwordsDontMatch')
           "
         >
-          Passwords Don't Match </span
-        >
+          Passwords Don't Match
+        </span>
       </mat-error>
     </mat-form-field>
     <button
       mat-flat-button
-      [disabled]="signUpForm.invalid || isSubmitting"
+      [disabled]="signUpForm.invalid || isSigningUp || isSigningIn"
       type="submit"
       class="w-100 mt-4 mb-1"
     >
-      <mat-icon matSuffix *ngIf="!isSubmitting; else submitting"
+      <mat-icon matSuffix *ngIf="!isSigningUp && !isSigningIn; else submitting"
         >how_to_reg</mat-icon
       >
       <ng-template #submitting
         ><mat-spinner diameter="30" strokeWidth="4"></mat-spinner
       ></ng-template>
-      <span *ngIf="!isSubmitting">Sign Up</span>
+      <span *ngIf="!isSigningUp && !isSigningIn">Sign Up</span>
     </button>
     <small
       >Already have an account?
       <a class="icon-link text-primary" routerLink="../sign-in"
-        >Sign in <i class="bi bi-box-arrow-in-right"></i></a
-    ></small>
+        >Sign in</a
+      ></small
+    >
   </form>
 </section>
 

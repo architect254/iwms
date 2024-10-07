@@ -30,27 +30,30 @@ export class ApiService implements OnDestroy {
   };
   protected snackBar = inject(MatSnackBar);
 
-  $subscriptions$: Subscription = new Subscription();
+  $subscriptions: Subscription = new Subscription();
 
   constructor() {}
 
   errorHandler(error: HttpErrorResponse) {
-    let errorMessage = '';
-    if (error.error instanceof HttpErrorResponse) {
-      // Get server-side error
-      errorMessage = `${error.status} - ${error.statusText || ''}: ${
-        error.message
-      }`;
+    if (error instanceof HttpErrorResponse) {
+      return throwError(
+        () =>
+          new Error(
+            `${error?.statusText || ''}. ${
+              error?.error?.message ? error?.error?.message : error?.message
+            }`
+          )
+      );
     } else {
-      // Get client-side error
-      errorMessage = error.error.message;
+      return throwError(
+        () => new Error(`Something Went Wrong. Please try again later..`)
+      );
     }
-    return throwError(() => errorMessage);
   }
 
   ngOnDestroy(): void {
-    if (this.$subscriptions$) {
-      this.$subscriptions$.unsubscribe();
+    if (this.$subscriptions) {
+      this.$subscriptions.unsubscribe();
     }
   }
 }

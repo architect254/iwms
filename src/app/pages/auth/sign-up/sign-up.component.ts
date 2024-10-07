@@ -18,6 +18,9 @@ import { UserRole, User } from '../../users/user.model';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { SignInDto, SignUpDto } from '../auth.dto';
 
 @Component({
   selector: 'iwms-sign-up',
@@ -31,13 +34,16 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatSnackBarModule,
     MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     RouterModule,
     CommonModule,
   ],
+  providers: [MatDatepickerModule],
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
 })
-export class SignUpComponent implements OnInit, OnDestroy {
+export class SignUpComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   signUpForm: FormGroup = this.fb.group(
@@ -45,6 +51,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       first_name: [``, Validators.required],
       last_name: [``, Validators.required],
       id_number: [``, Validators.required],
+      birth_date: [``, Validators.required],
       phone_number: [``, Validators.required],
       email: [``, [Validators.required, Validators.email]],
       password: [
@@ -58,22 +65,22 @@ export class SignUpComponent implements OnInit, OnDestroy {
       ],
       confirm_password: [``, Validators.required],
     },
+    { validator: this.passwordMisMatchValidator }
   );
 
-  isSubmitting = false;
+  startDate = new Date(2000, 0, 1);
+  minDate = new Date(1930, 0, 1);
+  maxDate = new Date(Date.now());
+
+  isSigningUp = false;
 
   isSigningIn = false;
 
-  $subscriptions: Subscription = new Subscription();
-
   constructor(
+    private router: Router,
     private authService: AuthService,
-    private _snackBar: MatSnackBar,
-    private router: Router
-  ) {
-    this.signUpForm.setValidators(this.passwordMisMatchValidator);
-    this.signUpForm.updateValueAndValidity();
-  }
+    private snackBar: MatSnackBar
+  ) {}
 
   get first_name() {
     return this.signUpForm.get(`first_name`);
@@ -83,6 +90,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
   }
   get id_number() {
     return this.signUpForm.get(`id_number`);
+  }
+  get birth_date() {
+    return this.signUpForm.get(`birth_date`);
   }
   get phone_number() {
     return this.signUpForm.get(`phone_number`);
@@ -103,7 +113,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
     return (form: FormGroup) => {
       const password = form.get(`password`);
       const confirm_password = form.get(`confirm_password`);
-      console.log('validated');
 
       if (
         confirm_password?.errors &&
@@ -113,72 +122,53 @@ export class SignUpComponent implements OnInit, OnDestroy {
       }
 
       if (password?.value !== confirm_password?.value) {
-        form?.setErrors({ passwordsDontMatch: true });
-        password?.setErrors({ passwordsDontMatch: true });
         confirm_password?.setErrors({ passwordsDontMatch: true });
       } else {
-        form?.setErrors(null);
-        password?.setErrors(null);
         confirm_password?.setErrors(null);
       }
-      console.log('validated');
     };
   }
 
   submitForm() {
-    this.isSubmitting = true;
+    this.isSigningUp = true;
+
     this.signUpForm.disable();
 
-    const signUpPayload = {
-      ...this.signUpForm.getRawValue(),
-      role: UserRole.SITE_ADMIN,
+    const signUpPayload: SignUpDto = {
+      ...this.signUpForm.value,
     };
-    delete signUpPayload.confirm_password;
 
-    this.$subscriptions.add(
+    this.authService.$subscriptions.add(
       this.authService
         .signUp(signUpPayload)
         .pipe(
           first(),
           concatMap(() => {
-            this.isSubmitting = false;
+            this.isSigningUp = false;
             this.isSigningIn = true;
-            const signInPayload = {
-              ...this.signUpForm.getRawValue(),
-              password: this.signUpForm.getRawValue().confirm_password,
+
+            const signInPayload: SignInDto = {
+              ...signUpPayload,
             };
-            delete signInPayload.confirm_password;
-            delete signInPayload.role;
             return this.authService.signIn(signInPayload);
           }),
-          catchError((error: HttpErrorResponse) => {
-            this.isSubmitting = false;
-            this.isSigningIn = true;
-            this.signUpForm.enable();
-
-            if (error instanceof HttpErrorResponse) {
-              return throwError(
-                new Error(`${error?.statusText}. ${error?.error?.message}`)
-              );
-            } else {
-              return throwError(
-                new Error(`Something Went Wrong. Please try again later..`)
-              );
-            }
-          })
+          catchError(this.authService.errorHandler)
         )
-        .subscribe(
-          (user: User) => {
-            this.isSubmitting = false;
+        .subscribe({
+          next: () => {
             this.isSigningIn = false;
-            this.router.navigateByUrl(`/`);
+            this.authService.$subscriptions.add(
+              this.authService.currentTokenUserValue$.subscribe((user) => {
+                if (!!user && user?.role == 'Site Admin') {
+                  this.router.navigateByUrl(`/users`);
+                }
+              })
+            );
           },
-          (error) => {
-            this.isSubmitting = false;
+          error: (error) => {
             this.isSigningIn = false;
-            this.signUpForm.enable();
 
-            const snackBarRef = this._snackBar.open(error?.message, `Retry`, {
+            const snackBarRef = this.snackBar.open(error?.message, `Retry`, {
               panelClass: `alert-dialog`,
             });
 
@@ -186,12 +176,10 @@ export class SignUpComponent implements OnInit, OnDestroy {
               snackBarRef.dismiss();
               this.submitForm();
             });
-          }
-        )
-    );
-  }
 
-  ngOnDestroy(): void {
-    this.$subscriptions.unsubscribe();
+            this.signUpForm.enable();
+          },
+        })
+    );
   }
 }
