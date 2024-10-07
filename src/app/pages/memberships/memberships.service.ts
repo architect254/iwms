@@ -128,6 +128,11 @@ export class MembershipsService extends ApiService {
         label: 'Birth Date',
         value: '',
         placeholder: '11/07/2000',
+        dateConfig: {
+          startDate: new Date(2000, 0, 1),
+          minDate: new Date(1930, 0, 1),
+          maxDate: new Date(Date.now()),
+        },
         icon: 'cake',
         required: true,
         order: 4,
@@ -179,6 +184,11 @@ export class MembershipsService extends ApiService {
         label: 'Birth Date',
         value: '',
         placeholder: '11/07/2000',
+        dateConfig: {
+          startDate: new Date(2000, 0, 1),
+          minDate: new Date(1930, 0, 1),
+          maxDate: new Date(Date.now()),
+        },
         icon: 'cake',
         required: true,
         order: 3,

@@ -2,7 +2,14 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 
-import { map, Observable, of, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 
@@ -17,6 +24,7 @@ import { UsersService } from '../users.service';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MembershipsService } from '../../memberships/memberships.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'iwms-upsert',
@@ -28,6 +36,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatButtonModule,
     MatStepperModule,
     MatCheckboxModule,
+    MatSnackBarModule,
     JsonPipe,
   ],
   providers: [],
@@ -61,7 +70,7 @@ export class UpsertComponent {
     phone_number?: string;
     email?: string;
     role?: string;
-    group?: string;
+    group_id?: string;
   } = {};
 
   spouseFormValues: {
@@ -71,20 +80,24 @@ export class UpsertComponent {
     birth_date?: Date;
     phone_number?: string;
     email?: string;
-  } = {};
+  } | null = null;
 
   childrenFormValues:
     | {
         first_name?: string;
         last_name?: string;
         birth_date?: Date;
-      }[] = [{}];
+      }[]
+    | null = null;
 
   displayMembershipForm: boolean = false;
+
+  isSubmitting = new BehaviorSubject(false);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private snackbar: MatSnackBar,
     private service: UsersService,
     private membershipService: MembershipsService
   ) {
@@ -103,9 +116,8 @@ export class UpsertComponent {
   get isSaveAllowed() {
     return (
       (this.isProceedAllowed['User Details'] && !this.displayMembershipForm) ||
-      (this.displayMembershipForm &&
-        this.isProceedAllowed['Spouse Details'] &&
-        this.areChildrenValid)
+      (this.displayMembershipForm && this.isProceedAllowed['Spouse Details']) ||
+      this.areChildrenValid
     );
   }
 
@@ -117,18 +129,26 @@ export class UpsertComponent {
     );
   }
 
+  get isSubmitting$(): Observable<boolean> {
+    return this.isSubmitting.asObservable();
+  }
+
+  set isSubmitting$(isIt: boolean) {
+    this.isSubmitting.next(isIt);
+  }
+
   checkChange(checked: boolean, section: string) {
     this.checks[section] = checked;
     switch (section) {
       case 'Not Married':
         if (checked) {
-          this.spouseFormValues = {};
+          this.spouseFormValues = null;
         }
 
         break;
       case 'No Children':
         if (checked) {
-          this.childrenFormValues = [{}];
+          this.childrenFormValues = null;
           this.validChildren = [false];
         }
 
@@ -142,7 +162,7 @@ export class UpsertComponent {
   onValidityNotified(
     formData: string,
     section: string,
-    childDetailsIndex?: number,
+    childDetailsIndex: number = 0,
     validOffspring: boolean = false
   ) {
     const data = JSON.parse(formData);
@@ -173,7 +193,10 @@ export class UpsertComponent {
               if (control.key == 'group') {
                 control.visible = this.displayMembershipForm;
                 control.required = this.displayMembershipForm;
-                if (this.displayMembershipForm && !this.userFormValues.group!) {
+                if (
+                  this.displayMembershipForm &&
+                  !this.userFormValues.group_id!
+                ) {
                   this.isProceedAllowed['User Details'] = false;
                 }
               }
@@ -188,8 +211,13 @@ export class UpsertComponent {
         this.isProceedAllowed['Spouse Details'] = true;
         break;
       case 'Family Details':
-        this.childrenFormValues[childDetailsIndex!] = { ...data };
-        this.validChildren[childDetailsIndex!] = validOffspring;
+        if (childDetailsIndex == 0) {
+          this.childrenFormValues = [];
+        }
+
+        this.childrenFormValues![childDetailsIndex] = { ...data };
+        this.validChildren[childDetailsIndex] = validOffspring;
+
         break;
       default:
         break;
@@ -197,29 +225,50 @@ export class UpsertComponent {
   }
 
   addChild() {
+    this.childrenFormValues?.push({
+      first_name: '',
+      last_name: '',
+      birth_date: new Date(),
+    });
     this.validChildren.push(false);
   }
 
   save() {
-    const payload = {
-      user: this.userFormValues,
-      spouse: this.spouseFormValues,
-      children: this.childrenFormValues,
+    this.isSubmitting$ = true;
+
+    const payload: any = {
+      userDto: this.userFormValues,
     };
-    this.service.createUser(payload).subscribe({
-      next: (value) => {
-        console.log('saved', value);
-        this.router.navigate(['../']);
-      },
-      error: (err) => {
-        console.error('not saved', err);
-      },
-    });
-    console.log(
-      'saving',
-      this.userFormValues,
-      this.spouseFormValues,
-      this.childrenFormValues
-    );
+
+    if (this.spouseFormValues) {
+      payload['spouseDto'] = this.spouseFormValues;
+    }
+    if (this.childrenFormValues) {
+      payload['childrenDto'] = this.childrenFormValues;
+    }
+
+    this.service
+      .createUser(payload)
+      .pipe(catchError(this.service.errorHandler))
+      .subscribe({
+        next: (value) => {
+          const snackBarRef = this.snackbar.open(
+            'User successfully created. Navigate back to Users List?',
+            `Yes`,
+            {
+              panelClass: `alert-dialog`,
+            }
+          );
+
+          snackBarRef.onAction().subscribe(() => {
+            snackBarRef.dismiss();
+            this.router.navigate(['../']);
+          });
+        },
+        error: (err) => {
+          this.isSubmitting$ = false;
+          console.error('not saved', err);
+        },
+      });
   }
 }

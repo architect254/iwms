@@ -7,13 +7,19 @@
     margin-top: 40px;
 }
 
-.form-container {
+.auth-container {
     max-width: 90%;
     margin: 0 auto;
 
     .double-column {
         display: flex;
         gap: 12px;
+    }
+
+    .loader {
+        display: block;
+        width: fit-content;
+        margin: 54px auto;
     }
 
     @media screen and (min-width: 960px) {

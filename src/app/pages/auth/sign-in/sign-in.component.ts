@@ -13,6 +13,7 @@ import {
   first,
   of,
   switchMap,
+  take,
   throwError,
 } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
@@ -43,7 +44,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
 
   signInForm: FormGroup = this.fb.group({
@@ -100,11 +101,15 @@ export class SignInComponent implements OnInit {
           next: () => {
             this.isSigningIn = false;
             this.authService.$subscriptions.add(
-              this.authService.currentTokenUserValue$.subscribe((user) => {
-                if (!!user && user?.role == 'Site Admin') {
-                  this.router.navigate([`/users`]);
-                }
-              })
+              this.authService.currentTokenUserValue$
+                .pipe(first())
+                .subscribe((user) => {
+                  if (user?.role == 'Site Admin') {
+                    this.router.navigate([`/users`]);
+                  } else {
+                    this.router.navigate([`/`]);
+                  }
+                })
             );
           },
           error: (error) => {
@@ -123,5 +128,8 @@ export class SignInComponent implements OnInit {
           },
         })
     );
+  }
+  ngOnDestroy(): void {
+    this.authService.ngOnDestroy();
   }
 }

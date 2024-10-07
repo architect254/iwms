@@ -5,6 +5,7 @@
     <ng-template matStepContent>
       <iwms-dynamic-form
         [controls]="personalDetailsFormControls$ | async"
+        [isSubmitting$]="isSubmitting$"
         (notifyValidity)="onValidityNotified($event, 'User Details')"
       ></iwms-dynamic-form>
       @if (displayMembershipForm) {
@@ -20,8 +21,7 @@
         mat-flat-button
         class="admin-save save-btn"
         [disabled]="
-          !checks['No Children'] &&
-          (checks['No Children'] || !isSaveAllowed)
+          !checks['No Children'] && (checks['No Children'] || !isSaveAllowed)
         "
         (click)="save()"
       >
@@ -43,6 +43,7 @@
       @if (!checks['Not Married']) {
       <iwms-dynamic-form
         [controls]="maritalDetailsFormControls$ | async"
+        [isSubmitting$]="isSubmitting$"
         (notifyValidity)="onValidityNotified($event, 'Spouse Details')"
       ></iwms-dynamic-form>
       }
@@ -76,6 +77,7 @@
       </h5>
       <iwms-dynamic-form
         [controls]="familyDetailsFormControls$ | async"
+        [isSubmitting$]="isSubmitting$"
         (notifyValidity)="
           onValidityNotified($event, 'Family Details', $index, true)
         "
@@ -87,12 +89,12 @@
       <br />}
 
       <button mat-button matStepperPrevious>Back</button>
+      {{ isSaveAllowed }}
       <button
         mat-flat-button
         class="save-btn"
         [disabled]="
-          !checks['No Children'] &&
-          (checks['No Children'] || !isSaveAllowed)
+          !checks['No Children'] && (checks['No Children'] || !isSaveAllowed)
         "
         (click)="save()"
       >

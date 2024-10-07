@@ -28,7 +28,6 @@ export class AuthService extends ApiService {
 
   constructor(private _router: Router) {
     super();
-    this.checkUser();
   }
 
   get currentTokenUserValue$(): Observable<any> {
@@ -68,7 +67,6 @@ export class AuthService extends ApiService {
       .pipe(
         tap({
           next: ({ token }) => {
-            this.currentTokenSubject.next(token);
             this._storageService.set(STORAGE_KEYS.ACCESS_TOKEN, token);
           },
         })

@@ -16,7 +16,7 @@ import {
   DynamicCustomFormControlBase,
   DynamicCustomFormControlService,
 } from './form.service';
-import { filter, Subscription } from 'rxjs';
+import { filter, Observable, of, Subscription, tap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -33,10 +33,13 @@ import { filter, Subscription } from 'rxjs';
 })
 export class DynamicFormComponent implements OnInit, OnDestroy {
   @Input() controls: DynamicCustomFormControlBase<string>[] | null = [];
+  @Input() isSubmitting$: Observable<boolean> = of(false);
+
   @Output() notifyValidity: EventEmitter<string> = new EventEmitter();
 
   form!: FormGroup;
-  formStatusSubscription!: Subscription;
+
+  $subscriptions: Subscription = new Subscription();
 
   formData = '';
 
@@ -46,23 +49,32 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
     this.form = this.fcs.toFormGroup(
       this.controls as DynamicCustomFormControlBase<string>[]
     );
-    this.formStatusSubscription = this.form.statusChanges
-      .pipe(
-        filter((status) => status.valueOf() === 'VALID'),
-      )
-      .subscribe(() => {
-        this.notify();
-      });
-  }
-
-  ngOnDestroy(): void {
-    if (this.formStatusSubscription) {
-      this.formStatusSubscription.unsubscribe();
-    }
+    this.$subscriptions.add(
+      this.isSubmitting$.subscribe((isSubmitting) => {
+        if (isSubmitting) {
+          this.form.disable();
+        } else {
+          this.form.enable();
+        }
+      })
+    );
+    this.$subscriptions.add(
+      this.form.statusChanges
+        .pipe(filter((status) => status.valueOf() === 'VALID'))
+        .subscribe(() => {
+          this.notify();
+        })
+    );
   }
 
   notify() {
-    this.formData = JSON.stringify(this.form.getRawValue());
+    this.formData = JSON.stringify(this.form.value);
     this.notifyValidity.emit(this.formData);
+  }
+
+  ngOnDestroy(): void {
+    if (this.$subscriptions) {
+      this.$subscriptions.unsubscribe();
+    }
   }
 }
