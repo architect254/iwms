@@ -7,6 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DynamicCustomFormControlBase } from './form.service';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   standalone: true,
@@ -18,8 +20,11 @@ import { DynamicCustomFormControlBase } from './form.service';
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatIconModule,
   ],
+  providers: [MatDatepickerModule,MatDatepicker],
 })
 export class DynamicFormControlComponent {
   @Input() control!: DynamicCustomFormControlBase<string>;

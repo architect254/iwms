@@ -5,19 +5,9 @@
 </mat-toolbar>
 <header class="header">
   <h1 class="mat-headline-5 text-center">Sign Up For <strong>IWMS</strong></h1>
-
-  <!-- <h1 class="mat-headline-5 text-center" *ngIf="!isSigningIn">
-    Sign Up For
-    <span class="app-name">
-      <span class="start">IW</span><span class="end">MS</span>
-    </span>
-  </h1> -->
 </header>
 
-<!--
-  Default Sign Up Layout
--->
-<section class="form-container mat-typography" *ngIf="!isSigningIn">
+<section class="auth-container mat-typography" *ngIf="!isSigningIn">
   <form
     class="mt-4"
     novalidate
@@ -84,7 +74,7 @@
           matInput
           placeholder="36124568"
         />
-        <mat-icon matPrefix class="material-icons-two-toned">badge</mat-icon>
+        <mat-icon matPrefix class="material-icons-two-toned">fingerprint</mat-icon>
         <mat-error *ngIf="id_number?.errors">
           <span
             class="is-danger"
@@ -212,7 +202,7 @@
             password?.hasError('pattern')
           "
           >Password is weak</span
-        >
+        ><br />
         <span
           class="is-danger"
           *ngIf="
@@ -285,12 +275,9 @@
   Automatic Sign In After Successful Sign Up
 -->
 
-<section
-  class="container h-100 d-flex flex-column align-items-center justify-content-center"
-  *ngIf="isSigningIn"
->
+<section class="auth-container" *ngIf="isSigningIn">
   <section class="loader">
     <mat-spinner color="accent"></mat-spinner>
   </section>
-  <header class="mat-small text-center">Signing In</header>
+  <header class="mat-small text-center">Signing In...</header>
 </section>

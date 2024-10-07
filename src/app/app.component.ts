@@ -74,7 +74,6 @@ export class AppComponent extends PageDirective {
   }
 
   checkForNewVersion = async () => {
-    this.authSrvice.checkUser();
     try {
       // Check if Service Worker is supported by the Browser
       if (this.swUpdate.isEnabled) {

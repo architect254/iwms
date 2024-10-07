@@ -26,6 +26,7 @@ export class DynamicCustomFormControlBase<T> {
   controlType: string;
   type: string;
   options: { key: string; value: string }[];
+  dateConfig?: { minDate: Date; maxDate: Date; startDate: Date };
   constructor(
     options: {
       value?: T;
@@ -34,11 +35,12 @@ export class DynamicCustomFormControlBase<T> {
       label?: string;
       icon?: string;
       required?: boolean;
+      visible?: boolean;
       order?: number;
       controlType?: string;
       type?: string;
       options?: { key: string; value: string }[];
-      visible?: boolean;
+      dateConfig?: { minDate: Date; maxDate: Date; startDate: Date };
     } = {}
   ) {
     this.value = options.value;
@@ -52,6 +54,7 @@ export class DynamicCustomFormControlBase<T> {
     this.controlType = options.controlType || '';
     this.type = options.type || '';
     this.options = options.options || [];
+    this.dateConfig = options.dateConfig;
   }
 }
 export class CustomTextboxControl extends DynamicCustomFormControlBase<string> {

@@ -12,7 +12,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Subscription, concatMap, catchError, throwError, first } from 'rxjs';
+import {
+  Subscription,
+  concatMap,
+  catchError,
+  throwError,
+  first,
+  firstValueFrom,
+  take,
+} from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole, User } from '../../users/user.model';
 import { Router, RouterModule } from '@angular/router';
@@ -21,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SignInDto, SignUpDto } from '../auth.dto';
+import { UsersService } from '../../users/users.service';
 
 @Component({
   selector: 'iwms-sign-up',
@@ -43,7 +52,7 @@ import { SignInDto, SignUpDto } from '../auth.dto';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
 })
-export class SignUpComponent implements OnInit {
+export class SignUpComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
 
   signUpForm: FormGroup = this.fb.group(
@@ -59,10 +68,10 @@ export class SignUpComponent implements OnInit {
         {
           validators: [
             Validators.required,
-            Validators.minLength(6),
-            Validators.maxLength(25),
+            Validators.minLength(7),
+            Validators.maxLength(15),
             // Validators.pattern(
-            //   '^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,}$'
+            //   '^(?=.*d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^wds:])([^s]){7,15}$'
             // ),
           ],
           updateOn: 'change',
@@ -86,8 +95,9 @@ export class SignUpComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private snackBar: MatSnackBar,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private usersService: UsersService
   ) {}
 
   get first_name() {
@@ -137,7 +147,7 @@ export class SignUpComponent implements OnInit {
     };
   }
 
-  submitForm() {
+  async submitForm() {
     this.isSigningUp = true;
 
     this.signUpForm.disable();
@@ -146,6 +156,22 @@ export class SignUpComponent implements OnInit {
       ...this.signUpForm.value,
     };
 
+    const persisted_users = await firstValueFrom(
+      this.usersService.getUsers(1, 1)
+    );
+    if (persisted_users.length) {
+      const snackBarRef = this.snackBar.open(
+        'Kindly contact your Welfare Manager to add you',
+        `OK`,
+        {
+          panelClass: `alert-dialog`,
+        }
+      );
+
+      snackBarRef.onAction().subscribe(() => {
+        snackBarRef.dismiss();
+      });
+    }
     this.authService.$subscriptions.add(
       this.authService
         .signUp(signUpPayload)
@@ -164,17 +190,23 @@ export class SignUpComponent implements OnInit {
         )
         .subscribe({
           next: () => {
-            this.isSigningIn = false;
             this.authService.$subscriptions.add(
-              this.authService.currentTokenUserValue$.subscribe((user) => {
-                if (!!user && user?.role == 'Site Admin') {
-                  this.router.navigateByUrl(`/users`);
-                }
-              })
+              this.authService.currentTokenUserValue$
+                .pipe(first())
+                .subscribe((user) => {
+                  if (user?.role == 'Site Admin') {
+                    this.router.navigate([`/users`]);
+                  } else {
+                    this.router.navigate([`/`]);
+                  }
+                })
             );
           },
           error: (error) => {
+            this.isSigningUp = false;
             this.isSigningIn = false;
+
+            this.signUpForm.enable();
 
             const snackBarRef = this.snackBar.open(error?.message, `Retry`, {
               panelClass: `alert-dialog`,
@@ -185,9 +217,11 @@ export class SignUpComponent implements OnInit {
               this.submitForm();
             });
 
-            this.signUpForm.enable();
           },
         })
     );
+  }
+  ngOnDestroy(): void {
+    this.authService.ngOnDestroy();
   }
 }
