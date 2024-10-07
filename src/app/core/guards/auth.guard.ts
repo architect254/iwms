@@ -1,26 +1,22 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-import { map, take } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   authService.checkUser();
 
-  return authService.isAuthenticated$.pipe(
-    take(1),
-    map((isAuthenticated) => {
-      if (isAuthenticated) {
-        return true;
-      } else {
-        router.navigateByUrl(`/auth/sign-in`);
-        return false;
-      }
-    })
-  );
+  const isAuthenticated = await firstValueFrom(authService.isAuthenticated$);
+
+  if (isAuthenticated) {
+    return true;
+  } else {
+    router.navigateByUrl(`/auth/sign-in`);
+    return false;
+  }
 };
