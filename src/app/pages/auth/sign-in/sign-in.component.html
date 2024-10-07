@@ -5,11 +5,6 @@
 </mat-toolbar>
 <header class="header">
   <h1 class="mat-headline-5 text-center">Sign In To <strong>IWMS</strong></h1>
-
-  <!-- <h1 class="mat-headline-5 text-center">
-    Sign In To
-    <span class="app-name"> IWMS </span>
-  </h1> -->
 </header>
 <section class="form-container">
   <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="signInForm">
@@ -66,22 +61,21 @@
 
     <button
       mat-flat-button
-      [disabled]="signInForm.invalid || isSubmitting"
+      [disabled]="signInForm.invalid || isSigningIn"
       type="submit"
-      class="w-100 my-1"
+      class="w-100 mt-4 mb-1"
     >
-      <mat-icon matSuffix *ngIf="!isSubmitting; else submitting"
-        >login</mat-icon
-      >
+      <mat-icon matSuffix *ngIf="!isSigningIn; else submitting">login</mat-icon>
       <ng-template #submitting
         ><mat-spinner diameter="30" strokeWidth="4"></mat-spinner
       ></ng-template>
-      <span *ngIf="!isSubmitting">Sign In</span>
+      <span *ngIf="!isSigningIn">Sign In</span>
     </button>
     <small
       >Don't have an account?
       <a class="icon-link text-primary" routerLink="../sign-up"
-        >Create One <i class="bi bi-box-arrow-in-right"></i></a
-    ></small>
+        >Create One</a
+      ></small
+    >
   </form>
 </section>

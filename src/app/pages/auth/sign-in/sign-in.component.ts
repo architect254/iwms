@@ -7,7 +7,14 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Subscription, catchError, first, throwError } from 'rxjs';
+import {
+  Subscription,
+  catchError,
+  first,
+  of,
+  switchMap,
+  throwError,
+} from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -36,21 +43,23 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements OnInit, OnDestroy {
+export class SignInComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   signInForm: FormGroup = this.fb.group({
     email: [``, Validators.required],
     password: [``, Validators.required],
   });
-  isSubmitting = false;
 
-  $subscriptions!: Subscription;
+  isSigningIn = false;
+
   constructor(
     private router: Router,
     private authService: AuthService,
-    private _snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar
+  ) {
+    this.authService.checkUser();
+  }
 
   get email() {
     return this.signInForm.get(`email`);
@@ -59,46 +68,51 @@ export class SignInComponent implements OnInit, OnDestroy {
     return this.signInForm.get(`password`);
   }
   ngOnInit() {
-    this.$subscriptions = this.authService.isAuthenticated$.subscribe(
-      (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.router.navigateByUrl(`/`);
-        }
-      }
+    this.authService.$subscriptions.add(
+      this.authService.isAuthenticated$
+        .pipe(
+          switchMap((isAuthenticated) => {
+            if (isAuthenticated) {
+              return this.authService.currentTokenUserValue$;
+            } else {
+              return of(null);
+            }
+          })
+        )
+        .subscribe((user) => {
+          if (!!user && user?.role == 'Site Admin') {
+            this.router.navigate(['/users']);
+          }
+        })
     );
   }
 
   submitForm() {
-    this.isSubmitting = true;
     this.signInForm.disable();
-    this.$subscriptions.add(
+
+    this.isSigningIn = true;
+
+    this.authService.$subscriptions.add(
       this.authService
-        .signIn(this.signInForm.getRawValue())
-        .pipe(
-          first(),
-          catchError((error: Error) => {
-            if (error instanceof HttpErrorResponse) {
-              return throwError(
-                () => new Error(`${error?.statusText}. ${error?.error?.message}`)
-              );
-            } else {
-              return throwError(
-                () =>
-                  new Error(`Something Went Wrong. Please try again later..`)
-              );
-            }
-          })
-        )
-        .subscribe(
-          () => {
-            this.isSubmitting = false;
-            this.router.navigateByUrl(`/`);
+        .signIn(this.signInForm.value)
+        .pipe(first(), catchError(this.authService.errorHandler))
+        .subscribe({
+          next: () => {
+            this.isSigningIn = false;
+            this.authService.$subscriptions.add(
+              this.authService.currentTokenUserValue$.subscribe((user) => {
+                if (!!user && user?.role == 'Site Admin') {
+                  this.router.navigate([`/users`]);
+                }
+              })
+            );
           },
-          (error) => {
-            this.isSubmitting = false;
+          error: (error) => {
             this.signInForm.enable();
 
-            const snackBarRef = this._snackBar.open(error?.message, `Retry`, {
+            this.isSigningIn = false;
+
+            const snackBarRef = this.snackBar.open(error?.message, `Retry`, {
               panelClass: `alert-dialog`,
             });
 
@@ -106,12 +120,8 @@ export class SignInComponent implements OnInit, OnDestroy {
               snackBarRef.dismiss();
               this.submitForm();
             });
-          }
-        )
+          },
+        })
     );
-  }
-
-  ngOnDestroy(): void {
-    this.$subscriptions.unsubscribe();
   }
 }

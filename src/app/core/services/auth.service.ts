@@ -1,6 +1,5 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { BehaviorSubject, map, Observable, of, tap, throwError } from 'rxjs';
 
@@ -9,10 +8,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { jwtDecode } from 'jwt-decode';
 
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
-import { environment } from '../../../environments/environment';
 import { JwtPayload } from '../../pages/auth/jwt.payload';
 import { ApiService } from './api.service';
-import { AuthDto } from '../../pages/auth/auth.dto';
+import { SignInDto, SignUpDto } from '../../pages/auth/auth.dto';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
@@ -60,11 +58,11 @@ export class AuthService extends ApiService {
     );
   }
 
-  signUp(credentials: AuthDto) {
+  signUp(credentials: SignUpDto) {
     return this.http.post<void>(`${this.API_URL}/auth/sign-up`, credentials);
   }
 
-  signIn(credentials: AuthDto) {
+  signIn(credentials: SignInDto) {
     return this.http
       .post<any>(`${this.API_URL}/auth/sign-in`, credentials)
       .pipe(

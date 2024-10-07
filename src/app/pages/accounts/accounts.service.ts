@@ -279,7 +279,7 @@ export class AccountsService extends ApiService {
   }
 
   getMembershipById(membershipId: number | string) {
-    this.$subscriptions$.add(
+    this.$subscriptions.add(
       this.http
         .get<Account>(this.endpoint)
         .pipe(catchError(this.errorHandler))
@@ -290,7 +290,7 @@ export class AccountsService extends ApiService {
   }
 
   selectAllMembershipsDummy(): void {
-    this.$subscriptions$.add(
+    this.$subscriptions.add(
       this.getAllMemberships().subscribe((memberships: Account[]) => {
         this.$accounts.next(memberships);
       })
