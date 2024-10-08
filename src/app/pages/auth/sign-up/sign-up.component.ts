@@ -1,5 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { DOCUMENT, Location } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -93,12 +93,28 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
   isSigningIn = false;
 
+  private document = inject(DOCUMENT);
+
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
     private authService: AuthService,
-    private usersService: UsersService
-  ) {}
+    private usersService: UsersService,
+    private location: Location
+  ) {
+    this.authService.checkUser();
+    this.authService.$subscriptions.add(
+      this.authService.currentTokenUserValue$
+        .pipe(first())
+        .subscribe((user) => {
+          if (user?.role == 'Site Admin') {
+            this.router.navigate([`/users`]);
+          } else {
+            this.router.navigate([`/`]);
+          }
+        })
+    );
+  }
 
   get first_name() {
     return this.signUpForm.get(`first_name`);
@@ -125,7 +141,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     return this.signUpForm.get(`confirm_password`);
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {}
 
   passwordMisMatchValidator() {
     return (form: FormGroup) => {
@@ -193,17 +209,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.isSigningIn = false;
-            this.authService.$subscriptions.add(
-              this.authService.currentTokenUserValue$
-                .pipe(first())
-                .subscribe((user) => {
-                  if (user?.role == 'Site Admin') {
-                    this.router.navigate([`/users`]);
-                  } else {
-                    this.router.navigate([`/`]);
-                  }
-                })
-            );
+            this.document.location.reload();
           },
           error: (error) => {
             this.isSigningUp = false;

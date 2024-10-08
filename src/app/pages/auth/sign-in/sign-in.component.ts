@@ -23,7 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -54,12 +54,25 @@ export class SignInComponent implements OnInit, OnDestroy {
 
   isSigningIn = false;
 
+  private document = inject(DOCUMENT);
+
   constructor(
     private router: Router,
     private authService: AuthService,
     private snackBar: MatSnackBar
   ) {
     this.authService.checkUser();
+    this.authService.$subscriptions.add(
+      this.authService.currentTokenUserValue$
+        .pipe(first())
+        .subscribe((user) => {
+          if (user?.role == 'Site Admin') {
+            this.router.navigate([`/users`]);
+          } else {
+            this.router.navigate([`/`]);
+          }
+        })
+    );
   }
 
   get email() {
@@ -68,7 +81,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   get password() {
     return this.signInForm.get(`password`);
   }
-  ngOnInit() {}
+  ngOnInit(): void {}
 
   submitForm() {
     this.signInForm.disable();
@@ -81,18 +94,7 @@ export class SignInComponent implements OnInit, OnDestroy {
         .pipe(first(), catchError(this.authService.errorHandler))
         .subscribe({
           next: () => {
-            this.isSigningIn = false;
-            this.authService.$subscriptions.add(
-              this.authService.currentTokenUserValue$
-                .pipe(first())
-                .subscribe((user) => {
-                  if (user?.role == 'Site Admin') {
-                    this.router.navigate([`/users`]);
-                  } else {
-                    this.router.navigate([`/`]);
-                  }
-                })
-            );
+            this.document.location.reload();
           },
           error: (error) => {
             this.signInForm.enable();

@@ -26,11 +26,7 @@
         </button>
       </mat-list-item>
       <mat-list-item [activated]="isActive('memberships')">
-        <a
-          matListItemTitle
-          routerLink="/memberships"
-          >Memberships</a
-        >
+        <a matListItemTitle routerLink="/memberships">Memberships</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>contacts</mat-icon>
         </button>
@@ -73,9 +69,10 @@
     </mat-toolbar>
   </mat-sidenav>
   <mat-sidenav-content>
-    @if (isApiLoading$ | async) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
+    <mat-progress-bar
+      mode="indeterminate"
+      [hidden]="!(isApiLoading$ | async)"
+    ></mat-progress-bar>
     <mat-toolbar id="toolbar">
       <mat-toolbar-row class="container primary-toolbar">
         @if (isHandset$ | async) {
