@@ -41,14 +41,12 @@ export class AppComponent extends PageDirective {
   private readonly document = inject(DOCUMENT);
 
   constructor(
-    override activatedRoute: ActivatedRoute,
-    override router: Router,
     private swUpdate: SwUpdate,
     appRef: ApplicationRef,
     zone: NgZone,
     private authSrvice: AuthService
   ) {
-    super(activatedRoute, router);
+    super();
     if (isPlatformBrowser(this.platform)) {
       console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)

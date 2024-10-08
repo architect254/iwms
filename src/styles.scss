@@ -74,6 +74,12 @@ body {
   mat-form-field {
     padding-bottom: 4px;
   }
+
+  .core-user-header,
+  .child-header,
+  .spouse-header {
+    font-weight: bold !important;
+  }
 }
 
 .alert-dialog {

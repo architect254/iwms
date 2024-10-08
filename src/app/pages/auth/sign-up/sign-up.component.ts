@@ -156,22 +156,22 @@ export class SignUpComponent implements OnInit, OnDestroy {
       ...this.signUpForm.value,
     };
 
-    const persisted_users = await firstValueFrom(
-      this.usersService.getUsers(1, 1)
-    );
-    if (persisted_users.length) {
-      const snackBarRef = this.snackBar.open(
-        'Kindly contact your Welfare Manager to add you',
-        `OK`,
-        {
-          panelClass: `alert-dialog`,
-        }
-      );
+    // const persisted_users = await firstValueFrom(
+    //   this.usersService.getUsers(1, 1)
+    // );
+    // if (persisted_users.length) {
+    //   const snackBarRef = this.snackBar.open(
+    //     'Kindly contact your Welfare Manager to add you',
+    //     `OK`,
+    //     {
+    //       panelClass: `alert-dialog`,
+    //     }
+    //   );
 
-      snackBarRef.onAction().subscribe(() => {
-        snackBarRef.dismiss();
-      });
-    }
+    //   snackBarRef.onAction().subscribe(() => {
+    //     snackBarRef.dismiss();
+    //   });
+    // }
     this.authService.$subscriptions.add(
       this.authService
         .signUp(signUpPayload)

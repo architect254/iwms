@@ -6,14 +6,14 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'not-found',
-    component: NotFoundComponent,
-    data: { title: 'Page Not Found' },
-  },
-  {
     path: 'auth',
     loadChildren: () =>
       import('./pages/auth/auth.routes').then((auth) => auth.routes),
+  },
+  {
+    path: 'not-found',
+    component: NotFoundComponent,
+    data: { title: 'Page Not Found' },
   },
   {
     path: '',
@@ -74,8 +74,8 @@ export const routes: Routes = [
             (notifications) => notifications.routes
           ),
       },
-      { path: '', redirectTo: '/users', pathMatch: 'full' },
-      { path: '**', redirectTo: '/not-found' },
+      { path: '', redirectTo: 'users', pathMatch: 'full' },
     ],
   },
+  { path: '**', redirectTo: 'not-found' },
 ];

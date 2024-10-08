@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
 
@@ -11,10 +11,14 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   authService.checkUser();
   const isAuthenticated = await firstValueFrom(authService.isAuthenticated$);
-
-  if (isAuthenticated) {
-    return true;
+  console.log('is auth', isAuthenticated);
+  if (!isAuthenticated) {
+    return new RedirectCommand(router.parseUrl('/auth/sign-in'), {
+      state,
+      browserUrl: router.getCurrentNavigation()?.finalUrl,
+      skipLocationChange: true,
+    });
   } else {
-    return router.parseUrl(`/auth/sign-in`);
+    return true;
   }
 };

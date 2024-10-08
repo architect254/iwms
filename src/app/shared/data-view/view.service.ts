@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Injectable()
-export class DynamicCustomViewDataService {
+export class DynamicCustomDataViewService {
   toFormGroup(controls: DynamicCustomDataBase<string | number | Date>[]) {
     const group: any = {};
     controls?.forEach((control) => {

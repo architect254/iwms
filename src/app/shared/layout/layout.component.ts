@@ -79,6 +79,10 @@ export class LayoutComponent implements OnInit {
     this.isApiLoading$ = this.loadingService.isLoading$;
     this.configureBreadCrumbs();
   }
+
+  isActive(route: string) {
+    return this.activatedRoute.firstChild?.snapshot.url.toString() == route;
+  }
   ngOnInit(): void {}
 
   changePassword() {

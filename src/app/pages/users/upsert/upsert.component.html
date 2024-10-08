@@ -1,16 +1,21 @@
-<iwms-header [title]="pageTitle"></iwms-header>
+<iwms-header [title]="pageTitle" [viewUrl]="viewUrl"></iwms-header>
+
+<!-- #region stepper-->
+
 <mat-stepper orientation="vertical">
   <mat-step>
-    <ng-template matStepLabel>User Details</ng-template>
+    <!-- #region core user details-->
+
+    <ng-template matStepLabel>Core User Details</ng-template>
     <ng-template matStepContent>
       <iwms-dynamic-form
-        [controls]="personalDetailsFormControls$ | async"
+        [controls]="coreUserDetailsFormControls$ | async"
         [isSubmitting$]="isSubmitting$"
-        (notifyValidity)="onValidityNotified($event, 'User Details')"
+        (notifyValidity)="onValidityNotified($event, 'Core User Details')"
       ></iwms-dynamic-form>
       @if (displayMembershipForm) {
       <button
-        [disabled]="!isProceedAllowed['User Details']"
+        [disabled]="!isProceedAllowed['Core User Details']"
         mat-button
         matStepperNext
       >
@@ -28,8 +33,12 @@
         Save User
       </button>
       }
-    </ng-template> </mat-step
-  >@if (displayMembershipForm) {
+    </ng-template>
+  </mat-step>
+
+  <!-- #region spouse details-->
+
+  @if (displayMembershipForm) {
   <mat-step>
     <ng-template matStepLabel>Spouse Details</ng-template>
     <ng-template matStepContent>
@@ -42,7 +51,7 @@
       </div>
       @if (!checks['Not Married']) {
       <iwms-dynamic-form
-        [controls]="maritalDetailsFormControls$ | async"
+        [controls]="spouseDetailsFormControls$ | async"
         [isSubmitting$]="isSubmitting$"
         (notifyValidity)="onValidityNotified($event, 'Spouse Details')"
       ></iwms-dynamic-form>
@@ -61,7 +70,9 @@
     </ng-template>
   </mat-step>
   <mat-step>
-    <ng-template matStepLabel>Family Details</ng-template>
+    <!-- #region children details-->
+
+    <ng-template matStepLabel>Children Details</ng-template>
     <ng-template matStepContent>
       <div class="checkbox">
         <mat-checkbox
@@ -73,10 +84,10 @@
       @if (!checks['No Children']) { @for (validOffspring of validChildren;
       track $index) {
       <h5 class="child-header mat-title-large">
-        Child Details[{{ $index + 1 }}]
+        Child Details [{{ $index + 1 }}]
       </h5>
       <iwms-dynamic-form
-        [controls]="familyDetailsFormControls$ | async"
+        [controls]="childrenDetailsFormControls$[$index] | async"
         [isSubmitting$]="isSubmitting$"
         (notifyValidity)="
           onValidityNotified($event, 'Family Details', $index, true)
@@ -89,12 +100,12 @@
       <br />}
 
       <button mat-button matStepperPrevious>Back</button>
-      {{ isSaveAllowed }}
       <button
         mat-flat-button
         class="save-btn"
         [disabled]="
-          !checks['No Children'] && (checks['No Children'] || !isSaveAllowed)
+          (isSubmitting$ | async) ||
+          (!checks['No Children'] && (checks['No Children'] || !isSaveAllowed))
         "
         (click)="save()"
       >

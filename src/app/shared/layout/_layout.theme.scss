@@ -48,6 +48,16 @@
     color: mat.get-theme-color($iwms-theme, primary, 30);
   }
 
+  .core-user-header,
+  .child-header,
+  .spouse-header {
+    color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+  .child-section {
+    background-color: mat.get-theme-color($iwms-theme, primary, 95);
+  }
+
   .footer {
     background-color: lighten(mat.get-theme-color($iwms-theme, primary, 30), 10) !important;
     color: mat.get-theme-color($iwms-theme, primary, 99) !important;

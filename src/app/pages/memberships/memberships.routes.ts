@@ -30,7 +30,6 @@ export const routes: Routes = [
         pathMatch: 'full',
         data: { title: 'Welfare Memberships List' },
       },
-      { path: '**', redirectTo: '/not-found' },
     ],
   },
 ];

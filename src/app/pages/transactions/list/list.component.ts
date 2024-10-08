@@ -71,12 +71,10 @@ export class ListComponent extends GridContainerDirective {
   filterOptions = [{ key: 1, label: 'option' }];
 
   constructor(
-    override activatedRoute: ActivatedRoute,
-    override router: Router,
     private _usersService: UsersService
   ) {
-    super(activatedRoute, router);
-    this.activatedRoute.data.subscribe((data: Data) => {
+    super();
+    this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });
   }
