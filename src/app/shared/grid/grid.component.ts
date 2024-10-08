@@ -120,6 +120,18 @@ export interface ColumnProperties {
   position: number;
   width: string;
 }
+export interface FilterColumn {
+  key: string;
+  label: string;
+  type: string;
+  position: number;
+  icon: string;
+  placeholder: string;
+  combinator: string;
+  value: string;
+  options?: { key: string; value: string }[];
+  colors?: { [key: string]: string };
+}
 export interface StatusProperties {
   [columnKey: string]: {
     labels: { [value: string]: string };

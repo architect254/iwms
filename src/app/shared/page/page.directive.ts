@@ -10,12 +10,12 @@ export abstract class PageDirective implements OnInit, OnDestroy {
   private _title = inject(Title);
   private _meta = inject(Meta);
 
+  protected route: ActivatedRoute = inject(ActivatedRoute);
+  protected router: Router = inject(Router);
+
   $subscription$: Subscription = new Subscription();
 
-  constructor(
-    protected activatedRoute: ActivatedRoute,
-    protected router: Router
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.applyTitle();
@@ -27,7 +27,7 @@ export abstract class PageDirective implements OnInit, OnDestroy {
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         map(() => {
-          let route = this.activatedRoute;
+          let route = this.route;
           while (route.firstChild) {
             route = route.firstChild;
           }

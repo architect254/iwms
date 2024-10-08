@@ -11,7 +11,7 @@ import {
   CustomListData,
   CustomTextData,
   DynamicCustomDataBase,
-} from '../../shared/view-data/view.service';
+} from '../../shared/data-view/view.service';
 
 @Injectable({
   providedIn: 'root',
@@ -218,7 +218,7 @@ export class UsersService extends ApiService {
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
-  getViewData() {
+  getDataView() {
     const data: DynamicCustomDataBase<string>[] = [
       new CustomTextData({
         key: 'firstName',

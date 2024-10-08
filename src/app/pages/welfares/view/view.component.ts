@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { HeaderComponent } from '../../../shared/header/header.component';
-import { DynamicViewComponent } from '../../../shared/view-data/view.component';
-import { DynamicCustomDataBase } from '../../../shared/view-data/view.service';
+import { DynamicViewComponent } from '../../../shared/data-view/view.component';
+import { DynamicCustomDataBase } from '../../../shared/data-view/view.service';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UsersService } from '../users.service';
@@ -17,12 +17,12 @@ import { UsersService } from '../users.service';
 })
 export class ViewComponent {
   pageTitle: string = '';
-  viewData$: Observable<DynamicCustomDataBase<any>[]>;
+  dataView$: Observable<DynamicCustomDataBase<any>[]>;
 
   constructor(private route: ActivatedRoute, service: UsersService) {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });
-    this.viewData$ = service.getViewData();
+    this.dataView$ = service.getDataView();
   }
 }

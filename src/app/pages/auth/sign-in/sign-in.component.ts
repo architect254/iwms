@@ -68,25 +68,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   get password() {
     return this.signInForm.get(`password`);
   }
-  ngOnInit() {
-    this.authService.$subscriptions.add(
-      this.authService.isAuthenticated$
-        .pipe(
-          switchMap((isAuthenticated) => {
-            if (isAuthenticated) {
-              return this.authService.currentTokenUserValue$;
-            } else {
-              return of(null);
-            }
-          })
-        )
-        .subscribe((user) => {
-          if (!!user && user?.role == 'Site Admin') {
-            this.router.navigate(['/users']);
-          }
-        })
-    );
-  }
+  ngOnInit() {}
 
   submitForm() {
     this.signInForm.disable();

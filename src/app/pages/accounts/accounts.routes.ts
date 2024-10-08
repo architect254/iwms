@@ -30,7 +30,6 @@ export const routes: Routes = [
         component: ListComponent,
         data: { title: 'Welfare Financial Accounts List' },
       },
-      { path: '**', redirectTo: '/not-found' },
     ],
   },
 ];

@@ -18,6 +18,7 @@ import {
   HttpRequest,
   provideHttpClient,
   withFetch,
+  withInterceptors,
 } from '@angular/common/http';
 import {
   JwtHelperService,
@@ -25,6 +26,7 @@ import {
   JwtInterceptor,
 } from '@auth0/angular-jwt';
 import { AuthService } from './core/services/auth.service';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -44,7 +46,7 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
     AuthService,
     JwtHelperService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

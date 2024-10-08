@@ -9,7 +9,7 @@
   >
     <mat-toolbar class="mobile-navigation"><logo></logo></mat-toolbar>
     <mat-nav-list class="secondary-navigation">
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('users')">
         <a matListItemTitle routerLink="/users" routerLinkActive="sn-active"
           >Users</a
         >
@@ -17,7 +17,7 @@
           <mat-icon>group</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('welfares')">
         <a matListItemTitle routerLink="/welfares" routerLinkActive="sn-active"
           >Welfares</a
         >
@@ -25,44 +25,43 @@
           <mat-icon>accessibility_new</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="true">
+      <mat-list-item [activated]="isActive('memberships')">
         <a
           matListItemTitle
           routerLink="/memberships"
-          routerLinkActive="sn-active"
           >Memberships</a
         >
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>contacts</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('contributions')">
         <a matListItemTitle routerLink="/contributions">Contributions</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>currency_exchange</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('accounts')">
         <a matListItemTitle routerLink="/accounts">Accounts</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>account_balance</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('transactions')">
         <a matListItemTitle routerLink="/transactions">Transactions</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>payments</mat-icon>
         </button>
       </mat-list-item>
 
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('reports')">
         <a matListItemTitle routerLink="/transactions">Reports</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>summarize</mat-icon>
         </button>
       </mat-list-item>
 
-      <mat-list-item [activated]="false">
+      <mat-list-item [activated]="isActive('notifications')">
         <a matListItemTitle routerLink="/notifications">Notifications</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>campaign</mat-icon>

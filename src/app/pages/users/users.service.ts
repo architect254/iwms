@@ -13,7 +13,7 @@ import {
   CustomStatusData,
   CustomTextData,
   DynamicCustomDataBase,
-} from '../../shared/view-data/view.service';
+} from '../../shared/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 
@@ -23,7 +23,7 @@ import { HttpParams } from '@angular/common/http';
 export class UsersService extends ApiService {
   protected override endpoint = `${this.API_URL}/users`;
 
-  getUserDetailsFormControls() {
+  getCoreUserDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomTextboxControl({
         key: 'first_name',
@@ -126,7 +126,9 @@ export class UsersService extends ApiService {
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
-  getViewData(): Observable<DynamicCustomDataBase<string | number | Date>[]> {
+  getUserDataView(): Observable<
+    DynamicCustomDataBase<string | number | Date>[]
+  > {
     const data: DynamicCustomDataBase<string | number | Date>[] = [
       new CustomTextData({
         key: 'first_name',
@@ -189,7 +191,99 @@ export class UsersService extends ApiService {
     return of(data.sort((a, b) => a.order - b.order));
   }
 
-  createUser(payload: any) {
+  getSpouseDataView(): Observable<
+    DynamicCustomDataBase<string | number | Date>[]
+  > {
+    const data: DynamicCustomDataBase<string | number | Date>[] = [
+      new CustomTextData({
+        key: 'first_name',
+        label: 'First name',
+        value: 'John',
+        icon: 'badge',
+        order: 1,
+      }),
+      new CustomTextData({
+        key: 'last_name',
+        label: 'Last Name',
+        value: 'Doe',
+        icon: 'badge',
+        order: 2,
+      }),
+      new CustomTextData({
+        key: 'id_number',
+        label: 'National ID No.',
+        value: '12345678',
+        icon: 'fingerprint',
+        order: 3,
+      }),
+      new CustomDateData({
+        key: 'birth_date',
+        label: 'Date of Birth',
+        value: '07/06/1999',
+        icon: 'cake',
+        order: 4,
+      }),
+      new CustomTextData({
+        key: 'phone_number',
+        label: 'Phone No.',
+        value: '0712345678',
+        icon: 'call_log',
+        order: 5,
+      }),
+      new CustomTextData({
+        key: 'email',
+        label: 'Email',
+        value: 'a@a.com',
+        icon: 'contact_mail',
+        type: 'email',
+        order: 6,
+      }),
+      new CustomStatusData({
+        key: 'role',
+        label: 'User Role',
+        value: 'Welfare Client Member',
+        colors: {
+          'Site Admin': 'red',
+          'Welfare Manager': 'orange',
+          'Welfare Accountant': 'blue',
+          'Welfare Secretary': 'purple',
+          'Welfare Client Member': 'green',
+        },
+        icon: 'checklist',
+        order: 7,
+      }),
+    ];
+    return of(data.sort((a, b) => a.order - b.order));
+  }
+
+  getChildDataView(): Observable<DynamicCustomDataBase<string>[]> {
+    const data: DynamicCustomDataBase<string>[] = [
+      new CustomTextData({
+        key: 'first_name',
+        label: 'First name',
+        value: 'John',
+        icon: 'badge',
+        order: 1,
+      }),
+      new CustomTextData({
+        key: 'last_name',
+        label: 'Last Name1',
+        value: 'Doe',
+        icon: 'badge',
+        order: 2,
+      }),
+      new CustomDateData({
+        key: 'birth_date',
+        label: 'Date of Birth2',
+        value: '07/06/1999',
+        icon: 'cake',
+        order: 3,
+      }),
+    ];
+    return of(data.sort((a, b) => a.order - b.order));
+  }
+
+  createUser(payload: any): Observable<User> {
     return this.http
       .post(this.endpoint, payload)
       .pipe(catchError(this.errorHandler));

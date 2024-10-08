@@ -25,6 +25,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MembershipsService } from '../../memberships/memberships.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { PageDirective } from '../../../shared/page/page.directive';
 
 @Component({
   selector: 'iwms-upsert',
@@ -43,15 +44,30 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
-export class UpsertComponent {
+export class UpsertComponent extends PageDirective {
   pageTitle: string = '';
+  viewUrl: string = '';
 
-  personalDetailsFormControls$: Observable<DynamicCustomFormControlBase<any>[]>;
-  maritalDetailsFormControls$: Observable<DynamicCustomFormControlBase<any>[]>;
-  familyDetailsFormControls$: Observable<DynamicCustomFormControlBase<any>[]>;
+  user!: {
+    [key: string]:
+      | string
+      | number
+      | Date
+      | { [key: string]: string | number | Date }[];
+  };
+  spouse!: { [key: string]: string | number | Date };
+  children!: { [key: string]: string | number | Date }[];
+
+  coreUserDetailsFormControls$!: Observable<
+    DynamicCustomFormControlBase<any>[]
+  >;
+  spouseDetailsFormControls$!: Observable<DynamicCustomFormControlBase<any>[]>;
+  childrenDetailsFormControls$!: Observable<
+    DynamicCustomFormControlBase<any>[]
+  >[];
 
   isProceedAllowed: { [key: string]: boolean } = {
-    'User Details': false,
+    'Core User Details': false,
     'Spouse Details': false,
   };
 
@@ -95,27 +111,93 @@ export class UpsertComponent {
   isSubmitting = new BehaviorSubject(false);
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     private snackbar: MatSnackBar,
     private service: UsersService,
     private membershipService: MembershipsService
   ) {
+    super();
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
-    });
+      this.viewUrl = `/users/view/${this.route.snapshot.paramMap.get('id')}`;
 
-    this.personalDetailsFormControls$ =
-      this.service.getUserDetailsFormControls();
-    this.maritalDetailsFormControls$ =
-      this.membershipService.getSpouseDetailsFormControls();
-    this.familyDetailsFormControls$ =
-      this.membershipService.getFamilyDetailsFormControls();
+      this.user = data['user'];
+      this.coreUserDetailsFormControls$ =
+        this.service.getCoreUserDetailsFormControls();
+      if (this.user) {
+        this.coreUserDetailsFormControls$.forEach((form) => {
+          form.forEach((control) => {
+            if (control) {
+              control.value = this.user[control.key];
+            }
+          });
+        });
+        this.isProceedAllowed['Core User Details'] = true;
+        this.checkDisplayMembershipForm(this.user['role'] as string);
+      }
+
+      this.spouse = this.user['spouse'] as unknown as {
+        [key: string]: string | number | Date;
+      };
+      this.spouseDetailsFormControls$ =
+        this.membershipService.getSpouseDetailsFormControls();
+
+      if (this.spouse) {
+        this.spouseDetailsFormControls$.forEach((form) => {
+          form.forEach((control) => {
+            if (control) {
+              control.value = this.spouse[control.key];
+            }
+          });
+        });
+        this.checkChange(false, 'Not Married');
+        this.isProceedAllowed['Spouse Details'] = true;
+      } else {
+        this.checkChange(true, 'Not Married');
+      }
+
+      this.children = this.user['children'] as {
+        [key: string]: string | number | Date;
+      }[];
+
+      if (this.children.length) {
+        this.checkChange(false, 'No Children');
+        this.children.forEach((child, index) => {
+          if (index == 0) {
+            this.childrenDetailsFormControls$ = [
+              this.membershipService.getChildDetailsFormControls(),
+            ];
+            this.validChildren = [true];
+          } else {
+            this.childrenDetailsFormControls$.push(
+              this.membershipService.getChildDetailsFormControls()
+            );
+            this.validChildren.push(true);
+          }
+        });
+        this.childrenDetailsFormControls$.forEach(
+          (
+            formGroup: Observable<DynamicCustomFormControlBase<any>[]>,
+            formGroupIndex
+          ) => {
+            formGroup.forEach((form: DynamicCustomFormControlBase<any>[]) => {
+              if (form) {
+                form.forEach((control: DynamicCustomFormControlBase<any>) => {
+                  control.value = this.children[formGroupIndex][control.key];
+                });
+              }
+            });
+          }
+        );
+      } else {
+        this.checkChange(true, 'No Children');
+      }
+    });
   }
 
   get isSaveAllowed() {
     return (
-      (this.isProceedAllowed['User Details'] && !this.displayMembershipForm) ||
+      (this.isProceedAllowed['Core User Details'] &&
+        !this.displayMembershipForm) ||
       (this.displayMembershipForm && this.isProceedAllowed['Spouse Details']) ||
       this.areChildrenValid
     );
@@ -135,6 +217,10 @@ export class UpsertComponent {
 
   set isSubmitting$(isIt: boolean) {
     this.isSubmitting.next(isIt);
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
   }
 
   checkChange(checked: boolean, section: string) {
@@ -167,27 +253,18 @@ export class UpsertComponent {
   ) {
     const data = JSON.parse(formData);
     switch (section) {
-      case 'User Details':
+      case 'Core User Details':
         this.userFormValues = { ...data };
-        this.isProceedAllowed['User Details'] = true;
+        this.isProceedAllowed['Core User Details'] = true;
 
-        const membershipRoles = [
-          'Welfare Manager',
-          'Welfare Accountant',
-          'Welfare Secretary',
-          'Welfare Client Member',
-        ];
+        this.checkDisplayMembershipForm(this.userFormValues.role!);
 
-        this.displayMembershipForm = membershipRoles.includes(
-          this.userFormValues.role!
-        );
+        // if (!this.displayMembershipForm) {
+        //   this.checkChange(true, 'Not Married');
+        //   this.checkChange(true, 'No Children');
+        // }
 
-        if (!this.displayMembershipForm) {
-          this.checkChange(true, 'Not Married');
-          this.checkChange(true, 'No Children');
-        }
-
-        this.personalDetailsFormControls$.forEach(
+        this.coreUserDetailsFormControls$.forEach(
           (controls: DynamicCustomFormControlBase<any>[]) => {
             controls.forEach((control) => {
               if (control.key == 'group') {
@@ -197,7 +274,7 @@ export class UpsertComponent {
                   this.displayMembershipForm &&
                   !this.userFormValues.group_id!
                 ) {
-                  this.isProceedAllowed['User Details'] = false;
+                  this.isProceedAllowed['Core User Details'] = false;
                 }
               }
             });
@@ -224,6 +301,17 @@ export class UpsertComponent {
     }
   }
 
+  checkDisplayMembershipForm(role: string) {
+    const membershipRoles = [
+      'Welfare Manager',
+      'Welfare Accountant',
+      'Welfare Secretary',
+      'Welfare Client Member',
+    ];
+
+    this.displayMembershipForm = membershipRoles.includes(role);
+  }
+
   addChild() {
     this.childrenFormValues?.push({
       first_name: '',
@@ -240,6 +328,8 @@ export class UpsertComponent {
       userDto: this.userFormValues,
     };
 
+    delete payload.userDto.group_id;
+
     if (this.spouseFormValues) {
       payload['spouseDto'] = this.spouseFormValues;
     }
@@ -251,7 +341,11 @@ export class UpsertComponent {
       .createUser(payload)
       .pipe(catchError(this.service.errorHandler))
       .subscribe({
-        next: (value) => {
+        next: ({ id }) => {
+          this.isSubmitting$ = false;
+
+          this.router.navigate(['/', 'users', 'view', id]);
+
           const snackBarRef = this.snackbar.open(
             'User successfully created. Navigate back to Users List?',
             `Yes`,
@@ -271,4 +365,8 @@ export class UpsertComponent {
         },
       });
   }
+
+  override setDefaultMetaAndTitle(): void {}
+  override setTwitterCardMeta(): void {}
+  override setFacebookOpenGraphMeta(): void {}
 }

@@ -1,2 +1,32 @@
-<iwms-header [title]="pageTitle"></iwms-header>
-<iwms-dynamic-view [dataset]="viewData$ | async"></iwms-dynamic-view>
+<iwms-header [title]="pageTitle" [editUrl]="editUrl"></iwms-header>
+
+<!-- #core_user -->
+
+<h4 class="core-user-header mat-title-large">Core User Details</h4>
+<iwms-dynamic-view [dataset]="userDataView$ | async"></iwms-dynamic-view>
+
+<!-- #spouse -->
+
+@if (spouse) {
+<h4 class="spouse-header mat-title-large">Spouse Details</h4>
+
+<iwms-dynamic-view
+  class="spouse-section"
+  [dataset]="spouseDataView$ | async"
+></iwms-dynamic-view>
+}
+
+<!-- #children -->
+
+@if (children.length) {
+<h4 class="child-header mat-title-large">Children Details</h4>
+
+@for (item of children; track $index; ) {
+<h5 class="child child-header mat-title-medium">
+  Child Details [{{ $index + 1 }}]
+</h5>
+<iwms-dynamic-view
+  class="child-section"
+  [dataset]="childDataView$[$index] | async"
+></iwms-dynamic-view>
+}}

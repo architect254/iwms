@@ -12,7 +12,7 @@ import {
   CustomListData,
   CustomTextData,
   DynamicCustomDataBase,
-} from '../../shared/view-data/view.service';
+} from '../../shared/data-view/view.service';
 
 @Injectable({
   providedIn: 'root',
@@ -125,7 +125,7 @@ export class MembershipsService extends ApiService {
       }),
       new CustomDateControl({
         key: 'birth_date',
-        label: 'Birth Date',
+        label: 'Date of Birth',
         value: '',
         placeholder: '11/07/2000',
         dateConfig: {
@@ -159,7 +159,7 @@ export class MembershipsService extends ApiService {
     ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
-  getFamilyDetailsFormControls() {
+  getChildDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomTextboxControl({
         key: 'first_name',
@@ -181,7 +181,7 @@ export class MembershipsService extends ApiService {
       }),
       new CustomDateControl({
         key: 'birth_date',
-        label: 'Birth Date',
+        label: 'Date of Birth',
         value: '',
         placeholder: '11/07/2000',
         dateConfig: {
@@ -197,7 +197,7 @@ export class MembershipsService extends ApiService {
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
-  getViewData() {
+  getDataView() {
     const data: DynamicCustomDataBase<string>[] = [
       new CustomTextData({
         key: 'firstName',

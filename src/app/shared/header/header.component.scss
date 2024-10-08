@@ -1,13 +1,21 @@
-.filter-header {
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px;
     padding: 0;
-}
 
-h1.page-title {
-    margin: 16px 0 !important;
-    font-weight: 500 !important;
+    position: relative;
+
+    .page-title {
+        margin: 16px 0 !important;
+        font-weight: 500 !important;
+    }
+
+    .header-nav-btns {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
 }

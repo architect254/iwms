@@ -15,6 +15,7 @@ import {
   StatusProperties,
   ActionProperties,
   GridComponent,
+  FilterColumn,
 } from '../../../shared/grid/grid.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
@@ -58,6 +59,7 @@ import { MatSortModule } from '@angular/material/sort';
 export class ListComponent extends GridContainerDirective {
   pageTitle: string = '';
   columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
+  filterColumns: FilterColumn[] = MOCK.FILTER_COLUMNS as FilterColumn[];
   statusProperties: StatusProperties = MOCK.STATUS;
   actionProperties: ActionProperties = MOCK.ACTIONS;
   defaultSortColumn!: string;
@@ -69,20 +71,15 @@ export class ListComponent extends GridContainerDirective {
 
   filterOptions = [{ key: 1, label: 'option' }];
 
-  constructor(
-    override activatedRoute: ActivatedRoute,
-    override router: Router,
-    private _usersService: UsersService
-  ) {
-    super(activatedRoute, router);
-    this.activatedRoute.data.subscribe((data: Data) => {
+  constructor(private _usersService: UsersService) {
+    super();
+    this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    console.log('users init');
     this._usersService.getUsers().subscribe((users) => {
       this.data = users.map((user) => {
         return {
@@ -100,7 +97,6 @@ export class ListComponent extends GridContainerDirective {
           updator_id: user.updator_id,
         };
       });
-      console.log('users now', this.data, users);
     });
   }
 
@@ -201,6 +197,78 @@ export class ListComponent extends GridContainerDirective {
   }
 }
 export const MOCK = {
+  FILTER_COLUMNS: [
+    {
+      key: 'name',
+      label: 'Full Name',
+      position: 1,
+      type: 'string',
+      icon: 'badge',
+      combinator: 'Includes',
+    },
+    {
+      key: 'id_number',
+      label: 'National ID Number',
+      position: 2,
+      type: 'number',
+      icon: 'fingerprint',
+      combinator: 'Includes',
+    },
+    {
+      key: 'birth_date',
+      label: 'Date of Birth',
+      position: 3,
+      type: 'date',
+      icon: 'cake',
+      combinator: 'Is',
+    },
+    {
+      key: 'phone_number',
+      label: 'Phone Number',
+      position: 4,
+      type: 'number',
+      icon: 'call_log',
+      combinator: 'Is',
+    },
+    {
+      key: 'email',
+      label: 'Email',
+      position: 5,
+      type: 'string',
+      icon: 'email',
+      combinator: 'Includes',
+    },
+    {
+      key: 'role',
+      label: 'User Role',
+      position: 6,
+      type: 'list',
+      icon: 'checklist',
+      combinator: 'Is',
+      options: [
+        { key: 'Site Admin', value: 'Site Admin' },
+        { key: 'Welfare Manager', value: 'Welfare Manager' },
+        { key: 'Welfare Accountant', value: 'Welfare Accountant' },
+        { key: 'Welfare Secretary', value: 'Welfare Secretary' },
+        { key: 'Welfare Client Member', value: 'Welfare Client Member' },
+      ],
+      colors: {
+        'Site Admin': 'red',
+        'Welfare Manager': 'orange',
+        'Welfare Accountant': 'blue',
+        'Welfare Secretary': 'purple',
+        'Welfare Client Member': 'green',
+      },
+    },
+    {
+      key: 'group',
+      label: 'Welfare Group',
+      position: 7,
+      type: 'string',
+      icon: 'group',
+      combinator: 'Is',
+    },
+  ],
   COLUMNS: [
     {
       key: 'select',

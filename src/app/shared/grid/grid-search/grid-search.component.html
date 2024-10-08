@@ -1,25 +1,122 @@
 <section class="filter">
   <mat-form-field appearance="outline" class="reduced-size">
     <mat-label>Select Option</mat-label>
-    <mat-select (selectionChange)="onSelectFilterOption($event)">
+    <mat-select
+      (selectionChange)="onSelectFilterOption($event.value)"
+      [formControl]="filterControl"
+    >
       @for (option of filterOptions; track $index) {
-      <mat-option [value]="option?.key">{{ option?.label }}</mat-option>
+      <mat-option [value]="option"
+        ><mat-icon matPrefix>{{ option?.icon }}</mat-icon
+        >{{ option?.label }}</mat-option
+      >
       }
     </mat-select>
     <mat-icon matPrefix>tune</mat-icon>
   </mat-form-field>
-
-  <mat-form-field appearance="outline" class="reduced-size">
-    <mat-label>Is</mat-label>
-    <input matInput type="text" />
-    <mat-icon matPrefix>edit_note</mat-icon>
+  @switch (selectedFilterOption?.type) { @case ('date') {
+  <mat-form-field appearance="outline" class="search-option reduced-size">
+    <mat-label>{{ selectedFilterOption?.combinator }}</mat-label>
+    <input
+      [name]="selectedFilterOption?.key!"
+      [formControl]="selectedFilterControl"
+      matInput
+      [matDatepicker]="picker"
+      [min]="minDate"
+      [max]="maxDate"
+      [placeholder]="selectedFilterOption?.placeholder!"
+    />
+    @if (selectedFilterOption?.icon) {
+    <mat-icon matPrefix class="material-icons-two-toned">{{
+      selectedFilterOption?.icon
+    }}</mat-icon>
+    }
+    <mat-datepicker-toggle
+      matSuffix
+      matDatepickerToggleIcon
+      [for]="picker"
+    ></mat-datepicker-toggle>
+    <mat-datepicker
+      #picker
+      startView="year"
+      [startAt]="startDate"
+    ></mat-datepicker>
   </mat-form-field>
+  }@case ('list') {
+  <mat-form-field appearance="outline" class="search-option reduced-size">
+    <mat-label>{{ selectedFilterOption?.combinator }}</mat-label>
+    <mat-select
+      [id]="selectedFilterOption?.key!"
+      [formControl]="selectedFilterControl"
+    >
+      @for (option of selectedFilterOption?.options; track option) {
+      <mat-option [value]="option?.key">{{ option?.value }}</mat-option>
+      }
+    </mat-select>
+    @if (selectedFilterOption?.icon) {
+    <mat-icon matPrefix class="material-icons-two-toned">{{
+      selectedFilterOption?.icon
+    }}</mat-icon>
+    }
+  </mat-form-field>
+  }@default {
+  <mat-form-field appearance="outline" class="search-option reduced-size">
+    <mat-label>{{
+      !selectedFilterOption ? "Is" : selectedFilterOption.combinator
+    }}</mat-label>
+    <input
+      [name]="selectedFilterOption?.key!"
+      [formControl]="selectedFilterControl"
+      matInput
+      type="text"
+      [placeholder]="selectedFilterOption?.placeholder!"
+    />
+    @if (selectedFilterOption?.icon) {
+    <mat-icon matPrefix class="material-icons-two-toned">{{
+      selectedFilterOption?.icon
+    }}</mat-icon>
+    }
+  </mat-form-field>
+  } }
 
   <button
     mat-flat-button
     class="action-btn"
     aria-label="Example icon button with a vertical three dot icon"
+    (click)="applyFilter()"
   >
     <mat-icon matPrefix>filter_alt</mat-icon>Apply filter
   </button>
+</section>
+<section
+  class="selected-filter-options"
+  id="selected-filter-options"
+  cdkObserveContent
+  (cdkObserveContent)="observeContent($event)"
+>
+  @if (selectedFilterOptions.length) {
+  <small class="mat-secondary">Applied Filters</small><br />
+  } @for (option of selectedFilterOptions; track option) {
+  <mat-chip (click)="actOnFilterOption(option, 'select')"
+    ><strong>{{ option.label }}</strong
+    >: {{ option.combinator }}
+
+    @switch (option.type) { @case ('date') {
+    <span>"{{ option.value | date }}"</span>
+    } @case ('list') {
+    <span [style.color]="option.colors?.[option.value]"
+      >"{{ option.value | uppercase }}"</span
+    >
+    } @default {
+    <span>"{{ option.value }}"</span>
+    } }
+    <button
+      mat-icon-button
+      (click)="actOnFilterOption(option, 'unselect')"
+      class="basic-btn"
+      aria-label=""
+    >
+      <mat-icon fontIcon="close" class="btn-icon"></mat-icon></button
+  ></mat-chip>
+  }
 </section>

@@ -19,6 +19,7 @@ export const routes: Routes = [
       {
         path: 'edit/:id',
         component: UpsertComponent,
+        resolve: { user: userResolver },
         data: { title: 'Edit User Details' },
       },
       {
@@ -32,7 +33,6 @@ export const routes: Routes = [
         component: ListComponent,
         data: { title: 'Welfare Users List' },
       },
-      { path: '**', redirectTo: '/not-found' },
     ],
   },
 ];

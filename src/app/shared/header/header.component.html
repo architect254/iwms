@@ -1,4 +1,46 @@
-<header class="container filter-header" id="header">
+<header class="container header" id="header">
   <h1 class="page-title mat-headline-large">{{ title }}</h1>
+
+  <!-- #region dynamic content-->
+
   <ng-content></ng-content>
+
+  <!-- #region naviation buttons-->
+
+  @if (displayList || editUrl || viewUrl || displayBack) {
+  <div class="header-nav-btns">
+    @if (displayList) {
+    <button mat-icon-button class="basic-btn" aria-label="" routerLink="">
+      <mat-icon fontIcon="list" class="btn-icon"></mat-icon>
+    </button>
+    } @if(editUrl){
+    <button
+      mat-icon-button
+      class="basic-btn"
+      aria-label=""
+      [routerLink]="[editUrl]"
+    >
+      <mat-icon fontIcon="edit" class="btn-icon"></mat-icon>
+    </button>
+    } @if(viewUrl){
+    <button
+      mat-icon-button
+      class="basic-btn"
+      aria-label=""
+      [routerLink]="[viewUrl]"
+    >
+      <mat-icon fontIcon="view" class="btn-icon"></mat-icon>
+    </button>
+    } @if (displayBack) {
+    <button
+      mat-icon-button
+      class="basic-btn"
+      aria-label=""
+      (click)="location.back()"
+    >
+      <mat-icon fontIcon="back" class="btn-icon"></mat-icon>
+    </button>
+    }
+  </div>
+  }
 </header>

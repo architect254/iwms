@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DynamicDataComponent } from './data.component';
 import {
   DynamicCustomDataBase,
-  DynamicCustomViewDataService,
+  DynamicCustomDataViewService,
 } from './view.service';
 
 @Component({
@@ -12,17 +12,19 @@ import {
   selector: 'iwms-dynamic-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
-  providers: [DynamicCustomViewDataService],
+  providers: [DynamicCustomDataViewService],
   imports: [CommonModule, DynamicDataComponent],
 })
 export class DynamicViewComponent implements OnInit, OnDestroy {
   @Input() dataset: DynamicCustomDataBase<any>[] | null = [];
 
-  constructor(private vds: DynamicCustomViewDataService) {}
+  constructor(private vds: DynamicCustomDataViewService) {
+    this.vds;
+  }
 
   ngOnInit() {
     // this.form = this.vds.toFormGroup(
-    //   this.data as DynamicCustomViewDataBase<string>[]
+    //   this.data as DynamicCustomDataViewBase<string>[]
     // );
   }
 

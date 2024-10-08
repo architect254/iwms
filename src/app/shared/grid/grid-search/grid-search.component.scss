@@ -3,4 +3,21 @@
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
+
+    .search-option {
+        max-width: 280px;
+    }
+}
+
+.selected-filter-options {
+    position: absolute;
+    left: 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+
+    width: 100%;
+    margin: 16px auto;
 }
