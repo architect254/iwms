@@ -11,7 +11,7 @@
   <div class="header-nav-btns">
     @if (displayList) {
     <button mat-icon-button class="basic-btn" aria-label="" routerLink="">
-      <mat-icon fontIcon="list" class="btn-icon"></mat-icon>
+      <mat-icon fontIcon="format_list_numbered" class="btn-icon"></mat-icon>
     </button>
     } @if(editUrl){
     <button
@@ -20,7 +20,7 @@
       aria-label=""
       [routerLink]="[editUrl]"
     >
-      <mat-icon fontIcon="edit" class="btn-icon"></mat-icon>
+      <mat-icon fontIcon="edit_note" class="btn-icon"></mat-icon>
     </button>
     } @if(viewUrl){
     <button
@@ -29,7 +29,7 @@
       aria-label=""
       [routerLink]="[viewUrl]"
     >
-      <mat-icon fontIcon="view" class="btn-icon"></mat-icon>
+      <mat-icon fontIcon="data_info_alert" class="btn-icon"></mat-icon>
     </button>
     } @if (displayBack) {
     <button
@@ -38,7 +38,7 @@
       aria-label=""
       (click)="location.back()"
     >
-      <mat-icon fontIcon="back" class="btn-icon"></mat-icon>
+      <mat-icon fontIcon="arrow_back" class="btn-icon"></mat-icon>
     </button>
     }
   </div>

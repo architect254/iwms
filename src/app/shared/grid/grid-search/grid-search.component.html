@@ -110,13 +110,8 @@
     } @default {
     <span>"{{ option.value }}"</span>
     } }
-    <button
-      mat-icon-button
-      (click)="actOnFilterOption(option, 'unselect')"
-      class="basic-btn"
-      aria-label=""
-    >
-      <mat-icon fontIcon="close" class="btn-icon"></mat-icon></button
-  ></mat-chip>
+    <mat-icon matChipRemove (click)="actOnFilterOption(option, 'unselect')">cancel</mat-icon>
+  </mat-chip>
   }
 </section>
+ 
