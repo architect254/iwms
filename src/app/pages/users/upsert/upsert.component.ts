@@ -120,9 +120,15 @@ export class UpsertComponent extends PageDirective {
       this.pageTitle = data['title'];
       this.viewUrl = `/users/view/${this.route.snapshot.paramMap.get('id')}`;
 
-      this.user = data['user'];
       this.coreUserDetailsFormControls$ =
         this.service.getCoreUserDetailsFormControls();
+      this.spouseDetailsFormControls$ =
+        this.membershipService.getSpouseDetailsFormControls();
+      this.childrenDetailsFormControls$ = [
+        this.membershipService.getChildDetailsFormControls(),
+      ];
+
+      this.user = data['user'];
       if (this.user) {
         this.coreUserDetailsFormControls$.forEach((form) => {
           form.forEach((control) => {
@@ -133,63 +139,68 @@ export class UpsertComponent extends PageDirective {
         });
         this.isProceedAllowed['Core User Details'] = true;
         this.checkDisplayMembershipForm(this.user['role'] as string);
-      }
 
-      this.spouse = this.user['spouse'] as unknown as {
-        [key: string]: string | number | Date;
-      };
-      this.spouseDetailsFormControls$ =
-        this.membershipService.getSpouseDetailsFormControls();
+        this.spouse = this.user['spouse'] as unknown as {
+          [key: string]: string | number | Date;
+        };
 
-      if (this.spouse) {
-        this.spouseDetailsFormControls$.forEach((form) => {
-          form.forEach((control) => {
-            if (control) {
-              control.value = this.spouse[control.key];
-            }
-          });
-        });
-        this.checkChange(false, 'Not Married');
-        this.isProceedAllowed['Spouse Details'] = true;
-      } else {
-        this.checkChange(true, 'Not Married');
-      }
-
-      this.children = this.user['children'] as {
-        [key: string]: string | number | Date;
-      }[];
-
-      if (this.children.length) {
-        this.checkChange(false, 'No Children');
-        this.children.forEach((child, index) => {
-          if (index == 0) {
-            this.childrenDetailsFormControls$ = [
-              this.membershipService.getChildDetailsFormControls(),
-            ];
-            this.validChildren = [true];
-          } else {
-            this.childrenDetailsFormControls$.push(
-              this.membershipService.getChildDetailsFormControls()
-            );
-            this.validChildren.push(true);
-          }
-        });
-        this.childrenDetailsFormControls$.forEach(
-          (
-            formGroup: Observable<DynamicCustomFormControlBase<any>[]>,
-            formGroupIndex
-          ) => {
-            formGroup.forEach((form: DynamicCustomFormControlBase<any>[]) => {
-              if (form) {
-                form.forEach((control: DynamicCustomFormControlBase<any>) => {
-                  control.value = this.children[formGroupIndex][control.key];
-                });
+        if (this.spouse) {
+          this.spouseDetailsFormControls$.forEach((form) => {
+            form.forEach((control) => {
+              if (control) {
+                control.value = this.spouse[control.key];
               }
             });
-          }
-        );
+          });
+          this.checkChange(false, 'Not Married');
+          this.isProceedAllowed['Spouse Details'] = true;
+        } else {
+          this.checkChange(true, 'Not Married');
+        }
+
+        this.children = this.user['children'] as {
+          [key: string]: string | number | Date;
+        }[];
+
+        if (this.children.length) {
+          this.checkChange(false, 'No Children');
+          this.children.forEach((child, index) => {
+            if (index == 0) {
+              this.childrenDetailsFormControls$ = [
+                this.membershipService.getChildDetailsFormControls(),
+              ];
+              this.validChildren = [true];
+            } else {
+              this.childrenDetailsFormControls$.push(
+                this.membershipService.getChildDetailsFormControls()
+              );
+              this.validChildren.push(true);
+            }
+          });
+          this.childrenDetailsFormControls$.forEach(
+            (
+              formGroup: Observable<DynamicCustomFormControlBase<any>[]>,
+              formGroupIndex
+            ) => {
+              formGroup.forEach((form: DynamicCustomFormControlBase<any>[]) => {
+                if (form) {
+                  form.forEach((control: DynamicCustomFormControlBase<any>) => {
+                    control.value = this.children[formGroupIndex][control.key];
+                  });
+                }
+              });
+            }
+          );
+        } else {
+          this.checkChange(true, 'No Children');
+        }
       } else {
-        this.checkChange(true, 'No Children');
+        this.displayMembershipForm = false;
+        this.isProceedAllowed['Core User Details'] = false;
+        this.isProceedAllowed['Spouse Details'] = false;
+        this.checkChange(false, 'Not Married');
+        this.checkChange(false, 'No Children');
+        this.validChildren = [false];
       }
     });
   }
@@ -198,8 +209,7 @@ export class UpsertComponent extends PageDirective {
     return (
       (this.isProceedAllowed['Core User Details'] &&
         !this.displayMembershipForm) ||
-      (this.displayMembershipForm && this.isProceedAllowed['Spouse Details']) ||
-      this.areChildrenValid
+      (this.isProceedAllowed['Spouse Details'] && this.areChildrenValid)
     );
   }
 
@@ -313,11 +323,9 @@ export class UpsertComponent extends PageDirective {
   }
 
   addChild() {
-    this.childrenFormValues?.push({
-      first_name: '',
-      last_name: '',
-      birth_date: new Date(),
-    });
+    this.childrenDetailsFormControls$.push(
+      this.membershipService.getChildDetailsFormControls()
+    );
     this.validChildren.push(false);
   }
 

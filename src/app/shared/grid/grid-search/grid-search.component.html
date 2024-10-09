@@ -104,14 +104,15 @@
     @switch (option.type) { @case ('date') {
     <span>"{{ option.value | date }}"</span>
     } @case ('list') {
-    <span [style.color]="option.colors?.[option.value]"
-      >"{{ option.value | uppercase }}"</span
+    <strong [style.color]="option.colors?.[option.value]"
+      >"{{ option.value | uppercase }}"</strong
     >
     } @default {
     <span>"{{ option.value }}"</span>
     } }
-    <mat-icon matChipRemove (click)="actOnFilterOption(option, 'unselect')">cancel</mat-icon>
+    <mat-icon matChipRemove (click)="actOnFilterOption(option, 'unselect')"
+      >cancel</mat-icon
+    >
   </mat-chip>
   }
 </section>
- 

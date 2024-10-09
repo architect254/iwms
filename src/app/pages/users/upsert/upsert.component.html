@@ -1,4 +1,9 @@
-<iwms-header [title]="pageTitle" [viewUrl]="viewUrl"></iwms-header>
+<iwms-header
+  [title]="pageTitle"
+  [viewUrl]="viewUrl"
+  [displayBack]="true"
+  [displayList]="true"
+></iwms-header>
 
 <!-- #region stepper-->
 
@@ -111,6 +116,9 @@
       >
         Save User
       </button>
+      {{ areChildrenValid }}{{ this.isProceedAllowed["Spouse Details"]
+      }}{{ this.isProceedAllowed["Core User Details"]
+      }}{{ this.displayMembershipForm }}
     </ng-template> </mat-step
   >}
 </mat-stepper>
