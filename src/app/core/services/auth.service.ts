@@ -85,7 +85,7 @@ export class AuthService extends ApiService {
   }
 
   logout() {
-    this._storageService.remove(STORAGE_KEYS.ACCESS_TOKEN);
+    this._storageService.clear();
     this.currentTokenSubject.next(null);
     this._router.navigate(['/auth/sign-in']);
   }
