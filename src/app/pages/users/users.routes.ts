@@ -4,6 +4,7 @@ import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
 import { userResolver } from './user.resolver';
+import { welfaresResolver } from '../welfares/welfares.resolver';
 
 export const routes: Routes = [
   {
@@ -13,13 +14,13 @@ export const routes: Routes = [
       {
         path: 'view/:id',
         component: ViewComponent,
-        resolve: { user: userResolver },
+        resolve: { user: userResolver, welfares: welfaresResolver },
         data: { title: 'View User Details' },
       },
       {
         path: 'edit/:id',
         component: UpsertComponent,
-        resolve: { user: userResolver },
+        resolve: { user: userResolver, welfares: welfaresResolver },
         data: { title: 'Edit User Details' },
       },
       {

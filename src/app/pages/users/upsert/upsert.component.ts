@@ -53,14 +53,27 @@ export class UpsertComponent extends PageDirective {
       | string
       | number
       | Date
+      | {
+          [key: string]:
+            | string
+            | number
+            | Date
+            | { [key: string]: string | number | Date };
+        }
       | { [key: string]: string | number | Date }[];
   };
+  welfare!: { [key: string]: string };
+  welfares!: { [key: string]: string }[];
   spouse!: { [key: string]: string | number | Date };
   children!: { [key: string]: string | number | Date }[];
 
   coreUserDetailsFormControls$!: Observable<
     DynamicCustomFormControlBase<any>[]
   >;
+  newWelfareDetailsFormControls$!: Observable<
+    DynamicCustomFormControlBase<any>[]
+  >;
+  welfareDetailsFormControls$!: Observable<DynamicCustomFormControlBase<any>[]>;
   spouseDetailsFormControls$!: Observable<DynamicCustomFormControlBase<any>[]>;
   childrenDetailsFormControls$!: Observable<
     DynamicCustomFormControlBase<any>[]
@@ -68,10 +81,13 @@ export class UpsertComponent extends PageDirective {
 
   isProceedAllowed: { [key: string]: boolean } = {
     'Core User Details': false,
+    'Welfare Details': false,
     'Spouse Details': false,
+    'Children Details': false,
   };
 
   checks: { [key: string]: boolean } = {
+    'Create New Welfare': false,
     'Not Married': false,
     'No Children': false,
   };
@@ -88,6 +104,15 @@ export class UpsertComponent extends PageDirective {
     role?: string;
     group_id?: string;
   } = {};
+
+  groupFormValues:
+    | {
+        name?: string;
+        phone_number?: string;
+        email?: string;
+      }
+    | { groupId?: number }
+    | null = null;
 
   spouseFormValues: {
     first_name?: string;
@@ -106,6 +131,7 @@ export class UpsertComponent extends PageDirective {
       }[]
     | null = null;
 
+  canCreateNewWelfare: boolean = false;
   displayMembershipForm: boolean = false;
 
   isSubmitting = new BehaviorSubject(false);
@@ -122,6 +148,10 @@ export class UpsertComponent extends PageDirective {
 
       this.coreUserDetailsFormControls$ =
         this.service.getCoreUserDetailsFormControls();
+      this.newWelfareDetailsFormControls$ =
+        this.service.newWelfareDetailsFormControls();
+      this.welfareDetailsFormControls$ =
+        this.service.getWelfareDetailsFormControls();
       this.spouseDetailsFormControls$ =
         this.membershipService.getSpouseDetailsFormControls();
       this.childrenDetailsFormControls$ = [
@@ -139,6 +169,24 @@ export class UpsertComponent extends PageDirective {
         });
         this.isProceedAllowed['Core User Details'] = true;
         this.checkDisplayMembershipForm(this.user['role'] as string);
+        this.checkCanCreateNewWelfare(this.user['role'] as string);
+
+        this.welfare = this.user['membership'] as {
+          [key: string]: string | { [key: string]: string };
+        }['welfare'] as unknown as {
+          [key: string]: string;
+        };
+
+        if (this.welfare) {
+          this.welfareDetailsFormControls$.forEach((form) => {
+            form.forEach((control) => {
+              if (control) {
+                control.value = this.welfare[control.key];
+              }
+            });
+          });
+          this.isProceedAllowed['Welfare Details'] = true;
+        }
 
         this.spouse = this.user['spouse'] as unknown as {
           [key: string]: string | number | Date;
@@ -197,20 +245,31 @@ export class UpsertComponent extends PageDirective {
       } else {
         this.displayMembershipForm = false;
         this.isProceedAllowed['Core User Details'] = false;
+        this.isProceedAllowed['Welfare Details'] = false;
         this.isProceedAllowed['Spouse Details'] = false;
+        this.isProceedAllowed['Children Details'] = false;
         this.checkChange(false, 'Not Married');
         this.checkChange(false, 'No Children');
         this.validChildren = [false];
       }
-    });
-  }
 
-  get isSaveAllowed() {
-    return (
-      (this.isProceedAllowed['Core User Details'] &&
-        !this.displayMembershipForm) ||
-      (this.isProceedAllowed['Spouse Details'] && this.areChildrenValid)
-    );
+      this.welfares = data['welfares'];
+
+      if (this.welfares.length) {
+        this.newWelfareDetailsFormControls$.forEach((form) => {
+          form.forEach((control) => {
+            if (control) {
+              this.welfares.forEach((welfare) => {
+                control.options.push({
+                  id: welfare['id'],
+                  name: welfare['name'],
+                });
+              });
+            }
+          });
+        });
+      }
+    });
   }
 
   get areChildrenValid() {
@@ -236,16 +295,33 @@ export class UpsertComponent extends PageDirective {
   checkChange(checked: boolean, section: string) {
     this.checks[section] = checked;
     switch (section) {
-      case 'Not Married':
+      case 'Create New Welfare':
+        this.groupFormValues = null;
         if (checked) {
-          this.spouseFormValues = null;
+          this.isProceedAllowed['Welfare Details'] = false;
+        } else {
+          if (this.isProceedAllowed['Welfare Details']) {
+            this.isProceedAllowed['Welfare Details'] = false;
+          }
+        }
+        break;
+      case 'Not Married':
+        this.spouseFormValues = null;
+
+        if (checked) {
+          this.isProceedAllowed['Spouse Details'] = true;
+        } else {
+          this.isProceedAllowed['Spouse Details'] = false;
         }
 
         break;
       case 'No Children':
+        this.childrenFormValues = null;
+
         if (checked) {
-          this.childrenFormValues = null;
-          this.validChildren = [false];
+          this.isProceedAllowed['Children Details'] = true;
+        } else {
+          this.isProceedAllowed['Children Details'] = false;
         }
 
         break;
@@ -267,17 +343,13 @@ export class UpsertComponent extends PageDirective {
         this.userFormValues = { ...data };
         this.isProceedAllowed['Core User Details'] = true;
 
+        this.checkCanCreateNewWelfare(this.userFormValues.role!);
         this.checkDisplayMembershipForm(this.userFormValues.role!);
-
-        // if (!this.displayMembershipForm) {
-        //   this.checkChange(true, 'Not Married');
-        //   this.checkChange(true, 'No Children');
-        // }
 
         this.coreUserDetailsFormControls$.forEach(
           (controls: DynamicCustomFormControlBase<any>[]) => {
             controls.forEach((control) => {
-              if (control.key == 'group') {
+              if (control.key == 'welfare') {
                 control.visible = this.displayMembershipForm;
                 control.required = this.displayMembershipForm;
                 if (
@@ -292,12 +364,16 @@ export class UpsertComponent extends PageDirective {
         );
 
         break;
+      case 'Welfare Details':
+        this.groupFormValues = { ...data };
+        this.isProceedAllowed['Welfare Details'] = true;
+        break;
 
       case 'Spouse Details':
         this.spouseFormValues = { ...data };
         this.isProceedAllowed['Spouse Details'] = true;
         break;
-      case 'Family Details':
+      case 'Children Details':
         if (childDetailsIndex == 0) {
           this.childrenFormValues = [];
         }
@@ -308,6 +384,16 @@ export class UpsertComponent extends PageDirective {
         break;
       default:
         break;
+    }
+  }
+
+  checkCanCreateNewWelfare(role: string) {
+    const canCreateWelfareRoles = ['Welfare Manager'];
+
+    this.canCreateNewWelfare = canCreateWelfareRoles.includes(role);
+
+    if (!this.canCreateNewWelfare) {
+      this.checkChange(false, 'Create New Welfare');
     }
   }
 
@@ -334,9 +420,8 @@ export class UpsertComponent extends PageDirective {
 
     const payload: any = {
       userDto: this.userFormValues,
+      groupDto: this.groupFormValues,
     };
-
-    delete payload.userDto.group_id;
 
     if (this.spouseFormValues) {
       payload['spouseDto'] = this.spouseFormValues;
@@ -345,33 +430,63 @@ export class UpsertComponent extends PageDirective {
       payload['childrenDto'] = this.childrenFormValues;
     }
 
-    this.service
-      .createUser(payload)
-      .pipe(catchError(this.service.errorHandler))
-      .subscribe({
-        next: ({ id }) => {
-          this.isSubmitting$ = false;
+    if (this.user) {
+      this.service
+        .updateUser(this.user['id'] as number, payload)
+        .pipe(catchError(this.service.errorHandler))
+        .subscribe({
+          next: ({ id }) => {
+            this.isSubmitting$ = false;
 
-          this.router.navigate(['/', 'users', 'view', id]);
+            this.router.navigate(['/', 'users', 'view', id]);
 
-          const snackBarRef = this.snackbar.open(
-            'User successfully created. Navigate back to Users List?',
-            `Yes`,
-            {
-              panelClass: `alert-dialog`,
-            }
-          );
+            const snackBarRef = this.snackbar.open(
+              'User successfully updated. Navigate back to Users List?',
+              `Yes`,
+              {
+                panelClass: `alert-dialog`,
+              }
+            );
 
-          snackBarRef.onAction().subscribe(() => {
-            snackBarRef.dismiss();
-            this.router.navigate(['../']);
-          });
-        },
-        error: (err) => {
-          this.isSubmitting$ = false;
-          console.error('not saved', err);
-        },
-      });
+            snackBarRef.onAction().subscribe(() => {
+              snackBarRef.dismiss();
+              this.router.navigate(['../']);
+            });
+          },
+          error: (err) => {
+            this.isSubmitting$ = false;
+            console.error('not saved', err);
+          },
+        });
+    } else {
+      this.service
+        .createUser(payload)
+        .pipe(catchError(this.service.errorHandler))
+        .subscribe({
+          next: ({ id }) => {
+            this.isSubmitting$ = false;
+
+            this.router.navigate(['/', 'users', 'view', id]);
+
+            const snackBarRef = this.snackbar.open(
+              'User successfully created. Navigate back to Users List?',
+              `Yes`,
+              {
+                panelClass: `alert-dialog`,
+              }
+            );
+
+            snackBarRef.onAction().subscribe(() => {
+              snackBarRef.dismiss();
+              this.router.navigate(['../']);
+            });
+          },
+          error: (err) => {
+            this.isSubmitting$ = false;
+            console.error('not saved', err);
+          },
+        });
+    }
   }
 
   override setDefaultMetaAndTitle(): void {}

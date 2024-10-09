@@ -11,7 +11,7 @@ import { DynamicFormComponent } from '../../../shared/form-control/form.componen
 
 import { DynamicCustomFormControlBase } from '../../../shared/form-control/form.service';
 import { HeaderComponent } from '../../../shared/header/header.component';
-import { UsersService } from '../users.service';
+import { WelfaresService } from '../welfares.service';
 
 @Component({
   selector: 'iwms-upsert',
@@ -45,7 +45,7 @@ export class UpsertComponent {
     'Family Details': '',
   };
 
-  constructor(private route: ActivatedRoute, service: UsersService) {
+  constructor(private route: ActivatedRoute, service: WelfaresService) {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });

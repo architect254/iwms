@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
-import { User } from './user';
+import { Welfare } from './welfare';
 import {
   CustomDropdownControl,
   CustomTextboxControl,
@@ -16,17 +16,11 @@ import { ApiService } from '../../core/services/api.service';
 @Injectable({
   providedIn: 'root',
 })
-export class UsersService extends ApiService {
-  protected override endpoint = `${this.API_URL}/users`;
-
-  $users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
+export class WelfaresService extends ApiService {
+  protected override endpoint = `${this.API_URL}/groups`;
 
   constructor() {
     super();
-  }
-
-  get users$(): Observable<User[]> {
-    return this.$users.asObservable();
   }
 
   getPersonalDetailsFormControls() {
@@ -80,10 +74,10 @@ export class UsersService extends ApiService {
         key: 'favoriteAnimal',
         label: 'Favorite Animal',
         options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
+          { id: 'cat', name: 'Cat' },
+          { id: 'dog', name: 'Dog' },
+          { id: 'horse', name: 'Horse' },
+          { id: 'capybara', name: 'Capybara' },
         ],
         icon: 'checklist',
         order: 3,
@@ -142,10 +136,10 @@ export class UsersService extends ApiService {
         key: 'favoriteAnimal',
         label: 'Favorite Animal',
         options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
+          { id: 'cat', name: 'Cat' },
+          { id: 'dog', name: 'Dog' },
+          { id: 'horse', name: 'Horse' },
+          { id: 'capybara', name: 'Capybara' },
         ],
         icon: 'checklist',
         order: 3,
@@ -204,10 +198,10 @@ export class UsersService extends ApiService {
         key: 'favoriteAnimal',
         label: 'Favorite Animal',
         options: [
-          { key: 'cat', value: 'Cat' },
-          { key: 'dog', value: 'Dog' },
-          { key: 'horse', value: 'Horse' },
-          { key: 'capybara', value: 'Capybara' },
+          { id: 'cat', name: 'Cat' },
+          { id: 'dog', name: 'Dog' },
+          { id: 'horse', name: 'Horse' },
+          { id: 'capybara', name: 'Capybara' },
         ],
         icon: 'checklist',
         order: 3,
@@ -270,28 +264,15 @@ export class UsersService extends ApiService {
     return of(data.sort((a, b) => a.order - b.order));
   }
 
-  getAllMemberships(): Observable<User[]> {
+  getAllWelfares(): Observable<Welfare[]> {
     return this.http
-      .get<User[]>(this.endpoint, this.httpOptions)
+      .get<Welfare[]>(this.endpoint, this.httpOptions)
       .pipe(catchError(this.errorHandler));
   }
 
-  getMembershipById(membershipId: number | string) {
-    this.$subscriptions.add(
-      this.http
-        .get<User>(this.endpoint)
-        .pipe(catchError(this.errorHandler))
-        .subscribe((membership: User) => {
-          this.$users.next([...this.$users.getValue(), membership]);
-        })
-    );
-  }
-
-  selectAllMembershipsDummy(): void {
-    this.$subscriptions.add(
-      this.getAllMemberships().subscribe((memberships: User[]) => {
-        this.$users.next(memberships);
-      })
-    );
+  getWelfareById(id: number | string) {
+    return this.http
+      .get<Welfare>(this.endpoint)
+      .pipe(catchError(this.errorHandler));
   }
 }

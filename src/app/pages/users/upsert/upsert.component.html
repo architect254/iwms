@@ -18,7 +18,16 @@
         [isSubmitting$]="isSubmitting$"
         (notifyValidity)="onValidityNotified($event, 'Core User Details')"
       ></iwms-dynamic-form>
-      @if (displayMembershipForm) {
+
+      @if(displayMembershipForm){
+      <div class="checkbox">
+        <mat-checkbox
+          [checked]="checks['Create New Welfare']"
+          (change)="checkChange($event.checked, 'Create New Welfare')"
+          [disabled]="!canCreateNewWelfare"
+          >Assign new group to user</mat-checkbox
+        >
+      </div>
       <button
         [disabled]="!isProceedAllowed['Core User Details']"
         mat-button
@@ -30,9 +39,7 @@
       <button
         mat-flat-button
         class="admin-save save-btn"
-        [disabled]="
-          !checks['No Children'] && (checks['No Children'] || !isSaveAllowed)
-        "
+        [disabled]="!isProceedAllowed['Core User Details']"
         (click)="save()"
       >
         Save User
@@ -41,9 +48,38 @@
     </ng-template>
   </mat-step>
 
+  @if (displayMembershipForm) {
+
+  <!-- #region group details-->
+  <mat-step>
+    <ng-template matStepLabel>Welfare Details</ng-template>
+    <ng-template matStepContent>
+      @if (canCreateNewWelfare && checks['Create New Welfare']) {
+      <iwms-dynamic-form
+        [controls]="newWelfareDetailsFormControls$ | async"
+        [isSubmitting$]="isSubmitting$"
+        (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
+      ></iwms-dynamic-form>
+      }@else{
+      <iwms-dynamic-form
+        [controls]="welfareDetailsFormControls$ | async"
+        [isSubmitting$]="isSubmitting$"
+        (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
+      ></iwms-dynamic-form>
+      }
+      <button mat-button matStepperPrevious>Back</button>
+      <button
+        [disabled]="!isProceedAllowed['Welfare Details']"
+        mat-button
+        matStepperNext
+      >
+        Proceed
+      </button>
+    </ng-template>
+  </mat-step>
+
   <!-- #region spouse details-->
 
-  @if (displayMembershipForm) {
   <mat-step>
     <ng-template matStepLabel>Spouse Details</ng-template>
     <ng-template matStepContent>
@@ -63,10 +99,7 @@
       }
       <button mat-button matStepperPrevious>Back</button>
       <button
-        [disabled]="
-          !checks['Not Married'] &&
-          (checks['Not Married'] || !isProceedAllowed['Spouse Details'])
-        "
+        [disabled]="!isProceedAllowed['Spouse Details']"
         mat-button
         matStepperNext
       >
@@ -95,7 +128,7 @@
         [controls]="childrenDetailsFormControls$[$index] | async"
         [isSubmitting$]="isSubmitting$"
         (notifyValidity)="
-          onValidityNotified($event, 'Family Details', $index, true)
+          onValidityNotified($event, 'Children Details', $index, true)
         "
       ></iwms-dynamic-form
       >}
@@ -108,17 +141,11 @@
       <button
         mat-flat-button
         class="save-btn"
-        [disabled]="
-          (isSubmitting$ | async) ||
-          (!checks['No Children'] && (checks['No Children'] || !isSaveAllowed))
-        "
+        [disabled]="!isProceedAllowed['Children Details'] && !areChildrenValid"
         (click)="save()"
       >
         Save User
       </button>
-      {{ areChildrenValid }}{{ this.isProceedAllowed["Spouse Details"]
-      }}{{ this.isProceedAllowed["Core User Details"]
-      }}{{ this.displayMembershipForm }}
     </ng-template> </mat-step
   >}
 </mat-stepper>
