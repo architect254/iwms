@@ -6,8 +6,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { Observable, of } from 'rxjs';
 
-import { UsersService } from '../users.service';
-import { User } from '../user';
+import { WelfaresService } from '../welfares.service';
+import { Welfare } from '../welfare';
 
 import { GridContainerDirective } from '../../../shared/grid-container/grid-container.directive';
 import {
@@ -43,7 +43,7 @@ export class ListComponent extends GridContainerDirective {
   defaultSortColumn!: string;
   defaultSortColumnDirection!: 'asc' | 'desc';
 
-  users$: Observable<User[]> = of([]);
+  users$: Observable<Welfare[]> = of([]);
 
   data = [
     {
@@ -71,7 +71,7 @@ export class ListComponent extends GridContainerDirective {
   filterOptions = [{ key: 1, label: 'option' }];
 
   constructor(
-    private _usersService: UsersService
+    private _usersService: WelfaresService
   ) {
     super();
     this.route.data.subscribe((data: Data) => {
@@ -82,7 +82,6 @@ export class ListComponent extends GridContainerDirective {
   override ngOnInit(): void {
     super.ngOnInit();
 
-    this._usersService.selectAllMembershipsDummy();
   }
 
   onSelectFilterOption(type: any) {}

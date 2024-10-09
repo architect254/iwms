@@ -89,33 +89,72 @@ export class UsersService extends ApiService {
         key: 'role',
         label: 'User Role',
         options: [
-          { key: 'Site Admin', value: 'Site Admin' },
-          { key: 'Welfare Manager', value: 'Welfare Manager' },
-          { key: 'Welfare Accountant', value: 'Welfare Accountant' },
-          { key: 'Welfare Secretary', value: 'Welfare Secretary' },
-          { key: 'Welfare Client Member', value: 'Welfare Client Member' },
+          { id: 'Site Admin', name: 'Site Admin' },
+          { id: 'Welfare Manager', name: 'Welfare Manager' },
+          { id: 'Welfare Accountant', name: 'Welfare Accountant' },
+          { id: 'Welfare Secretary', name: 'Welfare Secretary' },
+          { id: 'Welfare Client Member', name: 'Welfare Client Member' },
         ],
         icon: 'checklist',
         required: true,
         order: 7,
       }),
+    ];
+    return of(controls.sort((a, b) => a.order - b.order));
+  }
+
+  newWelfareDetailsFormControls() {
+    const controls: DynamicCustomFormControlBase<string>[] = [
+      new CustomTextboxControl({
+        key: 'name',
+        label: 'Name',
+        value: '',
+        placeholder: 'Welfare Name',
+        icon: 'badge',
+        required: true,
+        order: 1,
+      }),
+      new CustomTextboxControl({
+        key: 'phone_number',
+        label: 'Phone No.',
+        value: '',
+        placeholder: '0712345678',
+        icon: 'call_log',
+        required: true,
+        order: 2,
+      }),
+      new CustomTextboxControl({
+        key: 'email',
+        label: 'Email',
+        value: '',
+        placeholder: 'a@a.com',
+        icon: 'contact_mail',
+        type: 'email',
+        required: true,
+        order: 3,
+      }),
+    ];
+    return of(controls.sort((a, b) => a.order - b.order));
+  }
+
+  getWelfareDetailsFormControls() {
+    const controls: DynamicCustomFormControlBase<string>[] = [
       new CustomDropdownControl({
-        key: 'group_id',
-        label: 'Group Name',
+        key: 'name',
+        label: 'Welfare Name',
         options: [
-          { key: 'Mzedu', value: 'Mzedu' },
-          { key: 'Wumweri', value: 'Wumweri' },
-          { key: 'Mzinyi', value: 'Mzinyi' },
-          { key: 'Mbololo Sacco', value: 'Mbololo Sacco' },
+          { id: 'Mzedu', name: 'Mzedu' },
+          { id: 'Wumweri', name: 'Wumweri' },
+          { id: 'Mzinyi', name: 'Mzinyi' },
+          { id: 'Mbololo Sacco', name: 'Mbololo Sacco' },
           {
-            key: 'Wundanyi Pedu Self-help',
-            value: 'Wundanyi Pedu Self-help',
+            id: 'Wundanyi Pedu Self-help',
+            name: 'Wundanyi Pedu Self-help',
           },
         ],
         icon: 'groups',
         required: false,
-        visible: false,
-        order: 8,
+        order: 1,
       }),
     ];
     return of(controls.sort((a, b) => a.order - b.order));
@@ -288,6 +327,12 @@ export class UsersService extends ApiService {
       .post(this.endpoint, payload)
       .pipe(catchError(this.errorHandler));
   }
+
+  updateUser(id: number | string, payload: any): Observable<User> {
+    const endpoint = this.endpoint + '/' + id;
+    return this.http.put(endpoint, payload).pipe(catchError(this.errorHandler));
+  }
+
   getUsers(page: number = 1, take: number = 100): Observable<User[]> {
     return this.http
       .get<User[]>(this.endpoint, {
