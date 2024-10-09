@@ -9,11 +9,7 @@
 
   @if (displayList || editUrl || viewUrl || displayBack) {
   <div class="header-nav-btns">
-    @if (displayList) {
-    <button mat-icon-button class="basic-btn" aria-label="" routerLink="">
-      <mat-icon fontIcon="format_list_numbered" class="btn-icon"></mat-icon>
-    </button>
-    } @if(editUrl){
+    @if(editUrl){
     <button
       mat-icon-button
       class="basic-btn"
@@ -30,6 +26,10 @@
       [routerLink]="[viewUrl]"
     >
       <mat-icon fontIcon="wysiwyg" class="btn-icon"></mat-icon>
+    </button>
+    } @if (displayList) {
+    <button mat-icon-button class="basic-btn" aria-label="" routerLink="">
+      <mat-icon fontIcon="format_list_numbered" class="btn-icon"></mat-icon>
     </button>
     } @if (displayBack) {
     <button

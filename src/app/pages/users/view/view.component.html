@@ -1,4 +1,9 @@
-<iwms-header [title]="pageTitle" [editUrl]="editUrl" [displayBack]="true" [displayList]="true"></iwms-header>
+<iwms-header
+  [title]="pageTitle"
+  [editUrl]="editUrl"
+  [displayBack]="true"
+  [displayList]="true"
+></iwms-header>
 
 <!-- #core_user -->
 
@@ -18,7 +23,7 @@
 
 <!-- #children -->
 
-@if (children.length) {
+@if (children && children.length) {
 <h4 class="child-header mat-title-large">Children Details</h4>
 
 @for (item of children; track $index; ) {

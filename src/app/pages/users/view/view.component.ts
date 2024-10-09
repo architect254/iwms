@@ -76,7 +76,7 @@ export class ViewComponent extends PageDirective {
       this.children = this.user['children'] as {
         [key: string]: string | number | Date;
       }[];
-      if (this.children.length) {
+      if (this.children?.length) {
         this.children.forEach((child, index) => {
           if (index == 0) {
             this.childDataView$ = [this.service.getChildDataView()];
