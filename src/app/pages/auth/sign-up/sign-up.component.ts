@@ -102,18 +102,18 @@ export class SignUpComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private location: Location
   ) {
-    this.authService.checkUser();
-    this.authService.$subscriptions.add(
-      this.authService.currentTokenUserValue$
-        .pipe(first())
-        .subscribe((user) => {
-          if (user?.role == 'Site Admin') {
-            this.router.navigate([`/users`]);
-          } else {
-            this.router.navigate([`/`]);
-          }
-        })
-    );
+    // this.authService.checkUser();
+    // this.authService.$subscriptions.add(
+    //   this.authService.currentTokenUserValue$
+    //     .pipe(first())
+    //     .subscribe((user) => {
+    //       if (user?.role == 'Site Admin') {
+    //         this.router.navigate([`/users`]);
+    //       } else {
+    //         this.router.navigate([`/`]);
+    //       }
+    //     })
+    // );
   }
 
   get first_name() {
