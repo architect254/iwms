@@ -1,7 +1,5 @@
-import { Directive, inject, Inject, OnInit } from '@angular/core';
-import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
+import { Directive } from '@angular/core';
 import { PageDirective } from '../page/page.directive';
-import { DOCUMENT } from '@angular/common';
 
 @Directive({
   standalone: true,
@@ -15,8 +13,9 @@ export abstract class GridContainerDirective extends PageDirective {
 
     const toolbarHeight = this.document.getElementById('toolbar')?.offsetHeight;
     const headerHeight = this.document.getElementById('header')?.offsetHeight;
-    const containerWidth =
-      this.document.getElementById('container')?.offsetWidth;
+    const containerWidth = this.document.getElementById(
+      'main-routing-container'
+    )?.offsetWidth;
 
     if (toolbarHeight && headerHeight && containerWidth) {
       this.gridHeight = window.innerHeight - (toolbarHeight + headerHeight);

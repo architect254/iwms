@@ -98,12 +98,9 @@ export class LayoutComponent extends PageDirective {
 
   private configureBreadCrumbs() {
     this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map(() => this.route)
-      )
-      .subscribe((route) => {
-        route = this.applyBreadcrumbRoutes(route);
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.applyBreadcrumbRoutes(this.route);
 
         this.reduceBreadcrumbRoutes();
       });
@@ -137,7 +134,6 @@ export class LayoutComponent extends PageDirective {
         });
       }
     }
-    return route;
   }
 
   configureBreadcrumbRouteUrl(breadcrumbPosition: number): string[] {

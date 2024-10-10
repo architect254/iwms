@@ -11,7 +11,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 
-import { DynamicFormControlComponent } from './control.component';
+import { DynamicFormControlComponent, ValueType } from './control.component';
 import {
   DynamicCustomFormControlBase,
   DynamicCustomFormControlService,
@@ -32,14 +32,15 @@ import { filter, Observable, of, Subscription, tap } from 'rxjs';
   ],
 })
 export class DynamicFormComponent implements OnInit, OnDestroy {
-  @Input() controls: DynamicCustomFormControlBase<string>[] | null = [];
+  @Input() controls: DynamicCustomFormControlBase<ValueType>[] | null = [];
   @Input() isSubmitting$: Observable<boolean> = of(false);
+  @Input() triggerValidityNotification$: Observable<boolean> = of(false);
 
   @Output() notifyValidity: EventEmitter<string> = new EventEmitter();
 
   form!: FormGroup;
 
-  $subscriptions: Subscription = new Subscription();
+  $subscriptions$: Subscription = new Subscription();
 
   formData = '';
 
@@ -47,9 +48,16 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form = this.fcs.toFormGroup(
-      this.controls as DynamicCustomFormControlBase<string>[]
+      this.controls as DynamicCustomFormControlBase<ValueType>[]
     );
-    this.$subscriptions.add(
+    this.$subscriptions$.add(
+      this.triggerValidityNotification$.subscribe((doTrigger) => {
+        if (doTrigger) {
+          this.notify();
+        }
+      })
+    );
+    this.$subscriptions$.add(
       this.isSubmitting$.subscribe((isSubmitting) => {
         if (isSubmitting) {
           this.form.disable();
@@ -58,7 +66,7 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
         }
       })
     );
-    this.$subscriptions.add(
+    this.$subscriptions$.add(
       this.form.statusChanges
         .pipe(filter((status) => status.valueOf() === 'VALID'))
         .subscribe(() => {
@@ -73,8 +81,8 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.$subscriptions) {
-      this.$subscriptions.unsubscribe();
+    if (this.$subscriptions$) {
+      this.$subscriptions$.unsubscribe();
     }
   }
 }

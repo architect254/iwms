@@ -8,7 +8,6 @@ import {
 import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from './shared/page/page.directive';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { SwUpdate } from '@angular/service-worker';
 import { first } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
@@ -17,7 +16,7 @@ import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 @Component({
   selector: 'root',
   standalone: true,
-  imports: [RouterOutlet, ScrollingModule, AppShellComponent],
+  imports: [RouterOutlet, AppShellComponent],
   providers: [],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

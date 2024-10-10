@@ -7,15 +7,24 @@
 
 <!-- #region stepper-->
 
-<mat-stepper orientation="vertical">
+<mat-stepper
+  orientation="vertical"
+  [linear]="true"
+  (selectedIndexChange)="selected = $event"
+>
   <mat-step>
     <!-- #region core user details-->
 
-    <ng-template matStepLabel>Core User Details</ng-template>
+    <ng-template matStepLabel
+      ><h4 class="core-user-header selected mat-headline-medium">
+        Core User Details
+      </h4>
+    </ng-template>
     <ng-template matStepContent>
       <iwms-dynamic-form
         [controls]="coreUserDetailsFormControls$ | async"
         [isSubmitting$]="isSubmitting$"
+        [triggerValidityNotification$]="triggerValidityNotification$"
         (notifyValidity)="onValidityNotified($event, 'Core User Details')"
       ></iwms-dynamic-form>
 
@@ -23,7 +32,7 @@
       <div class="checkbox">
         <mat-checkbox
           [checked]="checks['Create New Welfare']"
-          (change)="checkChange($event.checked, 'Create New Welfare')"
+          (change)="check($event.checked, 'Create New Welfare')"
           [disabled]="!canCreateNewWelfare"
           >Assign new group to user</mat-checkbox
         >
@@ -52,18 +61,27 @@
 
   <!-- #region group details-->
   <mat-step>
-    <ng-template matStepLabel>Welfare Details</ng-template>
+    <ng-template matStepLabel
+      ><h4
+        class="welfare-header mat-headline-medium"
+        [class.selected]="isSelected[1]"
+      >
+        Welfare Details
+      </h4>
+    </ng-template>
     <ng-template matStepContent>
       @if (canCreateNewWelfare && checks['Create New Welfare']) {
       <iwms-dynamic-form
         [controls]="newWelfareDetailsFormControls$ | async"
         [isSubmitting$]="isSubmitting$"
+        [triggerValidityNotification$]="triggerValidityNotification$"
         (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
       ></iwms-dynamic-form>
       }@else{
       <iwms-dynamic-form
         [controls]="welfareDetailsFormControls$ | async"
         [isSubmitting$]="isSubmitting$"
+        [triggerValidityNotification$]="triggerValidityNotification$"
         (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
       ></iwms-dynamic-form>
       }
@@ -81,12 +99,19 @@
   <!-- #region spouse details-->
 
   <mat-step>
-    <ng-template matStepLabel>Spouse Details</ng-template>
+    <ng-template matStepLabel
+      ><h4
+        class="spouse-header mat-headline-medium"
+        [class.selected]="isSelected[2]"
+      >
+        Spouse Details
+      </h4>
+    </ng-template>
     <ng-template matStepContent>
       <div class="checkbox">
         <mat-checkbox
           [checked]="checks['Not Married']"
-          (change)="checkChange($event.checked, 'Not Married')"
+          (change)="check($event.checked, 'Not Married')"
           >User is not married</mat-checkbox
         >
       </div>
@@ -94,6 +119,7 @@
       <iwms-dynamic-form
         [controls]="spouseDetailsFormControls$ | async"
         [isSubmitting$]="isSubmitting$"
+        [triggerValidityNotification$]="triggerValidityNotification$"
         (notifyValidity)="onValidityNotified($event, 'Spouse Details')"
       ></iwms-dynamic-form>
       }
@@ -110,12 +136,19 @@
   <mat-step>
     <!-- #region children details-->
 
-    <ng-template matStepLabel>Children Details</ng-template>
+    <ng-template matStepLabel
+      ><h4
+        class="children-header mat-headline-medium"
+        [class.selected]="isSelected[3]"
+      >
+        Children Details
+      </h4>
+    </ng-template>
     <ng-template matStepContent>
       <div class="checkbox">
         <mat-checkbox
           [checked]="checks['No Children']"
-          (change)="checkChange($event.checked, 'No Children')"
+          (change)="check($event.checked, 'No Children')"
           >User has no offsprings</mat-checkbox
         >
       </div>
@@ -127,6 +160,7 @@
       <iwms-dynamic-form
         [controls]="childrenDetailsFormControls$[$index] | async"
         [isSubmitting$]="isSubmitting$"
+        [triggerValidityNotification$]="triggerValidityNotification$"
         (notifyValidity)="
           onValidityNotified($event, 'Children Details', $index, true)
         "

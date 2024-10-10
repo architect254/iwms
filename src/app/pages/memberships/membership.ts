@@ -7,6 +7,6 @@ export enum MembershipStatus {
 }
 export interface Membership extends BaseEntity {
   status?: MembershipStatus;
-  welfareGroup?: Welfare;
+  welfare?: Welfare;
 }
 export class Membership implements Membership {}

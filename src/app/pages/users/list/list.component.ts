@@ -90,7 +90,7 @@ export class ListComponent extends GridContainerDirective {
           email: user.email,
           profile_image: user.profile_image_url,
           role: user.role,
-          group: user.membership?.welfareGroup?.name,
+          group: user.membership?.welfare?.name,
           status: user.membership?.status || 'Active',
           create_date: user.create_date,
           update_date: user.update_date,

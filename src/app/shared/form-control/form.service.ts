@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
+import { ValueType } from './control.component';
 
 @Injectable()
 export class DynamicCustomFormControlService {
-  toFormGroup(controls: DynamicCustomFormControlBase<string>[]) {
+  toFormGroup(controls: DynamicCustomFormControlBase<ValueType>[]) {
     const group: any = {};
     controls?.forEach((control) => {
       group[control.key] = control.required
@@ -25,7 +26,7 @@ export class DynamicCustomFormControlBase<T> {
   order: number;
   controlType: string;
   type: string;
-  options: { id: string; name: string }[];
+  options: { id: string | number | undefined; name: string }[];
   dateConfig?: { minDate: Date; maxDate: Date; startDate: Date };
   constructor(
     options: {
@@ -39,7 +40,7 @@ export class DynamicCustomFormControlBase<T> {
       order?: number;
       controlType?: string;
       type?: string;
-      options?: { id: string; name: string }[];
+      options?: { id: string | number | undefined; name: string }[];
       dateConfig?: { minDate: Date; maxDate: Date; startDate: Date };
     } = {}
   ) {

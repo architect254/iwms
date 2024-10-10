@@ -27,10 +27,11 @@ import { MatNativeDateModule } from '@angular/material/core';
   providers: [MatDatepickerModule,MatDatepicker],
 })
 export class DynamicFormControlComponent {
-  @Input() control!: DynamicCustomFormControlBase<string>;
+  @Input() control!: DynamicCustomFormControlBase<ValueType>;
   @Input() form!: FormGroup;
 
   get isValid() {
     return this.form.controls[this.control.key].valid;
   }
 }
+export type ValueType = string | number | Date;

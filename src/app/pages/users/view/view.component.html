@@ -7,18 +7,18 @@
 
 <!-- #core_user -->
 
-<h4 class="core-user-header mat-title-large">Core User Details</h4>
+<h4 class="core-user-header mat-headline-large">Core User Details</h4>
 <iwms-dynamic-view [dataset]="userDataView$ | async"></iwms-dynamic-view>
 
 <!-- #welfare -->
 @if (welfare) {
-<h4 class="core-user-header mat-title-large">Group Details</h4>
+<h4 class="welfare-header mat-headline-large">Group Details</h4>
 <iwms-dynamic-view [dataset]="welfareDataView$ | async"></iwms-dynamic-view>
 }
 <!-- #spouse -->
 
 @if (spouse) {
-<h4 class="spouse-header mat-title-large">Spouse Details</h4>
+<h4 class="spouse-header mat-headline-large">Spouse Details</h4>
 
 <iwms-dynamic-view
   class="spouse-section"
@@ -29,10 +29,10 @@
 <!-- #children -->
 
 @if (children && children.length) {
-<h4 class="child-header mat-title-large">Children Details</h4>
+<h4 class="children-header mat-headline-large">Children Details</h4>
 
 @for (item of children; track $index; ) {
-<h5 class="child child-header mat-title-medium">
+<h5 class="children-header child mat-title-medium">
   Child Details [{{ $index + 1 }}]
 </h5>
 <iwms-dynamic-view
