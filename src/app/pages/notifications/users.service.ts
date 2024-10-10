@@ -275,14 +275,14 @@ export class UsersService extends ApiService {
   getAllMemberships(): Observable<User[]> {
     return this.http
       .get<User[]>(this.endpoint, this.httpOptions)
-      .pipe(catchError(this.errorHandler));
+      ;
   }
 
   getMembershipById(membershipId: number | string) {
     this.$subscriptions.add(
       this.http
         .get<User>(this.endpoint)
-        .pipe(catchError(this.errorHandler))
+        
         .subscribe((membership: User) => {
           this.$users.next([...this.$users.getValue(), membership]);
         })

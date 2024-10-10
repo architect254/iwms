@@ -16,6 +16,7 @@ import {
 } from '../../shared/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
+import { Welfare } from '../welfares/welfare';
 
 @Injectable({
   providedIn: 'root',
@@ -231,8 +232,8 @@ export class UsersService extends ApiService {
         label: 'Welfare Membership Status',
         value: 'Active',
         colors: {
-          'Active': 'green',
-          'Inactive':'red'
+          Active: 'green',
+          Inactive: 'red',
         },
         icon: 'checklist',
         order: 8,
@@ -347,26 +348,27 @@ export class UsersService extends ApiService {
   }
 
   createUser(payload: any): Observable<User> {
-    return this.http
-      .post<User>(this.endpoint, payload)
-      .pipe(catchError(this.errorHandler));
+    return this.http.post<User>(this.endpoint, payload);
   }
 
   updateUser(id: number | string, payload: any): Observable<User> {
     const endpoint = this.endpoint + '/' + id;
-    return this.http.put<User>(endpoint, payload).pipe(catchError(this.errorHandler));
+    return this.http.put<User>(endpoint, payload);
   }
 
   getUsers(page: number = 1, take: number = 100): Observable<User[]> {
-    return this.http
-      .get<User[]>(this.endpoint, {
-        params: new HttpParams().set('page', page).set('take', take),
-      })
-      .pipe(catchError(this.errorHandler));
+    return this.http.get<User[]>(this.endpoint, {
+      params: new HttpParams().set('page', page).set('take', take),
+    });
   }
 
   getUserById(id: number | string): Observable<User> {
     const endpoint = `${this.endpoint}/${id}`;
-    return this.http.get<User>(endpoint).pipe(catchError(this.errorHandler));
+    return this.http.get<User>(endpoint);
+  }
+
+  getWelfareByMembershipId(id: string): Observable<Welfare> {
+    const endpoint = `${this.endpoint}/welfare-by-membership-id/${id}`;
+    return this.http.get<Welfare>(endpoint);
   }
 }

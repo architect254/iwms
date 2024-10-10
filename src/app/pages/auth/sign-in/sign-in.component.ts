@@ -25,6 +25,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { PageDirective } from '../../../shared/page/page.directive';
 
 @Component({
   selector: 'iwms-sign-in',
@@ -44,7 +45,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements OnInit, OnDestroy {
+export class SignInComponent extends PageDirective {
   private fb = inject(FormBuilder);
 
   signInForm: FormGroup = this.fb.group({
@@ -54,13 +55,9 @@ export class SignInComponent implements OnInit, OnDestroy {
 
   isSigningIn = false;
 
-  private document = inject(DOCUMENT);
-
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private snackBar: MatSnackBar
-  ) {}
+  constructor(private authService: AuthService, private snackBar: MatSnackBar) {
+    super();
+  }
 
   get email() {
     return this.signInForm.get(`email`);
@@ -68,39 +65,30 @@ export class SignInComponent implements OnInit, OnDestroy {
   get password() {
     return this.signInForm.get(`password`);
   }
-  ngOnInit(): void {}
+  override ngOnInit(): void {
+    super.ngOnInit();
+  }
 
   submitForm() {
-    this.signInForm.disable();
-
     this.isSigningIn = true;
 
-    this.authService.$subscriptions.add(
-      this.authService
-        .signIn(this.signInForm.value)
-        .pipe(first(), catchError(this.authService.errorHandler))
-        .subscribe({
-          next: () => {
-            this.document.location.reload();
-          },
-          error: (error) => {
-            this.signInForm.enable();
-
-            this.isSigningIn = false;
-
-            const snackBarRef = this.snackBar.open(error?.message, `Retry`, {
-              panelClass: `alert-dialog`,
-            });
-
-            snackBarRef.onAction().subscribe(() => {
-              snackBarRef.dismiss();
-              this.submitForm();
-            });
-          },
-        })
+    this.signInForm.disable();
+    this.$subscriptions$.add(
+      this.authService.signIn(this.signInForm.value, this.document).subscribe({
+        next: () => {
+          this.isSigningIn = false;
+        },
+        error: (error) => {
+          this.isSigningIn = false;
+          this.signInForm.enable();
+        },
+      })
     );
   }
-  ngOnDestroy(): void {
-    this.authService.ngOnDestroy();
+  override setDefaultMetaAndTitle(): void {}
+  override setTwitterCardMeta(): void {}
+  override setFacebookOpenGraphMeta(): void {}
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 }

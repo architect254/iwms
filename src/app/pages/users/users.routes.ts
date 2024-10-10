@@ -14,13 +14,19 @@ export const routes: Routes = [
       {
         path: 'view/:id',
         component: ViewComponent,
-        resolve: { user: userResolver, welfares: welfaresResolver },
+        resolve: {
+          user: userResolver,
+          welfares: welfaresResolver,
+        },
         data: { title: 'View User Details' },
       },
       {
         path: 'edit/:id',
         component: UpsertComponent,
-        resolve: { user: userResolver, welfares: welfaresResolver },
+        resolve: {
+          user: userResolver,
+          welfares: welfaresResolver,
+        },
         data: { title: 'Edit User Details' },
       },
       {

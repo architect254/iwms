@@ -74,14 +74,14 @@ export class ViewComponent extends PageDirective {
               if (view) {
                 view.value =
                   (this.user[view.key] as string | number | Date) ||
-                  (this.membership[view.key] as string);
+                  (this.membership?.[view.key] as string);
               }
             }
           );
         }
       );
 
-      this.welfare = this.membership['welfare'] as {
+      this.welfare = this.membership?.['welfare'] as {
         [key: string]: string | number | Date;
       };
       if (this.welfare) {

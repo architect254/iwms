@@ -268,14 +268,14 @@ export class WelfaresService extends ApiService {
   createWelfare(payload: any): Observable<Welfare> {
     return this.http
       .post<Welfare>(this.endpoint, payload)
-      .pipe(catchError(this.errorHandler));
+      ;
   }
 
   updateWelfare(id: number | string, payload: any): Observable<Welfare> {
     const endpoint = this.endpoint + '/' + id;
     return this.http
       .put<Welfare>(endpoint, payload)
-      .pipe(catchError(this.errorHandler));
+      ;
   }
 
   getWelfares(page: number = 1, take: number = 100): Observable<Welfare[]> {
@@ -283,11 +283,11 @@ export class WelfaresService extends ApiService {
       .get<Welfare[]>(this.endpoint, {
         params: new HttpParams().set('page', page).set('take', take),
       })
-      .pipe(catchError(this.errorHandler));
+      ;
   }
 
   getWelfareById(id: number | string): Observable<Welfare> {
     const endpoint = `${this.endpoint}/${id}`;
-    return this.http.get<Welfare>(endpoint).pipe(catchError(this.errorHandler));
+    return this.http.get<Welfare>(endpoint);
   }
 }

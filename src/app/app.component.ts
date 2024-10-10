@@ -6,25 +6,24 @@ import {
   NgZone,
   PLATFORM_ID,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from './shared/page/page.directive';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { environment } from '../environments/environment';
-import { Title, Meta } from '@angular/platform-browser';
 import { SwUpdate } from '@angular/service-worker';
-import { Subscription, first } from 'rxjs';
+import { first } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
 import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { AuthService } from './core/services/auth.service';
 
-export const API_BASE_URL = new InjectionToken('Dynamic API Base Url');
+export const API_SERVER_URL = new InjectionToken('Dynamic API Base Url');
 
-const apiFactory = () => {
+const apiServerFactory = () => {
   if (environment.production) {
-    return ``;
+    return 'https://iwms-be-api.onrender.com';
   } else {
-    return `localhost:3000`;
+    return `http://iwms.com`;
   }
 };
 
@@ -32,19 +31,17 @@ const apiFactory = () => {
   selector: 'root',
   standalone: true,
   imports: [RouterOutlet, ScrollingModule, AppShellComponent],
-  providers: [{ provide: API_BASE_URL, useFactory: apiFactory }],
+  providers: [{ provide: API_SERVER_URL, useFactory: apiServerFactory }],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent extends PageDirective {
   private readonly platform = inject(PLATFORM_ID);
-  private readonly document = inject(DOCUMENT);
 
   constructor(
     private swUpdate: SwUpdate,
-    appRef: ApplicationRef,
-    zone: NgZone,
-    private authSrvice: AuthService
+    private appRef: ApplicationRef,
+    private zone: NgZone
   ) {
     super();
     if (isPlatformBrowser(this.platform)) {
@@ -59,9 +56,9 @@ export class AppComponent extends PageDirective {
       // console.log(this.document);
     }
 
-    this.$subscription$.add(
-      appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
-        zone.run(() => {
+    this.$subscriptions$.add(
+      this.appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
+        this.zone.run(() => {
           this.checkForNewVersion();
 
           // Check for new version every minute
@@ -69,6 +66,10 @@ export class AppComponent extends PageDirective {
         })
       )
     );
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
   }
 
   checkForNewVersion = async () => {
@@ -186,5 +187,9 @@ export class AppComponent extends PageDirective {
         content: `IWMS - Integrated Welfare Management System`,
       },
     ]);
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 }

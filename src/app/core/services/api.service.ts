@@ -8,7 +8,11 @@ import {
 import { Subscription, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  TextOnlySnackBar,
+} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -33,23 +37,6 @@ export class ApiService implements OnDestroy {
   $subscriptions: Subscription = new Subscription();
 
   constructor() {}
-
-  errorHandler(error: HttpErrorResponse) {
-    if (error instanceof HttpErrorResponse) {
-      return throwError(
-        () =>
-          new Error(
-            `${error?.statusText || ''}. ${
-              error?.error?.message ? error?.error?.message : error?.message
-            }`
-          )
-      );
-    } else {
-      return throwError(
-        () => new Error(`Something Went Wrong. Please try again later..`)
-      );
-    }
-  }
 
   ngOnDestroy(): void {
     if (this.$subscriptions) {

@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { DOCUMENT, Location } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -10,26 +9,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import {
-  Subscription,
-  concatMap,
-  catchError,
-  throwError,
-  first,
-  firstValueFrom,
-  take,
-} from 'rxjs';
+import { concatMap } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { UserRole, User } from '../../users/user.model';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SignInDto, SignUpDto } from '../auth.dto';
-import { UsersService } from '../../users/users.service';
+import { PageDirective } from '../../../shared/page/page.directive';
 
 @Component({
   selector: 'iwms-sign-up',
@@ -52,7 +42,7 @@ import { UsersService } from '../../users/users.service';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
 })
-export class SignUpComponent implements OnInit, OnDestroy {
+export class SignUpComponent extends PageDirective {
   private fb = inject(FormBuilder);
 
   signUpForm: FormGroup = this.fb.group(
@@ -85,24 +75,16 @@ export class SignUpComponent implements OnInit, OnDestroy {
     { validator: this.passwordMisMatchValidator() }
   );
 
-  startDate = new Date(2000, 0, 1);
-  minDate = new Date(1930, 0, 1);
-  maxDate = new Date(Date.now());
-
   isSigningUp = false;
 
   isSigningIn = false;
 
-  private document = inject(DOCUMENT);
+  startDate = new Date(2000, 0, 1);
+  minDate = new Date(1930, 0, 1);
+  maxDate = new Date(Date.now());
 
-  constructor(
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private authService: AuthService,
-    private usersService: UsersService,
-    private location: Location
-  ) {
-    
+  constructor(private authService: AuthService) {
+    super();
   }
 
   get first_name() {
@@ -130,7 +112,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
     return this.signUpForm.get(`confirm_password`);
   }
 
-  ngOnInit() {}
+  override ngOnInit() {
+    super.ngOnInit();
+  }
 
   passwordMisMatchValidator() {
     return (form: FormGroup) => {
@@ -155,8 +139,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
   async submitForm() {
     this.isSigningUp = true;
 
-    this.signUpForm.disable();
-
     const signUpPayload: SignUpDto = {
       ...this.signUpForm.value,
     };
@@ -177,11 +159,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
     //     snackBarRef.dismiss();
     //   });
     // }
-    this.authService.$subscriptions.add(
+
+    this.signUpForm.disable();
+    this.$subscriptions$.add(
       this.authService
         .signUp(signUpPayload)
         .pipe(
-          first(),
           concatMap(() => {
             this.isSigningUp = false;
             this.isSigningIn = true;
@@ -189,36 +172,26 @@ export class SignUpComponent implements OnInit, OnDestroy {
             const signInPayload: SignInDto = {
               ...signUpPayload,
             };
-            return this.authService
-              .signIn(signInPayload)
-              .pipe(catchError(this.authService.errorHandler));
-          }),
-          catchError(this.authService.errorHandler)
+            return this.authService.signIn(signInPayload, this.document);
+          })
         )
         .subscribe({
           next: () => {
             this.isSigningIn = false;
-            this.document.location.reload();
           },
           error: (error) => {
             this.isSigningUp = false;
             this.isSigningIn = false;
 
             this.signUpForm.enable();
-
-            const snackBarRef = this.snackBar.open(error?.message, `Retry`, {
-              panelClass: `alert-dialog`,
-            });
-
-            snackBarRef.onAction().subscribe(() => {
-              snackBarRef.dismiss();
-              this.submitForm();
-            });
           },
         })
     );
   }
-  ngOnDestroy(): void {
-    this.authService.ngOnDestroy();
+  override setDefaultMetaAndTitle(): void {}
+  override setTwitterCardMeta(): void {}
+  override setFacebookOpenGraphMeta(): void {}
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 }

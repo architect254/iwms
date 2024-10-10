@@ -436,7 +436,7 @@ export class UpsertComponent extends PageDirective {
     if (this.user) {
       this.service
         .updateUser(this.user['id'] as number, payload)
-        .pipe(catchError(this.service.errorHandler))
+        
         .subscribe({
           next: ({ id }) => {
             this.isSubmitting$ = false;
@@ -464,7 +464,7 @@ export class UpsertComponent extends PageDirective {
     } else {
       this.service
         .createUser(payload)
-        .pipe(catchError(this.service.errorHandler))
+        
         .subscribe({
           next: ({ id }) => {
             this.isSubmitting$ = false;

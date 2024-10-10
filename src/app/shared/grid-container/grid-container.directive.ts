@@ -7,8 +7,6 @@ import { DOCUMENT } from '@angular/common';
   standalone: true,
 })
 export abstract class GridContainerDirective extends PageDirective {
-  private document: Document = inject(DOCUMENT);
-
   gridHeight: number = 0;
   gridWidth: number = 0;
 
