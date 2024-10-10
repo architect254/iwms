@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { ContainerLayoutComponent } from './container-layout.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
 import { userResolver } from './user.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
+import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
 
 export const routes: Routes = [
   {

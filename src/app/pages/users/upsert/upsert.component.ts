@@ -210,7 +210,7 @@ export class UpsertComponent extends PageDirective {
           [key: string]: string | number | Date;
         }[];
 
-        if (this.children.length) {
+        if (this.children?.length) {
           this.checkChange(false, 'No Children');
           this.children.forEach((child, index) => {
             if (index == 0) {
@@ -255,7 +255,7 @@ export class UpsertComponent extends PageDirective {
 
       this.welfares = data['welfares'];
 
-      if (this.welfares.length) {
+      if (this.welfares?.length) {
         this.newWelfareDetailsFormControls$.forEach((form) => {
           form.forEach((control) => {
             if (control) {
@@ -420,8 +420,11 @@ export class UpsertComponent extends PageDirective {
 
     const payload: any = {
       userDto: this.userFormValues,
-      groupDto: this.groupFormValues,
     };
+
+    if (this.groupFormValues) {
+      payload['groupDto'] = this.groupFormValues;
+    }
 
     if (this.spouseFormValues) {
       payload['spouseDto'] = this.spouseFormValues;

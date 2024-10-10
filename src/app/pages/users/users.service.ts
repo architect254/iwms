@@ -226,6 +226,44 @@ export class UsersService extends ApiService {
         icon: 'checklist',
         order: 7,
       }),
+      new CustomStatusData({
+        key: 'status',
+        label: 'Welfare Membership Status',
+        value: 'Active',
+        colors: {
+          'Active': 'green',
+          'Inactive':'red'
+        },
+        icon: 'checklist',
+        order: 8,
+      }),
+    ];
+    return of(data.sort((a, b) => a.order - b.order));
+  }
+
+  getWelfareDataView(): Observable<DynamicCustomDataBase<string>[]> {
+    const data: DynamicCustomDataBase<string>[] = [
+      new CustomTextData({
+        key: 'name',
+        label: 'Name',
+        value: 'Welfare Name',
+        icon: 'badge',
+        order: 1,
+      }),
+      new CustomTextData({
+        key: 'phone_number',
+        label: 'Phone No.',
+        value: '0712345678',
+        icon: 'call_log',
+        order: 2,
+      }),
+      new CustomDateData({
+        key: 'email',
+        label: 'Email',
+        value: 'welfare@welfare.com',
+        icon: 'email',
+        order: 3,
+      }),
     ];
     return of(data.sort((a, b) => a.order - b.order));
   }
@@ -277,20 +315,6 @@ export class UsersService extends ApiService {
         type: 'email',
         order: 6,
       }),
-      new CustomStatusData({
-        key: 'role',
-        label: 'User Role',
-        value: 'Welfare Client Member',
-        colors: {
-          'Site Admin': 'red',
-          'Welfare Manager': 'orange',
-          'Welfare Accountant': 'blue',
-          'Welfare Secretary': 'purple',
-          'Welfare Client Member': 'green',
-        },
-        icon: 'checklist',
-        order: 7,
-      }),
     ];
     return of(data.sort((a, b) => a.order - b.order));
   }
@@ -306,14 +330,14 @@ export class UsersService extends ApiService {
       }),
       new CustomTextData({
         key: 'last_name',
-        label: 'Last Name1',
+        label: 'Last Name',
         value: 'Doe',
         icon: 'badge',
         order: 2,
       }),
       new CustomDateData({
         key: 'birth_date',
-        label: 'Date of Birth2',
+        label: 'Date of Birth',
         value: '07/06/1999',
         icon: 'cake',
         order: 3,
@@ -324,13 +348,13 @@ export class UsersService extends ApiService {
 
   createUser(payload: any): Observable<User> {
     return this.http
-      .post(this.endpoint, payload)
+      .post<User>(this.endpoint, payload)
       .pipe(catchError(this.errorHandler));
   }
 
   updateUser(id: number | string, payload: any): Observable<User> {
     const endpoint = this.endpoint + '/' + id;
-    return this.http.put(endpoint, payload).pipe(catchError(this.errorHandler));
+    return this.http.put<User>(endpoint, payload).pipe(catchError(this.errorHandler));
   }
 
   getUsers(page: number = 1, take: number = 100): Observable<User[]> {

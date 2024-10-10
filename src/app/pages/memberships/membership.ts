@@ -1,8 +1,12 @@
-export interface Membership {
-  id: string;
-  locationId: string;
-  desc: string;
-  rooms: number;
-  rent: number;
-  image_url: string;
+import { BaseEntity } from '../users/user.model';
+import { Welfare } from '../welfares/welfare';
+
+export enum MembershipStatus {
+  ACTIVE = 'Active',
+  INACTVE = 'Inactive',
 }
+export interface Membership extends BaseEntity {
+  status?: MembershipStatus;
+  welfareGroup?: Welfare;
+}
+export class Membership implements Membership {}

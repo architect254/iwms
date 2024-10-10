@@ -18,7 +18,7 @@ export const routes: Routes = [
         component: SignUpComponent,
         data: { title: 'Welfare Management System Auth Sign Up' },
       },
-      { path: '**', redirectTo: '/not-found' },
+      { path: '', pathMatch: 'full', redirectTo: 'sign-in' },
     ],
   },
 ];

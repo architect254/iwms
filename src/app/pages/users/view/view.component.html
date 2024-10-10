@@ -10,6 +10,11 @@
 <h4 class="core-user-header mat-title-large">Core User Details</h4>
 <iwms-dynamic-view [dataset]="userDataView$ | async"></iwms-dynamic-view>
 
+<!-- #welfare -->
+@if (welfare) {
+<h4 class="core-user-header mat-title-large">Group Details</h4>
+<iwms-dynamic-view [dataset]="welfareDataView$ | async"></iwms-dynamic-view>
+}
 <!-- #spouse -->
 
 @if (spouse) {

@@ -10,14 +10,10 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
 
   authService.checkUser();
+
   const isAuthenticated = await firstValueFrom(authService.isAuthenticated$);
-  console.log('is auth', isAuthenticated);
   if (!isAuthenticated) {
-    return new RedirectCommand(router.parseUrl('/auth/sign-in'), {
-      state,
-      browserUrl: router.getCurrentNavigation()?.finalUrl,
-      skipLocationChange: true,
-    });
+    return new RedirectCommand(router.parseUrl('/auth/sign-in'));
   } else {
     return true;
   }

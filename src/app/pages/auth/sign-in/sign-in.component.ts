@@ -60,20 +60,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private snackBar: MatSnackBar
-  ) {
-    this.authService.checkUser();
-    this.authService.$subscriptions.add(
-      this.authService.currentTokenUserValue$
-        .pipe(first())
-        .subscribe((user) => {
-          if (user?.role == 'Site Admin') {
-            this.router.navigate([`/users`]);
-          } else {
-            this.router.navigate([`/`]);
-          }
-        })
-    );
-  }
+  ) {}
 
   get email() {
     return this.signInForm.get(`email`);

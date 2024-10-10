@@ -1,4 +1,11 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -26,6 +33,7 @@ import { PasswordResetDialogComponent } from '../password-reset-dialog/password-
 import { AuthService } from '../../core/services/auth.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../core/services/loading.service';
+import { PageDirective } from '../page/page.directive';
 
 @Component({
   selector: 'layout',
@@ -51,7 +59,7 @@ import { LoadingService } from '../../core/services/loading.service';
     CommonModule,
   ],
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent extends PageDirective implements OnChanges {
   private breakpointObserver = inject(BreakpointObserver);
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -61,32 +69,35 @@ export class LayoutComponent implements OnInit {
     );
 
   breadcrumbs: breadCrumb[] = [];
-  route: ActivatedRoute | null | undefined;
 
-  dialog = inject(MatDialog);
-
-  user$: Observable<any>;
-
-  isApiLoading$: Observable<boolean>;
+  user$!: Observable<any>;
+  isApiLoading$!: Observable<boolean>;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
     private authService: AuthService,
     private loadingService: LoadingService
   ) {
-    this.user$ = this.authService.currentTokenUserValue$;
-    this.isApiLoading$ = this.loadingService.isLoading$;
+    super();
+
     this.configureBreadCrumbs();
   }
 
   isActive(route: string) {
-    return this.activatedRoute.firstChild?.snapshot.url.toString() == route;
+    return this.route.firstChild?.snapshot.url.toString() == route;
   }
-  ngOnInit(): void {}
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.user$ = this.authService.currentTokenUserValue$;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.isApiLoading$ = this.loadingService.isLoading$;
+    console.log('changes', changes);
+  }
 
   changePassword() {
-    const dialogRef = this.dialog.open(PasswordResetDialogComponent, {
+    const dialog = inject(MatDialog);
+    const dialogRef = dialog.open(PasswordResetDialogComponent, {
       data: { password: '', newPassword: '' },
     });
 
@@ -100,7 +111,7 @@ export class LayoutComponent implements OnInit {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        map(() => this.activatedRoute)
+        map(() => this.route)
       )
       .subscribe((route) => {
         this.breadcrumbs = [];
@@ -150,5 +161,9 @@ export class LayoutComponent implements OnInit {
   logout() {
     this.authService.logout();
   }
+
+  override setDefaultMetaAndTitle(): void {}
+  override setTwitterCardMeta(): void {}
+  override setFacebookOpenGraphMeta(): void {}
 }
 type breadCrumb = { label: string; url: string };
