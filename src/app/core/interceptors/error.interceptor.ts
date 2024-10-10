@@ -25,7 +25,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         );
 
         snackBarRef = snackBar.open(errorResponse?.message, `Retry`, {
-          panelClass: `api-error-alert server`,
+          panelClass: `.api-error-alert.server`,
           duration: 200,
         });
 
@@ -35,11 +35,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         });
       } else {
         errorResponse = new Error(
-          `Something Went Wrong. Please try again later..`
+          `Something Went Wrong. Please try again later...`
         );
 
         snackBarRef = snackBar.open(errorResponse?.message, `OK`, {
-          panelClass: `api-error-alert browser`,
+          panelClass: `.api-error-alert.browser`,
           duration: 200,
         });
 

@@ -1,24 +1,27 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { inject, Injectable, InjectionToken, OnDestroy } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Subscription, throwError } from 'rxjs';
+import { Subscription } from 'rxjs';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
-import {
-  MatSnackBar,
-  MatSnackBarRef,
-  TextOnlySnackBar,
-} from '@angular/material/snack-bar';
 
+export const API_SERVER_URL = new InjectionToken<string>(
+  'Dynamic API Server URL'
+);
+
+export const apiServerUrlFactory = (): string => {
+  if (environment.production) {
+    return 'https://iwms-be-api.onrender.com';
+  } else {
+    return `http://iwms.com`;
+  }
+};
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService implements OnDestroy {
-  readonly #SERVER_URL: string = `${environment.serverUrl}`;
+  readonly #SERVER_URL: string = inject(API_SERVER_URL);
   readonly API_URL = `${this.#SERVER_URL}/api`;
 
   protected endpoint = `${this.API_URL}/`;
@@ -28,8 +31,6 @@ export class ApiService implements OnDestroy {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Origin: 'http://iwms.com',
-      Host: '127.0.0.1:3000',
     }),
   };
   protected snackBar = inject(MatSnackBar);

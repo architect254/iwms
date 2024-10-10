@@ -2,7 +2,6 @@ import {
   ApplicationRef,
   Component,
   inject,
-  InjectionToken,
   NgZone,
   PLATFORM_ID,
 } from '@angular/core';
@@ -10,28 +9,16 @@ import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from './shared/page/page.directive';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { environment } from '../environments/environment';
 import { SwUpdate } from '@angular/service-worker';
 import { first } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
-import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { AuthService } from './core/services/auth.service';
-
-export const API_SERVER_URL = new InjectionToken('Dynamic API Base Url');
-
-const apiServerFactory = () => {
-  if (environment.production) {
-    return 'https://iwms-be-api.onrender.com';
-  } else {
-    return `http://iwms.com`;
-  }
-};
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 
 @Component({
   selector: 'root',
   standalone: true,
   imports: [RouterOutlet, ScrollingModule, AppShellComponent],
-  providers: [{ provide: API_SERVER_URL, useFactory: apiServerFactory }],
+  providers: [],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
