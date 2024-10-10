@@ -45,13 +45,13 @@ export class AppComponent extends PageDirective {
   ) {
     super();
     if (isPlatformBrowser(this.platform)) {
-      console.warn('browser');
+      // console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)
       // console.log(document);
     }
 
     if (isPlatformServer(this.platform)) {
-      console.warn('server');
+      // console.warn('server');
       // Not smart to use document here, however, we can inject it ;-)
       // console.log(this.document);
     }
