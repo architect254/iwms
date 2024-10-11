@@ -465,9 +465,14 @@ export class UsersService extends ApiService {
     return this.http.put<User>(endpoint, payload);
   }
 
-  getUsers(page: number = 1, take: number = 100): Observable<User[]> {
+  getUsers(
+    page: number = 1,
+    take: number = 100,
+    searchQueryObj: { [key: string]: string } = {}
+  ): Observable<User[]> {
+    const searchParams = new HttpParams().appendAll(searchQueryObj);
     return this.http.get<User[]>(this.endpoint, {
-      params: new HttpParams().set('page', page).set('take', take),
+      params: searchParams.append('page', page).append('take', take),
     });
   }
 

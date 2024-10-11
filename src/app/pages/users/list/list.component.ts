@@ -61,18 +61,22 @@ import { MatSortModule } from '@angular/material/sort';
 })
 export class ListComponent extends GridContainerDirective {
   pageTitle: string = '';
+
   columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
   filterColumns: FilterColumn[] = MOCK.FILTER_COLUMNS as FilterColumn[];
   statusProperties: StatusProperties = MOCK.STATUS;
   actionProperties: ActionProperties = MOCK.ACTIONS;
+
   defaultSortColumn!: string;
   defaultSortColumnDirection!: 'asc' | 'desc';
 
   data: any[] = [];
 
-  minRentCtrl: FormControl = new FormControl();
+  page: number = 1;
+  take: number = 100;
 
-  filterOptions = [{ key: 1, label: 'option' }];
+  searchQueryDTO: SearchQueryDto = new SearchQueryDto();
+  searchQueryObj!: { [key: string]: string };
 
   constructor(private service: UsersService) {
     super();
@@ -83,38 +87,52 @@ export class ListComponent extends GridContainerDirective {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.service.getUsers().subscribe((users) => {
-      this.data = users.map((user) => {
-        return {
-          id: user.id,
-          name: `${user.first_name} ${user.last_name}`,
-          id_number: user.id_number,
-          phone_number: user.phone_number,
-          email: user.email,
-          profile_image: user.profile_image_url,
-          role: user.role,
-          group: user.membership?.welfare?.name,
-          status: user.membership?.status || 'Active',
-          create_date: user.create_date,
-          update_date: user.update_date,
-        };
-      });
-    });
+    this.fetchData();
   }
 
-  onSelectFilterOption(type: any) {}
+  fetchData(
+    page: number = this.page,
+    take: number = this.take,
+    searchQueryObj = this.searchQueryObj
+  ) {
+    this.$subscriptions$.add(
+      this.service.getUsers(page, take, searchQueryObj).subscribe((users) => {
+        this.data = users.map((user) => {
+          return {
+            id: user.id,
+            name: `${user.first_name} ${user.last_name}`,
+            id_number: user.id_number,
+            phone_number: user.phone_number,
+            email: user.email,
+            profile_image: user.profile_image_url,
+            role: user.role,
+            group: user.membership?.welfare?.name,
+            status: user.membership?.status || 'Active',
+            create_date: user.create_date,
+            update_date: user.update_date,
+          };
+        });
+      })
+    );
+  }
 
   doApplyFilter(filters: FilterOption[]) {
-    const filterParams = new UserListFilterParams();
+    this.searchQueryDTO = Object.create(this.searchQueryDTO);
+    this.searchQueryObj = {};
+
     filters.forEach((filter) => {
-      Object.entries(filter).forEach((entry) => {
-        const [key, value] = entry;
-        if (value && Object.hasOwn(filterParams, key)) {
-          (filterParams as unknown as { [key: string]: string })[key] = value;
-        }
-      });
+      if (Object.hasOwn(this.searchQueryDTO, filter.key)) {
+        const filterParam: { [key: string]: string } = {
+          [filter.key]: filter.value,
+        };
+        Object.assign(this.searchQueryDTO, filterParam);
+      }
     });
-    console.log('filter', filterParams);
+    this.searchQueryObj = Object.fromEntries(
+      Object.entries(this.searchQueryDTO).filter(([key, value]) => !!value)
+    );
+
+    this.fetchData(this.page, this.take, this.searchQueryObj);
   }
 
   override setTwitterCardMeta(): void {
@@ -211,22 +229,30 @@ export class ListComponent extends GridContainerDirective {
     ]);
   }
 }
-export class UserListFilterParams {
-  first_name!: string;
-  last_name!: string;
-  id_number!: string;
-  birth_date!: Date;
-  phone_number!: string;
-  email!: string;
-  role!: string;
-  status!: string;
-  groupId!: number;
+export class SearchQueryDto {
+  first_name?: string;
+  last_name?: string;
+  id_number?: string;
+  birth_date?: Date;
+  phone_number?: string;
+  email?: string;
+  role?: string;
+  status?: string;
+  groupId?: number;
 }
 export const MOCK = {
   FILTER_COLUMNS: [
     {
-      key: 'name',
-      label: 'Full Name',
+      key: 'first_name',
+      label: 'First Name',
+      position: 0,
+      type: 'string',
+      icon: 'badge',
+      combinator: 'Includes',
+    },
+    {
+      key: 'last_name',
+      label: 'Last Name',
       position: 1,
       type: 'string',
       icon: 'badge',
