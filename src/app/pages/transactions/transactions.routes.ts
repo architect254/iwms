@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { ContainerLayoutComponent } from './container-layout.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
-import { NotFoundComponent } from '../../shared/not-found/not-found.component';
+import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
 
 export const routes: Routes = [
   {

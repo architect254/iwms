@@ -16,6 +16,7 @@ import {
 } from '../../shared/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
+import { Welfare } from '../welfares/welfare';
 
 @Injectable({
   providedIn: 'root',
@@ -137,31 +138,140 @@ export class UsersService extends ApiService {
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
-  getWelfareDetailsFormControls() {
+  welfareDetailsFormControls(welfares: Welfare[] | undefined) {
+    let controls: DynamicCustomFormControlBase<string>[];
+    if (welfares?.length) {
+      const welfareOptions = welfares?.map((welfare) => {
+        return { id: welfare?.id!, name: welfare?.name! };
+      });
+      controls = [
+        new CustomDropdownControl({
+          key: 'id',
+          label: 'Welfare Name',
+          options: welfareOptions,
+          icon: 'groups',
+          required: false,
+          order: 1,
+        }),
+      ];
+    } else {
+      controls = [
+        new CustomDropdownControl({
+          key: 'name',
+          label: 'Welfare Name',
+          options: [
+            { id: undefined, name: 'No Welfares. Please create one...' },
+          ],
+          icon: 'groups',
+          required: false,
+          order: 1,
+        }),
+      ];
+    }
+    return of(controls.sort((a, b) => a.order - b.order));
+  }
+
+  getSpouseDetailsFormControls() {
     const controls: DynamicCustomFormControlBase<string>[] = [
-      new CustomDropdownControl({
-        key: 'name',
-        label: 'Welfare Name',
-        options: [
-          { id: 'Mzedu', name: 'Mzedu' },
-          { id: 'Wumweri', name: 'Wumweri' },
-          { id: 'Mzinyi', name: 'Mzinyi' },
-          { id: 'Mbololo Sacco', name: 'Mbololo Sacco' },
-          {
-            id: 'Wundanyi Pedu Self-help',
-            name: 'Wundanyi Pedu Self-help',
-          },
-        ],
-        icon: 'groups',
-        required: false,
+      new CustomTextboxControl({
+        key: 'first_name',
+        label: 'First Name',
+        value: '',
+        placeholder: 'John',
+        icon: 'badge',
+        required: true,
         order: 1,
+      }),
+      new CustomTextboxControl({
+        key: 'last_name',
+        label: 'Last Name',
+        value: '',
+        placeholder: 'Doe',
+        icon: 'badge',
+        required: true,
+        order: 2,
+      }),
+      new CustomTextboxControl({
+        key: 'id_number',
+        label: 'National ID No.',
+        value: '',
+        placeholder: '12345678',
+        icon: 'fingerprint',
+        required: true,
+        order: 3,
+      }),
+      new CustomDateControl({
+        key: 'birth_date',
+        label: 'Date of Birth',
+        value: '',
+        placeholder: '11/07/2000',
+        dateConfig: {
+          startDate: new Date(2000, 0, 1),
+          minDate: new Date(1930, 0, 1),
+          maxDate: new Date(Date.now()),
+        },
+        icon: 'cake',
+        required: true,
+        order: 4,
+      }),
+      new CustomTextboxControl({
+        key: 'phone_number',
+        label: 'Phone No.',
+        value: '',
+        placeholder: '0712345678',
+        icon: 'call_log',
+        required: true,
+        order: 5,
+      }),
+      new CustomTextboxControl({
+        key: 'email',
+        label: 'Email',
+        value: '',
+        placeholder: 'a@a.com',
+        icon: 'contact_mail',
+        type: 'email',
+        required: true,
+        order: 6,
       }),
     ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
-  getMembershipDetailsFormControls() {
-    const controls: DynamicCustomFormControlBase<string>[] = [];
+  getChildDetailsFormControls() {
+    const controls: DynamicCustomFormControlBase<string>[] = [
+      new CustomTextboxControl({
+        key: 'first_name',
+        label: 'First Name',
+        value: '',
+        placeholder: 'John',
+        icon: 'badge',
+        required: true,
+        order: 1,
+      }),
+      new CustomTextboxControl({
+        key: 'last_name',
+        label: 'Last Name',
+        value: '',
+        placeholder: 'Doe',
+        icon: 'badge',
+        required: true,
+        order: 2,
+      }),
+      new CustomDateControl({
+        key: 'birth_date',
+        label: 'Date of Birth',
+        value: '',
+        placeholder: '11/07/2000',
+        dateConfig: {
+          startDate: new Date(2000, 0, 1),
+          minDate: new Date(1930, 0, 1),
+          maxDate: new Date(Date.now()),
+        },
+        icon: 'cake',
+        required: true,
+        order: 3,
+      }),
+    ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
 
@@ -226,6 +336,44 @@ export class UsersService extends ApiService {
         icon: 'checklist',
         order: 7,
       }),
+      new CustomStatusData({
+        key: 'status',
+        label: 'Welfare Membership Status',
+        value: 'Active',
+        colors: {
+          Active: 'green',
+          Inactive: 'red',
+        },
+        icon: 'checklist',
+        order: 8,
+      }),
+    ];
+    return of(data.sort((a, b) => a.order - b.order));
+  }
+
+  getWelfareDataView(): Observable<DynamicCustomDataBase<string>[]> {
+    const data: DynamicCustomDataBase<string>[] = [
+      new CustomTextData({
+        key: 'name',
+        label: 'Name',
+        value: 'Welfare Name',
+        icon: 'badge',
+        order: 1,
+      }),
+      new CustomTextData({
+        key: 'phone_number',
+        label: 'Phone No.',
+        value: '0712345678',
+        icon: 'call_log',
+        order: 2,
+      }),
+      new CustomTextData({
+        key: 'email',
+        label: 'Email',
+        value: 'welfare@welfare.com',
+        icon: 'email',
+        order: 3,
+      }),
     ];
     return of(data.sort((a, b) => a.order - b.order));
   }
@@ -277,20 +425,6 @@ export class UsersService extends ApiService {
         type: 'email',
         order: 6,
       }),
-      new CustomStatusData({
-        key: 'role',
-        label: 'User Role',
-        value: 'Welfare Client Member',
-        colors: {
-          'Site Admin': 'red',
-          'Welfare Manager': 'orange',
-          'Welfare Accountant': 'blue',
-          'Welfare Secretary': 'purple',
-          'Welfare Client Member': 'green',
-        },
-        icon: 'checklist',
-        order: 7,
-      }),
     ];
     return of(data.sort((a, b) => a.order - b.order));
   }
@@ -306,14 +440,14 @@ export class UsersService extends ApiService {
       }),
       new CustomTextData({
         key: 'last_name',
-        label: 'Last Name1',
+        label: 'Last Name',
         value: 'Doe',
         icon: 'badge',
         order: 2,
       }),
       new CustomDateData({
         key: 'birth_date',
-        label: 'Date of Birth2',
+        label: 'Date of Birth',
         value: '07/06/1999',
         icon: 'cake',
         order: 3,
@@ -323,26 +457,27 @@ export class UsersService extends ApiService {
   }
 
   createUser(payload: any): Observable<User> {
-    return this.http
-      .post(this.endpoint, payload)
-      .pipe(catchError(this.errorHandler));
+    return this.http.post<User>(this.endpoint, payload);
   }
 
   updateUser(id: number | string, payload: any): Observable<User> {
     const endpoint = this.endpoint + '/' + id;
-    return this.http.put(endpoint, payload).pipe(catchError(this.errorHandler));
+    return this.http.put<User>(endpoint, payload);
   }
 
   getUsers(page: number = 1, take: number = 100): Observable<User[]> {
-    return this.http
-      .get<User[]>(this.endpoint, {
-        params: new HttpParams().set('page', page).set('take', take),
-      })
-      .pipe(catchError(this.errorHandler));
+    return this.http.get<User[]>(this.endpoint, {
+      params: new HttpParams().set('page', page).set('take', take),
+    });
   }
 
   getUserById(id: number | string): Observable<User> {
     const endpoint = `${this.endpoint}/${id}`;
-    return this.http.get<User>(endpoint).pipe(catchError(this.errorHandler));
+    return this.http.get<User>(endpoint);
+  }
+
+  getWelfareByMembershipId(id: string): Observable<Welfare> {
+    const endpoint = `${this.endpoint}/welfare-by-membership-id/${id}`;
+    return this.http.get<Welfare>(endpoint);
   }
 }

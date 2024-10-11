@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { ContainerLayoutComponent } from './container-layout.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
-import { userResolver } from './user.resolver';
+import { userResolver, welfareResolver } from './user.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
+import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
 
 export const routes: Routes = [
   {
@@ -14,18 +14,27 @@ export const routes: Routes = [
       {
         path: 'view/:id',
         component: ViewComponent,
-        resolve: { user: userResolver, welfares: welfaresResolver },
+        resolve: {
+          user: userResolver,
+          welfares: welfaresResolver,
+          welfare: welfareResolver,
+        },
         data: { title: 'View User Details' },
       },
       {
         path: 'edit/:id',
         component: UpsertComponent,
-        resolve: { user: userResolver, welfares: welfaresResolver },
+        resolve: {
+          user: userResolver,
+          welfares: welfaresResolver,
+          welfare: welfareResolver,
+        },
         data: { title: 'Edit User Details' },
       },
       {
         path: 'add',
         component: UpsertComponent,
+        resolve: { welfares: welfaresResolver },
         data: { title: 'Add User Details' },
       },
       {

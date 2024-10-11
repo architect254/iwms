@@ -3,6 +3,7 @@
     display: flex;
     flex-wrap: wrap;
     margin: 0;
+    padding: 4px;
 
     .data-label {
         // color: rgba(31, 37, 41, .75);
@@ -11,5 +12,6 @@
 
     &>* {
         flex: 1 1 100%;
+        overflow-wrap: anywhere;
     }
 }

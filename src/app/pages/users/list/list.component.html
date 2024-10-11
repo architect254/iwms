@@ -1,5 +1,5 @@
 <iwms-header [title]="pageTitle">
-  <iwms-grid-search [filterOptions]="filterColumns"></iwms-grid-search
+  <iwms-grid-search [filterOptions]="filterColumns" (applyFilter)="doApplyFilter($event)"></iwms-grid-search
 ></iwms-header>
 <iwms-grid
   name="User"

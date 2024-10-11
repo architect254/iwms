@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -13,12 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Observable } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Router,
-  RouterModule,
-} from '@angular/router';
+import { ActivatedRoute, NavigationEnd, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LogoComponent } from '../logo/logo.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +21,7 @@ import { PasswordResetDialogComponent } from '../password-reset-dialog/password-
 import { AuthService } from '../../core/services/auth.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../core/services/loading.service';
+import { PageDirective } from '../page/page.directive';
 
 @Component({
   selector: 'layout',
@@ -51,7 +47,7 @@ import { LoadingService } from '../../core/services/loading.service';
     CommonModule,
   ],
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent extends PageDirective {
   private breakpointObserver = inject(BreakpointObserver);
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -60,79 +56,100 @@ export class LayoutComponent implements OnInit {
       shareReplay()
     );
 
-  breadcrumbs: breadCrumb[] = [];
-  route: ActivatedRoute | null | undefined;
+  user$!: Observable<any>;
+  isApiLoading: boolean = false;
 
-  dialog = inject(MatDialog);
-
-  user$: Observable<any>;
-
-  isApiLoading$: Observable<boolean>;
+  breadcrumbs: BreadCrumb[] = [];
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
     private authService: AuthService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private cdr: ChangeDetectorRef
   ) {
-    this.user$ = this.authService.currentTokenUserValue$;
-    this.isApiLoading$ = this.loadingService.isLoading$;
+    super();
     this.configureBreadCrumbs();
   }
 
-  isActive(route: string) {
-    return this.activatedRoute.firstChild?.snapshot.url.toString() == route;
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.user$ = this.authService.currentTokenUserValue$;
+    this.$subscriptions$.add(
+      this.loadingService.isLoading$.subscribe((isLoading) => {
+        this.isApiLoading = isLoading;
+        this.cdr.detectChanges();
+      })
+    );
   }
-  ngOnInit(): void {}
 
-  changePassword() {
-    const dialogRef = this.dialog.open(PasswordResetDialogComponent, {
+  public isActive(route: string) {
+    return this.route.firstChild?.snapshot.url.toString() == route;
+  }
+
+  public changePassword() {
+    this.dialogRef = this.dialog.open(PasswordResetDialogComponent, {
       data: { password: '', newPassword: '' },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    this.dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
       }
     });
   }
 
-  configureBreadCrumbs() {
+  private configureBreadCrumbs() {
     this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map(() => this.activatedRoute)
-      )
-      .subscribe((route) => {
-        this.breadcrumbs = [];
-        while (route.firstChild) {
-          route = route.firstChild;
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.applyBreadcrumbRoutes(this.route);
 
-          if (route.snapshot.data['title']) {
-            this.breadcrumbs.push({
-              label: route.snapshot.data['title'],
-              url: route?.snapshot?.url.toString(),
-            });
-          }
-        }
-
-        this.breadcrumbs = this.breadcrumbs.reduce(
-          (previousBreadcrumbs: breadCrumb[], currentBreadcrumb) => {
-            if (
-              !previousBreadcrumbs.some(
-                (obj) => obj.label === currentBreadcrumb.label
-              )
-            ) {
-              previousBreadcrumbs.push(currentBreadcrumb);
-            }
-            return previousBreadcrumbs;
-          },
-          []
-        );
+        this.reduceBreadcrumbRoutes();
       });
   }
-  buildBreadcrumbRouteingUrl(breadcrumbPosition: number): string[] {
+
+  private reduceBreadcrumbRoutes() {
+    this.breadcrumbs = this.breadcrumbs.reduce(
+      (previousBreadcrumbs: BreadCrumb[], currentBreadcrumb) => {
+        if (
+          !previousBreadcrumbs.some(
+            (obj) => obj.label === currentBreadcrumb.label
+          )
+        ) {
+          previousBreadcrumbs.push(currentBreadcrumb);
+        }
+        return previousBreadcrumbs;
+      },
+      []
+    );
+  }
+
+  private applyBreadcrumbRoutes(route: ActivatedRoute) {
+    this.breadcrumbs = [];
+    while (route.firstChild) {
+      route = route.firstChild;
+
+      if (route.snapshot.data['title']) {
+        this.breadcrumbs.push({
+          label: route.snapshot.data['title'],
+          url: route?.snapshot?.url.toString(),
+        });
+      }
+    }
+  }
+
+  configureBreadcrumbRouteUrl(breadcrumbPosition: number): string[] {
     let url = '';
 
+    url = this.configureBreadcrumbRouteUrlForEachBreadcrumb(
+      breadcrumbPosition,
+      url
+    );
+    return [url];
+  }
+
+  private configureBreadcrumbRouteUrlForEachBreadcrumb(
+    breadcrumbPosition: number,
+    url: string
+  ) {
     for (let index = 0; index <= breadcrumbPosition; index++) {
       if (this.breadcrumbs.length > 2) {
         url.concat(`/${this.breadcrumbs[index].url}`);
@@ -144,11 +161,18 @@ export class LayoutComponent implements OnInit {
         }
       }
     }
-    return [url];
+    return url;
   }
 
-  logout() {
+  public logout() {
     this.authService.logout();
   }
+
+  override setDefaultMetaAndTitle(): void {}
+  override setTwitterCardMeta(): void {}
+  override setFacebookOpenGraphMeta(): void {}
 }
-type breadCrumb = { label: string; url: string };
+interface BreadCrumb {
+  label: string;
+  url: string;
+}

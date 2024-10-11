@@ -43,13 +43,13 @@ export class GridSearchComponent {
   @Input() title: string = '';
   @Input() filterOptions: any = [];
 
-  @Output() search: EventEmitter<SearchOption[]> = new EventEmitter();
+  @Output() applyFilter: EventEmitter<FilterOption[]> = new EventEmitter();
 
   filterControl: FormControl = new FormControl({ updateOn: 'change' });
   selectedFilterControl: FormControl = new FormControl();
 
   selectedFilterOption: FilterColumn | null = null;
-  selectedFilterOptions: SearchOption[] = [];
+  selectedFilterOptions: FilterOption[] = [];
 
   startDate = new Date(2000, 0, 1);
   minDate = new Date(1930, 0, 1);
@@ -85,7 +85,7 @@ export class GridSearchComponent {
     this.cdr.detectChanges();
   }
 
-  actOnFilterOption(option: SearchOption, action: string) {
+  actOnFilterOption(option: FilterOption, action: string) {
     let selectedOption = this.selectedFilterOptions.find(
       (selectedOption) => selectedOption.key === option.key
     );
@@ -119,7 +119,7 @@ export class GridSearchComponent {
     }
   }
 
-  applyFilter() {
+  addFilter() {
     if (this.selectedFilterOption?.type == 'date') {
       this.selectedFilterOption!.value = new Date(
         this.selectedFilterControl?.value
@@ -145,9 +145,11 @@ export class GridSearchComponent {
     this.filterControl.setValue(null);
     this.selectedFilterControl.setValue(null);
     this.selectedFilterControl.disable();
+
+    this.applyFilter.emit(this.selectedFilterOptions);
   }
 }
-export interface SearchOption {
+export interface FilterOption {
   key: string;
   label: string;
   type: string;

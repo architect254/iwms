@@ -94,108 +94,6 @@ export class MembershipsService extends ApiService {
     ];
     return of(controls.sort((a, b) => a.order - b.order));
   }
-  getSpouseDetailsFormControls() {
-    const controls: DynamicCustomFormControlBase<string>[] = [
-      new CustomTextboxControl({
-        key: 'first_name',
-        label: 'First Name',
-        value: '',
-        placeholder: 'John',
-        icon: 'badge',
-        required: true,
-        order: 1,
-      }),
-      new CustomTextboxControl({
-        key: 'last_name',
-        label: 'Last Name',
-        value: '',
-        placeholder: 'Doe',
-        icon: 'badge',
-        required: true,
-        order: 2,
-      }),
-      new CustomTextboxControl({
-        key: 'id_number',
-        label: 'National ID No.',
-        value: '',
-        placeholder: '12345678',
-        icon: 'fingerprint',
-        required: true,
-        order: 3,
-      }),
-      new CustomDateControl({
-        key: 'birth_date',
-        label: 'Date of Birth',
-        value: '',
-        placeholder: '11/07/2000',
-        dateConfig: {
-          startDate: new Date(2000, 0, 1),
-          minDate: new Date(1930, 0, 1),
-          maxDate: new Date(Date.now()),
-        },
-        icon: 'cake',
-        required: true,
-        order: 4,
-      }),
-      new CustomTextboxControl({
-        key: 'phone_number',
-        label: 'Phone No.',
-        value: '',
-        placeholder: '0712345678',
-        icon: 'call_log',
-        required: true,
-        order: 5,
-      }),
-      new CustomTextboxControl({
-        key: 'email',
-        label: 'Email',
-        value: '',
-        placeholder: 'a@a.com',
-        icon: 'contact_mail',
-        type: 'email',
-        required: true,
-        order: 6,
-      }),
-    ];
-    return of(controls.sort((a, b) => a.order - b.order));
-  }
-  getChildDetailsFormControls() {
-    const controls: DynamicCustomFormControlBase<string>[] = [
-      new CustomTextboxControl({
-        key: 'first_name',
-        label: 'First Name',
-        value: '',
-        placeholder: 'John',
-        icon: 'badge',
-        required: true,
-        order: 1,
-      }),
-      new CustomTextboxControl({
-        key: 'last_name',
-        label: 'Last Name',
-        value: '',
-        placeholder: 'Doe',
-        icon: 'badge',
-        required: true,
-        order: 2,
-      }),
-      new CustomDateControl({
-        key: 'birth_date',
-        label: 'Date of Birth',
-        value: '',
-        placeholder: '11/07/2000',
-        dateConfig: {
-          startDate: new Date(2000, 0, 1),
-          minDate: new Date(1930, 0, 1),
-          maxDate: new Date(Date.now()),
-        },
-        icon: 'cake',
-        required: true,
-        order: 3,
-      }),
-    ];
-    return of(controls.sort((a, b) => a.order - b.order));
-  }
 
   getDataView() {
     const data: DynamicCustomDataBase<string>[] = [
@@ -252,16 +150,14 @@ export class MembershipsService extends ApiService {
   }
 
   getAllMemberships(): Observable<Membership[]> {
-    return this.http
-      .get<Membership[]>(this.endpoint, this.httpOptions)
-      .pipe(catchError(this.errorHandler));
+    return this.http.get<Membership[]>(this.endpoint, this.httpOptions);
   }
 
   getMembershipById(membershipId: number | string) {
     this.$subscriptions.add(
       this.http
         .get<Membership>(this.endpoint)
-        .pipe(catchError(this.errorHandler))
+
         .subscribe((membership: Membership) => {
           this.$memberships.next([...this.$memberships.getValue(), membership]);
         })

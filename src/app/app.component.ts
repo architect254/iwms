@@ -2,66 +2,49 @@ import {
   ApplicationRef,
   Component,
   inject,
-  InjectionToken,
   NgZone,
   PLATFORM_ID,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from './shared/page/page.directive';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { environment } from '../environments/environment';
-import { Title, Meta } from '@angular/platform-browser';
 import { SwUpdate } from '@angular/service-worker';
-import { Subscription, first } from 'rxjs';
+import { first } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
-import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { AuthService } from './core/services/auth.service';
-
-export const API_BASE_URL = new InjectionToken('Dynamic API Base Url');
-
-const apiFactory = () => {
-  if (environment.production) {
-    return ``;
-  } else {
-    return `localhost:3000`;
-  }
-};
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 
 @Component({
   selector: 'root',
   standalone: true,
-  imports: [RouterOutlet, ScrollingModule, AppShellComponent],
-  providers: [{ provide: API_BASE_URL, useFactory: apiFactory }],
+  imports: [RouterOutlet, AppShellComponent],
+  providers: [],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent extends PageDirective {
   private readonly platform = inject(PLATFORM_ID);
-  private readonly document = inject(DOCUMENT);
 
   constructor(
     private swUpdate: SwUpdate,
-    appRef: ApplicationRef,
-    zone: NgZone,
-    private authSrvice: AuthService
+    private appRef: ApplicationRef,
+    private zone: NgZone
   ) {
     super();
     if (isPlatformBrowser(this.platform)) {
-      console.warn('browser');
+      // console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)
       // console.log(document);
     }
 
     if (isPlatformServer(this.platform)) {
-      console.warn('server');
+      // console.warn('server');
       // Not smart to use document here, however, we can inject it ;-)
       // console.log(this.document);
     }
 
-    this.$subscription$.add(
-      appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
-        zone.run(() => {
+    this.$subscriptions$.add(
+      this.appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
+        this.zone.run(() => {
           this.checkForNewVersion();
 
           // Check for new version every minute
@@ -69,6 +52,10 @@ export class AppComponent extends PageDirective {
         })
       )
     );
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
   }
 
   checkForNewVersion = async () => {
@@ -186,5 +173,9 @@ export class AppComponent extends PageDirective {
         content: `IWMS - Integrated Welfare Management System`,
       },
     ]);
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 }

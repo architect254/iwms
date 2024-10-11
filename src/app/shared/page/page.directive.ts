@@ -1,4 +1,7 @@
+import { DOCUMENT } from '@angular/common';
 import { Directive, inject, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SimpleSnackBar } from '@angular/material/snack-bar';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subscription } from 'rxjs';
@@ -7,13 +10,18 @@ import { filter, map, Subscription } from 'rxjs';
   standalone: true,
 })
 export abstract class PageDirective implements OnInit, OnDestroy {
-  private _title = inject(Title);
-  private _meta = inject(Meta);
+  private _title: Title = inject(Title);
+  private _meta: Meta = inject(Meta);
 
   protected route: ActivatedRoute = inject(ActivatedRoute);
   protected router: Router = inject(Router);
 
-  $subscription$: Subscription = new Subscription();
+  protected document: Document = inject(DOCUMENT);
+
+  protected dialog: MatDialog = inject(MatDialog);
+  protected dialogRef!: MatDialogRef<any>;
+
+  protected $subscriptions$: Subscription = new Subscription();
 
   constructor() {}
 
@@ -64,8 +72,8 @@ export abstract class PageDirective implements OnInit, OnDestroy {
   abstract setFacebookOpenGraphMeta(): void;
 
   ngOnDestroy(): void {
-    if (this.$subscription$) {
-      this.$subscription$.unsubscribe();
+    if (this.$subscriptions$) {
+      this.$subscriptions$.unsubscribe();
     }
   }
 }

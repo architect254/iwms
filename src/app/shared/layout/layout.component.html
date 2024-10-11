@@ -69,10 +69,9 @@
     </mat-toolbar>
   </mat-sidenav>
   <mat-sidenav-content>
-    <mat-progress-bar
-      mode="indeterminate"
-      [hidden]="!(isApiLoading$ | async)"
-    ></mat-progress-bar>
+    @if (isApiLoading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
     <mat-toolbar id="toolbar">
       <mat-toolbar-row class="container primary-toolbar">
         @if (isHandset$ | async) {
@@ -173,7 +172,7 @@
                 $index == breadcrumbs.length - 1 ? 'page' : undefined
               "
             >
-              <a [routerLink]="buildBreadcrumbRouteingUrl($index)">{{
+              <a [routerLink]="configureBreadcrumbRouteUrl($index)">{{
                 breadcrumb.label
               }}</a>
             </li>
@@ -182,7 +181,7 @@
         </nav>
       </mat-toolbar-row>
     </mat-toolbar>
-    <section class="container" id="container">
+    <section class="container" id="main-routing-container">
       <router-outlet></router-outlet>
     </section>
   </mat-sidenav-content>

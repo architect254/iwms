@@ -6,7 +6,5 @@ import { Welfare } from './welfare';
 
 export const welfaresResolver: ResolveFn<Welfare[] | null> = (route, state) => {
   const welfaresService = inject(WelfaresService);
-  return welfaresService
-    .getAllWelfares()
-    .pipe(catchError(welfaresService.errorHandler));
+  return welfaresService.getWelfares();
 };

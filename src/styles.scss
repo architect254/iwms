@@ -76,14 +76,17 @@ body {
   }
 
   .core-user-header,
-  .child-header,
-  .spouse-header {
+  .welfare-header,
+  .children-header,
+  .spouse-header,
+  .page-title {
     font-weight: bold !important;
+    margin-bottom: 0 !important;
   }
 
-  iwms-view{
+  iwms-view {
     display: block;
-    padding-bottom: 30px;
+    margin-bottom: 100px;
   }
 }
 

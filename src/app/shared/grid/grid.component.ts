@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'iwms-grid',
@@ -20,6 +21,7 @@ import { Router, RouterModule } from '@angular/router';
     MatButtonModule,
     MatMenuModule,
     MatIconModule,
+    ScrollingModule,
     MatChipsModule,
     MatProgressSpinnerModule,
     MatSortModule,

@@ -2,6 +2,7 @@ import {
   ApplicationConfig,
   provideZoneChangeDetection,
   isDevMode,
+  InjectionToken,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
@@ -27,6 +28,11 @@ import {
 } from '@auth0/angular-jwt';
 import { AuthService } from './core/services/auth.service';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
+import {
+  API_SERVER_URL,
+  apiServerUrlFactory,
+} from './core/services/api.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -46,10 +52,14 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
-    AuthService,
-    JwtHelperService,
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([loadingInterceptor, errorInterceptor])
+    ),
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: API_SERVER_URL, useFactory: apiServerUrlFactory, multi: true },
+    AuthService,
+    JwtHelperService,
   ],
 };

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
 import { Welfare } from './welfare';
 import {
   CustomDropdownControl,
@@ -12,12 +11,14 @@ import {
   DynamicCustomDataBase,
 } from '../../shared/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
+import { HttpParams } from '@angular/common/http';
+import { of, Observable, catchError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WelfaresService extends ApiService {
-  protected override endpoint = `${this.API_URL}/groups`;
+  protected override endpoint = `${this.API_URL}/welfares`;
 
   constructor() {
     super();
@@ -264,15 +265,29 @@ export class WelfaresService extends ApiService {
     return of(data.sort((a, b) => a.order - b.order));
   }
 
-  getAllWelfares(): Observable<Welfare[]> {
+  createWelfare(payload: any): Observable<Welfare> {
     return this.http
-      .get<Welfare[]>(this.endpoint, this.httpOptions)
-      .pipe(catchError(this.errorHandler));
+      .post<Welfare>(this.endpoint, payload)
+      ;
   }
 
-  getWelfareById(id: number | string) {
+  updateWelfare(id: number | string, payload: any): Observable<Welfare> {
+    const endpoint = this.endpoint + '/' + id;
     return this.http
-      .get<Welfare>(this.endpoint)
-      .pipe(catchError(this.errorHandler));
+      .put<Welfare>(endpoint, payload)
+      ;
+  }
+
+  getWelfares(page: number = 1, take: number = 100): Observable<Welfare[]> {
+    return this.http
+      .get<Welfare[]>(this.endpoint, {
+        params: new HttpParams().set('page', page).set('take', take),
+      })
+      ;
+  }
+
+  getWelfareById(id: number | string): Observable<Welfare> {
+    const endpoint = `${this.endpoint}/${id}`;
+    return this.http.get<Welfare>(endpoint);
   }
 }

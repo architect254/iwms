@@ -49,9 +49,26 @@
   }
 
   .core-user-header,
-  .child-header,
+  .welfare-header,
+  .children-header,
   .spouse-header {
-    color: mat.get-theme-color($iwms-theme, primary, 30);
+    color: mat.get-theme-color($iwms-theme, primary, 35);
+  }
+
+  iwms-upsert {
+    --stepper-color: var(--mat-stepper-header-icon-background-color, var(--mat-app-on-surface-variant));
+
+    .core-user-header,
+    .welfare-header,
+    .children-header,
+    .spouse-header {
+      color: var(--stepper-color);
+
+      &.selected {
+        color: mat.get-theme-color($iwms-theme, primary, 35);
+
+      }
+    }
   }
 
   .child-section {

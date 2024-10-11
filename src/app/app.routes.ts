@@ -2,18 +2,18 @@ import { Routes } from '@angular/router';
 
 import { LayoutComponent } from './shared/layout/layout.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
-import {  authGuard } from './core/guards/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  {
-    path: 'auth',
-    loadChildren: () =>
-      import('./pages/auth/auth.routes').then((auth) => auth.routes),
-  },
   {
     path: 'not-found',
     component: NotFoundComponent,
     data: { title: 'Page Not Found' },
+  },
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('./pages/auth/auth.routes').then((auth) => auth.routes),
   },
   {
     path: '',
