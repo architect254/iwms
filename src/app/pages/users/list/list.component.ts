@@ -19,7 +19,10 @@ import {
 } from '../../../shared/grid/grid.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
-import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
+import {
+  FilterOption,
+  GridSearchComponent,
+} from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -71,7 +74,7 @@ export class ListComponent extends GridContainerDirective {
 
   filterOptions = [{ key: 1, label: 'option' }];
 
-  constructor(private _usersService: UsersService) {
+  constructor(private service: UsersService) {
     super();
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
@@ -80,7 +83,7 @@ export class ListComponent extends GridContainerDirective {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this._usersService.getUsers().subscribe((users) => {
+    this.service.getUsers().subscribe((users) => {
       this.data = users.map((user) => {
         return {
           id: user.id,
@@ -100,6 +103,19 @@ export class ListComponent extends GridContainerDirective {
   }
 
   onSelectFilterOption(type: any) {}
+
+  doApplyFilter(filters: FilterOption[]) {
+    const filterParams = new UserListFilterParams();
+    filters.forEach((filter) => {
+      Object.entries(filter).forEach((entry) => {
+        const [key, value] = entry;
+        if (value && Object.hasOwn(filterParams, key)) {
+          (filterParams as unknown as { [key: string]: string })[key] = value;
+        }
+      });
+    });
+    console.log('filter', filterParams);
+  }
 
   override setTwitterCardMeta(): void {
     this.setMeta([
@@ -194,6 +210,17 @@ export class ListComponent extends GridContainerDirective {
       },
     ]);
   }
+}
+export class UserListFilterParams {
+  first_name!: string;
+  last_name!: string;
+  id_number!: string;
+  birth_date!: Date;
+  phone_number!: string;
+  email!: string;
+  role!: string;
+  status!: string;
+  groupId!: number;
 }
 export const MOCK = {
   FILTER_COLUMNS: [

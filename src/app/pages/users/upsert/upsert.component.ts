@@ -16,7 +16,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PageDirective } from '../../../shared/page/page.directive';
 import { Welfare } from '../../welfares/welfare';
-import { Child, Spouse, User } from '../user.model';
+import { Child, Spouse, User, UserRole } from '../user.model';
 import { Membership } from '../../memberships/membership';
 import { ValueType } from '../../../shared/form-control/control.component';
 
@@ -97,28 +97,40 @@ export class UpsertComponent extends PageDirective {
 
   constructor(private service: UsersService) {
     super();
+
+    this.coreUserDetailsFormControls$ =
+      this.service.getCoreUserDetailsFormControls();
+
+    this.newWelfareDetailsFormControls$ =
+      this.service.newWelfareDetailsFormControls();
+
+    this.spouseDetailsFormControls$ =
+      this.service.getSpouseDetailsFormControls();
+    this.childrenDetailsFormControls$ = [
+      this.service.getChildDetailsFormControls(),
+    ];
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
       this.viewUrl = `/users/view/${this.route.snapshot.paramMap.get('id')}`;
 
-      this.coreUserDetailsFormControls$ =
-        this.service.getCoreUserDetailsFormControls();
-      this.newWelfareDetailsFormControls$ =
-        this.service.newWelfareDetailsFormControls();
+      this.user = data['user'];
 
-      this.spouseDetailsFormControls$ =
-        this.service.getSpouseDetailsFormControls();
-      this.childrenDetailsFormControls$ = [
-        this.service.getChildDetailsFormControls(),
-      ];
+      this.membership = this.user?.membership!;
+      this.welfare = this.membership?.welfare;
 
-      this.user = data['user'] as User;
+      this.spouse = this.user?.spouse!;
+      this.children = this.user?.children!;
+
+      this.welfares = data['welfares'];
+      this.welfareDetailsFormControls$ =
+        this.service.welfareDetailsFormControls(this.welfares);
+
       if (this.user) {
         this.coreUserDetailsFormControls$.forEach(
           (form: DynamicCustomFormControlBase<ValueType>[]) => {
             form.forEach((control: DynamicCustomFormControlBase<ValueType>) => {
               Object.entries<ValueType>(
-                this.user as { [key: string]: ValueType }
+                this.user as unknown as { [key: string]: ValueType }
               ).forEach((entry, index, entries) => {
                 const [key, value] = entry;
                 if (control.key == key) {
@@ -129,35 +141,26 @@ export class UpsertComponent extends PageDirective {
           }
         );
 
-        this.tryDisplayingMembershipForm(this.user['role'] as string);
-        this.checkCanCreateNewWelfare(this.user['role'] as string);
+        this.tryDisplayingMembershipForm(this.user?.role);
+        this.checkCanCreateNewWelfare(this.user?.role);
         this.isProceedAllowed['Core User Details'] = true;
-
-        this.welfare = data['welfare'];
 
         if (this.welfare) {
           this.welfareDetailsFormControls$.forEach(
             (form: DynamicCustomFormControlBase<ValueType>[]) => {
               form.forEach(
                 (control: DynamicCustomFormControlBase<ValueType>) => {
-                  Object.entries<ValueType>(
-                    this.welfare as { [key: string]: ValueType }
-                  ).forEach((entry, index, entries) => {
-                    const [key, value] = entry;
-                    if (control.key == key) {
-                      control.value = value;
-                    }
-                  });
+                  if (control) {
+                    control.value = this.welfare.id;
+                  }
                 }
               );
             }
           );
 
-          this.check(false, 'Create New Welfare');
+          this.canCreateNewWelfare = false;
           this.isProceedAllowed['Welfare Details'] = true;
         }
-
-        this.spouse = this.user.spouse!;
 
         if (this.spouse) {
           this.spouseDetailsFormControls$.forEach(
@@ -165,7 +168,7 @@ export class UpsertComponent extends PageDirective {
               form.forEach(
                 (control: DynamicCustomFormControlBase<ValueType>) => {
                   Object.entries<ValueType>(
-                    this.spouse as { [key: string]: ValueType }
+                    this.spouse as unknown as { [key: string]: ValueType }
                   ).forEach((entry, index, entries) => {
                     const [key, value] = entry;
                     if (control.key == key) {
@@ -183,21 +186,15 @@ export class UpsertComponent extends PageDirective {
           this.check(true, 'Not Married');
         }
 
-        this.children = this.user['children'] as Child[];
-
         if (this.children?.length) {
-          this.childrenDetailsFormControls$ = [
-            this.service.getChildDetailsFormControls(),
-          ];
+          this.children.forEach((child, childIndex) => {
+            if (childIndex > 0) {
+              this.childrenDetailsFormControls$.push(
+                this.service.getChildDetailsFormControls()
+              );
 
-          this.validChildren = [true];
-
-          this.children.forEach((child, index) => {
-            this.childrenDetailsFormControls$.push(
-              this.service.getChildDetailsFormControls()
-            );
-
-            this.validChildren.push(true);
+              this.validChildren.push(true);
+            }
           });
 
           this.childrenDetailsFormControls$.forEach(
@@ -212,7 +209,7 @@ export class UpsertComponent extends PageDirective {
                       form.forEach(
                         (control: DynamicCustomFormControlBase<ValueType>) => {
                           Object.entries<ValueType>(
-                            child as { [key: string]: ValueType }
+                            child as unknown as { [key: string]: ValueType }
                           ).forEach((entry, index, entries) => {
                             const [key, value] = entry;
                             if (control.key == key) {
@@ -233,13 +230,12 @@ export class UpsertComponent extends PageDirective {
           this.check(true, 'No Children');
         }
       }
-
-      this.welfares = data['welfares'];
-      if (this.welfares?.length) {
-        this.welfareDetailsFormControls$ =
-          this.service.welfareDetailsFormControls(this.welfares);
-      }
     });
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.triggerValidityNotification = true;
   }
 
   set selected(index: number) {
@@ -268,11 +264,6 @@ export class UpsertComponent extends PageDirective {
 
   set triggerValidityNotification(doTrigger: boolean) {
     this.$triggerValidityNotification.next(doTrigger);
-  }
-
-  override ngOnInit(): void {
-    super.ngOnInit();
-    this.triggerValidityNotification = true;
   }
 
   check(checked: boolean, section: string) {
@@ -314,24 +305,30 @@ export class UpsertComponent extends PageDirective {
     }
   }
 
-  tryDisplayingMembershipForm(role: string) {
+  tryDisplayingMembershipForm(role: UserRole) {
     const membershipRoles = [
-      'Welfare Manager',
-      'Welfare Accountant',
-      'Welfare Secretary',
-      'Welfare Client Member',
+      UserRole.WELFARE_MANAGER,
+      UserRole.WELFARE_ACCOUNTANT,
+      UserRole.WELFARE_SECRETARY,
+      UserRole.WELFARE_CLIENT_MEMBER,
     ];
 
     this.displayMembershipForm = membershipRoles.includes(role);
   }
 
-  checkCanCreateNewWelfare(role: string) {
-    const canCreateWelfareRoles = ['Welfare Manager'];
+  checkCanCreateNewWelfare(role: UserRole) {
+    const canCreateWelfareRoles = [UserRole.WELFARE_MANAGER];
 
     this.canCreateNewWelfare = canCreateWelfareRoles.includes(role);
 
     if (!this.canCreateNewWelfare) {
       this.check(false, 'Create New Welfare');
+    } else {
+      if (this.welfare) {
+        this.canCreateNewWelfare = false;
+      } else {
+        this.canCreateNewWelfare = true;
+      }
     }
   }
 
@@ -354,8 +351,8 @@ export class UpsertComponent extends PageDirective {
         this.userDto = { ...data };
         this.isProceedAllowed['Core User Details'] = true;
 
-        this.checkCanCreateNewWelfare(this.userDto.role!);
-        this.tryDisplayingMembershipForm(this.userDto.role!);
+        this.checkCanCreateNewWelfare(this.userDto.role);
+        this.tryDisplayingMembershipForm(this.userDto.role);
 
         this.coreUserDetailsFormControls$.forEach(
           (controls: DynamicCustomFormControlBase<any>[]) => {
@@ -420,7 +417,10 @@ export class UpsertComponent extends PageDirective {
 
     if (this.user) {
       serverAction = 'update';
-      serviceAction$ = this.service.updateUser(this.user.id as number, payload);
+      serviceAction$ = this.service.updateUser(
+        this.user?.id as number,
+        payload
+      );
     } else {
       serverAction = 'create';
       serviceAction$ = this.service.createUser(payload);
@@ -467,13 +467,13 @@ type IsSelected = [boolean, boolean, boolean, boolean];
 type IsProceedAllowed = { [key: string]: boolean };
 
 type UserDto = {
-  first_name?: string;
-  last_name?: string;
-  id_number?: string;
-  birth_date?: Date;
-  phone_number?: string;
-  email?: string;
-  role?: string;
+  first_name: string;
+  last_name: string;
+  id_number: string;
+  birth_date: Date;
+  phone_number: string;
+  email: string;
+  role: UserRole;
   group_id?: string;
 };
 
@@ -483,7 +483,7 @@ type WelfareDto =
       phone_number?: string;
       email?: string;
     }
-  | { groupId?: number };
+  | { id?: number };
 
 type SpouseDto = {
   first_name?: string;

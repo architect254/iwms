@@ -1,9 +1,9 @@
 import { Membership } from '../memberships/membership';
 
 export interface BaseEntity {
-  id?: number;
-  create_date?: Date;
-  update_date?: Date;
+  id: number;
+  create_date: Date;
+  update_date: Date;
 }
 export class BaseEntity implements BaseEntity {}
 
@@ -15,25 +15,25 @@ export enum UserRole {
   WELFARE_CLIENT_MEMBER = 'Welfare Client Member',
 }
 export interface Child extends BaseEntity {
-  first_name?: string;
-  last_name?: string;
-  birth_date?: string;
+  first_name: string;
+  last_name: string;
+  birth_date: string;
 }
 export interface Spouse extends BaseEntity {
-  first_name?: string;
-  last_name?: string;
-  id_number?: string;
-  phone_number?: string;
-  email?: string;
+  first_name: string;
+  last_name: string;
+  id_number: string;
+  phone_number: string;
+  email: string;
 }
 export interface User extends BaseEntity {
-  first_name?: string;
-  last_name?: string;
-  id_number?: string;
-  phone_number?: string;
-  email?: string;
-  role?: UserRole;
-  profile_image_url?: string;
+  first_name: string;
+  last_name: string;
+  id_number: string;
+  phone_number: string;
+  email: string;
+  role: UserRole;
+  profile_image_url: string;
   membership?: Membership;
   spouse?: Spouse;
   children?: Child[];

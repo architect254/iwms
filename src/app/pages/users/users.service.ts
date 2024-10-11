@@ -146,7 +146,7 @@ export class UsersService extends ApiService {
       });
       controls = [
         new CustomDropdownControl({
-          key: 'name',
+          key: 'id',
           label: 'Welfare Name',
           options: welfareOptions,
           icon: 'groups',

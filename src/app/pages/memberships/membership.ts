@@ -6,7 +6,7 @@ export enum MembershipStatus {
   INACTVE = 'Inactive',
 }
 export interface Membership extends BaseEntity {
-  status?: MembershipStatus;
-  welfare?: Welfare;
+  status: MembershipStatus;
+  welfare: Welfare;
 }
 export class Membership implements Membership {}

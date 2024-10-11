@@ -34,6 +34,7 @@ export const routes: Routes = [
       {
         path: 'add',
         component: UpsertComponent,
+        resolve: { welfares: welfaresResolver },
         data: { title: 'Add User Details' },
       },
       {
