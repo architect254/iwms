@@ -13,10 +13,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     authService.isAuthenticated$.pipe(
       map(async (isAuthenticated: boolean) => {
         if (!isAuthenticated) {
-          return new RedirectCommand(router.parseUrl('/auth/sign-in'), {
-            state,
-            browserUrl: router.getCurrentNavigation()?.finalUrl,
-          });
+          return new RedirectCommand(router.parseUrl('/auth/sign-in'));
         } else {
           if (state.url.includes('auth')) {
             let nextRoute = '';
@@ -29,10 +26,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
                   } else {
                     nextRoute = '/memberships';
                   }
-                  return new RedirectCommand(router.parseUrl(nextRoute), {
-                    state,
-                    browserUrl: router.getCurrentNavigation()?.initialUrl,
-                  });
+                  return new RedirectCommand(router.parseUrl(nextRoute));
                 })
               )
             );
