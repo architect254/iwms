@@ -1,10 +1,19 @@
 import { DOCUMENT } from '@angular/common';
-import { Directive, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Directive,
+  inject,
+  OnDestroy,
+  OnInit,
+  SkipSelf,
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SimpleSnackBar } from '@angular/material/snack-bar';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map, Subscription } from 'rxjs';
+import { filter, map, Subscription, tap } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
+import { AuthComponent } from '../auth-dialog/auth-dialog.component';
 
 @Directive({
   standalone: true,
@@ -16,14 +25,16 @@ export abstract class PageDirective implements OnInit, OnDestroy {
   protected route: ActivatedRoute = inject(ActivatedRoute);
   protected router: Router = inject(Router);
 
-  protected document: Document = inject(DOCUMENT);
+  protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   protected dialog: MatDialog = inject(MatDialog);
   protected dialogRef!: MatDialogRef<any>;
 
   protected $subscriptions$: Subscription = new Subscription();
 
-  constructor() {}
+  constructor(
+    @SkipSelf() protected authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.applyTitle();

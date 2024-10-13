@@ -1,6 +1,12 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  inject,
+  SkipSelf,
+} from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -13,7 +19,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Observable } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
-import { ActivatedRoute, NavigationEnd, RouterModule } from '@angular/router';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterModule,
+} from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LogoComponent } from '../logo/logo.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -62,11 +73,10 @@ export class LayoutComponent extends PageDirective {
   breadcrumbs: BreadCrumb[] = [];
 
   constructor(
-    private authService: AuthService,
-    private loadingService: LoadingService,
-    private cdr: ChangeDetectorRef
+    @SkipSelf() authService: AuthService,
+    private loadingService: LoadingService
   ) {
-    super();
+    super(authService);
     this.configureBreadCrumbs();
   }
 
@@ -166,6 +176,7 @@ export class LayoutComponent extends PageDirective {
 
   public logout() {
     this.authService.logout();
+    window.location.reload();
   }
 
   override setDefaultMetaAndTitle(): void {}

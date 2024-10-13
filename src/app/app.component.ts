@@ -1,6 +1,7 @@
 import {
   ApplicationRef,
   Component,
+  Inject,
   inject,
   NgZone,
   PLATFORM_ID,
@@ -9,9 +10,11 @@ import { RouterOutlet } from '@angular/router';
 
 import { PageDirective } from './shared/page/page.directive';
 import { SwUpdate } from '@angular/service-worker';
-import { first } from 'rxjs';
+import { first, tap } from 'rxjs';
 import { AppShellComponent } from './app-shell/app-shell.component';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { AuthComponent } from './shared/auth-dialog/auth-dialog.component';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'root',
@@ -25,15 +28,28 @@ export class AppComponent extends PageDirective {
   private readonly platform = inject(PLATFORM_ID);
 
   constructor(
+    authService: AuthService,
     private swUpdate: SwUpdate,
     private appRef: ApplicationRef,
     private zone: NgZone
   ) {
-    super();
+    super(authService);
     if (isPlatformBrowser(this.platform)) {
       // console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)
       // console.log(document);
+      this.$subscriptions$.add(
+        this.authService.isAuthenticated$.subscribe({
+          next: (isAuthenticated) => {
+            console.log('isAuthenticated', isAuthenticated);
+            if (!isAuthenticated) {
+              this.dialogRef = this.dialog.open(AuthComponent);
+            } else {
+              this.dialogRef?.close();
+            }
+          },
+        })
+      );
     }
 
     if (isPlatformServer(this.platform)) {

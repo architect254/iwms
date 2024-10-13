@@ -5,6 +5,7 @@ import {
   Input,
   ChangeDetectorRef,
   inject,
+  OnInit,
 } from '@angular/core';
 
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -39,13 +40,15 @@ import { CdkObserveContent } from '@angular/cdk/observers';
   templateUrl: './grid-search.component.html',
   styleUrl: './grid-search.component.scss',
 })
-export class GridSearchComponent {
+export class GridSearchComponent implements OnInit {
   @Input() title: string = '';
   @Input() filterOptions: any = [];
 
   @Output() applyFilter: EventEmitter<FilterOption[]> = new EventEmitter();
 
-  filterControl: FormControl = new FormControl({ updateOn: 'change' });
+  filterControl: FormControl = new FormControl({
+    updateOn: 'change',
+  });
   selectedFilterControl: FormControl = new FormControl();
 
   selectedFilterOption: FilterColumn | null = null;
@@ -58,6 +61,9 @@ export class GridSearchComponent {
   private readonly document = inject(DOCUMENT);
 
   constructor(private cdr: ChangeDetectorRef) {}
+  ngOnInit(): void {
+    this.selectedFilterControl.disable();
+  }
 
   observeContent(mutations: MutationRecord[]) {
     const childAdded = mutations.find(

@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -19,6 +19,7 @@ import { Welfare } from '../../welfares/welfare';
 import { Child, Spouse, User, UserRole } from '../user.model';
 import { Membership } from '../../memberships/membership';
 import { ValueType } from '../../../shared/form-control/control.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'iwms-upsert',
@@ -95,8 +96,12 @@ export class UpsertComponent extends PageDirective {
   $triggerValidityNotification = new BehaviorSubject(false);
   $isSubmitting = new BehaviorSubject(false);
 
-  constructor(private service: UsersService) {
-    super();
+  constructor(
+    @SkipSelf() override authService: AuthService,
+    
+    private service: UsersService
+  ) {
+    super(authService);
 
     this.coreUserDetailsFormControls$ =
       this.service.getCoreUserDetailsFormControls();

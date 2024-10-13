@@ -4,6 +4,7 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  SkipSelf,
   inject,
 } from '@angular/core';
 
@@ -13,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
+  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -25,126 +27,242 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BehaviorSubject, Subscription, of } from 'rxjs';
-import { AsyncPipe, DOCUMENT } from '@angular/common';
-import { error, log, profile } from 'console';
+import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { PageDirective } from '../page/page.directive';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule } from '@angular/router';
+import { BehaviorSubject, concatMap, Observable } from 'rxjs';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { SignInDto, SignUpDto } from './auth.dto';
+import { passwordsMismatchValidator } from './password.validator';
 
 @Component({
   selector: 'adb-auth-dialog',
   standalone: true,
   imports: [
-    MatButtonModule,
+    ReactiveFormsModule,
+    MatToolbarModule,
     MatInputModule,
     MatFormFieldModule,
-    MatIconModule,
     MatProgressSpinnerModule,
-    ReactiveFormsModule,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
-    AsyncPipe,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    RouterModule,
+    CommonModule,
   ],
+  providers: [MatDatepickerModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 
   templateUrl: './auth-dialog.component.html',
   styleUrl: './auth-dialog.component.scss',
 })
-export class AuthDialogComponent implements OnInit, OnDestroy {
-  $action = new BehaviorSubject('Login');
-  $subscription$ = new Subscription();
+export class AuthComponent extends PageDirective {
+  $action = new BehaviorSubject<'Sign Up' | 'Sign In'>('Sign In');
+
+  private fb = inject(FormBuilder);
 
   authForm!: FormGroup;
 
-  loading = false;
+  isSigningUp = false;
+  isSigningIn = false;
+
+  startDate = new Date(2000, 0, 1);
+  minDate = new Date(1930, 0, 1);
+  maxDate = new Date(Date.now());
 
   constructor(
-    private _fb: FormBuilder,
-    readonly dialogRef: MatDialogRef<AuthDialogComponent>,
-    private _authService: AuthService
-  ) {}
+    @SkipSelf() authService: AuthService,
+    override dialogRef: MatDialogRef<AuthComponent>
+  ) {
+    super(authService);
+  }
 
-  get action$() {
+  get action$(): Observable<'Sign Up' | 'Sign In'> {
     return this.$action.asObservable();
   }
-  ngOnInit(): void {
-    this.$subscription$.add(
-      this.action$.subscribe((action) => {
-        if (action == 'Login') {
-          this.authForm = this._fb.group({
-            username: ['', Validators.required],
-            password: ['', Validators.required],
-          });
-        } else {
-          this.authForm = this._fb.group({
-            name: ['', Validators.required],
-            username: ['', Validators.required],
-            email: ['', Validators.required],
-            password: ['', Validators.required],
-            confirm_password: ['', Validators.required],
-          });
-        }
 
-        this.dialogRef.updateSize(
-          `450px`,
-          `${this.$action.value == 'Login' ? 400 : 700}px`
-        );
+  set action$(action: 'Sign Up' | 'Sign In') {
+    this.$action.next(action);
+  }
+
+  get first_name() {
+    return this.authForm.get(`first_name`);
+  }
+  get last_name() {
+    return this.authForm.get(`last_name`);
+  }
+  get id_number() {
+    return this.authForm.get(`id_number`);
+  }
+  get birth_date() {
+    return this.authForm.get(`birth_date`);
+  }
+  get phone_number() {
+    return this.authForm.get(`phone_number`);
+  }
+  get email() {
+    return this.authForm.get(`email`);
+  }
+  get password() {
+    return this.authForm.get(`password`);
+  }
+  get confirm_password() {
+    return this.authForm.get(`confirm_password`);
+  }
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.buildForm();
+  }
+
+  buildForm() {
+    this.$subscriptions$.add(
+      this.action$.subscribe((action) => {
+        switch (action) {
+          case 'Sign In':
+            this.authForm = this.fb.group({
+              email: [``, Validators.required],
+              password: [``, Validators.required],
+            });
+            // this.dialogRef.updateSize(`700px`, `700px`);
+            break;
+          case 'Sign Up':
+            this.authForm = this.fb.group(
+              {
+                first_name: [``, Validators.required],
+                last_name: [``, Validators.required],
+                id_number: [``, Validators.required],
+                birth_date: [``, Validators.required],
+                phone_number: [``, Validators.required],
+                email: [``, [Validators.required, Validators.email]],
+                password: [
+                  ``,
+                  {
+                    validators: [
+                      Validators.required,
+                      Validators.minLength(7),
+                      Validators.maxLength(15),
+                      // Validators.pattern(
+                      //   '^(?=.*d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^wds:])([^s]){7,15}$'
+                      // ),
+                    ],
+                    updateOn: 'change',
+                  },
+                ],
+                confirm_password: [
+                  ``,
+                  { validators: [Validators.required], updateOn: 'change' },
+                ],
+              },
+              { validator: passwordsMismatchValidator() }
+            );
+            // this.dialogRef.updateSize(`700px`, `950px`);
+            break;
+
+          default:
+            break;
+        }
       })
     );
   }
 
-  onFileSelected() {
-    const inputNode: any = document.querySelector('#file');
+  submitForm() {
+    this.authForm.disable();
+    switch (this.$action.value) {
+      case 'Sign Up':
+        this.signUp();
+        break;
+      case 'Sign In':
+        this.signIn();
+        break;
 
-    if (typeof FileReader !== 'undefined') {
-      const reader = new FileReader();
-
-      reader.onload = (e: any) => {
-        this.authForm.get(`profile`)?.setValue(e.target.result);
-      };
-
-      reader.readAsArrayBuffer(inputNode.files[0]);
+      default:
+        break;
     }
   }
 
-  submit() {
-    this.loading = true;
-    const payLoad = this.authForm.getRawValue();
+  signUp() {
+    this.isSigningUp = true;
 
-    if (this.$action.value != `Login`) {
-      this.$subscription$.add(
-        this._authService.signUp(payLoad).subscribe({
+    const signUpPayload: SignUpDto = {
+      ...this.authForm.value,
+    };
+
+    // const persisted_users = await firstValueFrom(
+    //   this.usersService.getUsers(1, 1)
+    // );
+    // if (persisted_users.length) {
+    //   const snackBarRef = this.snackBar.open(
+    //     'Kindly contact your Welfare Manager to add you',
+    //     `OK`,
+    //     {
+    //       panelClass: `alert-dialog`,
+    //     }
+    //   );
+
+    //   snackBarRef.onAction().subscribe(() => {
+    //     snackBarRef.dismiss();
+    //   });
+    // }
+
+    this.$subscriptions$.add(
+      this.authService
+        .signUp(signUpPayload)
+        .pipe(
+          concatMap(() => {
+            this.isSigningUp = false;
+            this.isSigningIn = true;
+
+            const signInPayload: SignInDto = {
+              ...signUpPayload,
+            };
+            return this.authService.signIn(signInPayload);
+          })
+        )
+        .subscribe({
           next: () => {
-            this.authForm.patchValue(payLoad);
-            this.login(payLoad);
+            this.isSigningIn = false;
+            this.dialogRef?.close();
+            window.location.reload();
           },
           error: (error) => {
-            this.loading = false;
+            this.isSigningUp = false;
+            this.isSigningIn = false;
+            this.authForm.enable();
           },
         })
-      );
-    } else {
-      this.login(payLoad);
-    }
+    );
   }
+  signIn() {
+    this.isSigningIn = true;
 
-  login = (payload: any) => {
-    this.$action.next(`Login`);
-    this.$subscription$.add(
-      this._authService.signIn(payload).subscribe({
+    const signInPayload: SignInDto = {
+      ...this.authForm.value,
+    };
+
+    this.$subscriptions$.add(
+      this.authService.signIn(signInPayload).subscribe({
         next: () => {
-          this.loading = false;
+          this.isSigningIn = false;
+          this.dialogRef?.close();
           window.location.reload();
         },
         error: (error) => {
-          this.loading = false;
+          this.isSigningIn = false;
+          this.authForm.enable();
         },
       })
     );
-  };
-
-  ngOnDestroy(): void {
-    this.$subscription$.unsubscribe();
+  }
+  override setDefaultMetaAndTitle(): void {}
+  override setTwitterCardMeta(): void {}
+  override setFacebookOpenGraphMeta(): void {}
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 }
