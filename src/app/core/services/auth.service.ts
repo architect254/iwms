@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   finalize,
   first,
+  last,
   map,
   Observable,
   of,
@@ -17,11 +18,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { jwtDecode } from 'jwt-decode';
 
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
-import { JwtPayload } from '../../pages/auth/jwt.payload';
 import { ApiService } from './api.service';
-import { SignInDto, SignUpDto } from '../../pages/auth/auth.dto';
+import { SignInDto, SignUpDto } from '../../shared/auth-dialog/auth.dto';
 import { User } from '../../pages/users/user.model';
-
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
@@ -31,12 +30,13 @@ export class AuthService extends ApiService {
   private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(
     this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN)
   );
-  public currentToken$: Observable<any> =
-    this.currentTokenSubject.asObservable();
+  public currentToken$: Observable<any> = this.currentTokenSubject
+    .asObservable()
+    .pipe(first());
 
   private jwtHelper = new JwtHelperService();
 
-  constructor(private _router: Router) {
+  constructor() {
     super();
   }
 
@@ -72,7 +72,7 @@ export class AuthService extends ApiService {
       .pipe(first());
   }
 
-  signIn(credentials: SignInDto, document: Document) {
+  signIn(credentials: SignInDto) {
     return this.http
       .post<any>(`${this.API_URL}/auth/sign-in`, credentials)
       .pipe(
@@ -82,9 +82,6 @@ export class AuthService extends ApiService {
             this._storageService.set(STORAGE_KEYS.ACCESS_TOKEN, token);
             this.checkUser();
           },
-        }),
-        finalize(() => {
-          document.location.reload();
         })
       );
   }
@@ -103,6 +100,12 @@ export class AuthService extends ApiService {
   logout() {
     this._storageService.clear();
     this.currentTokenSubject.next(null);
-    this._router.navigate(['/auth/sign-in']);
   }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+  }
+}
+export interface JwtPayload {
+  user: User;
 }

@@ -11,7 +11,7 @@ export const API_SERVER_URL = new InjectionToken<string>(
 );
 
 export const apiServerUrlFactory = (): string => {
-  if (true) {
+  if (false) {
     return 'https://iwms-be-api.onrender.com';
   } else {
     return `http://iwms.com`;

@@ -3,29 +3,14 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
 import { authGuard } from './core/guards/auth.guard';
+import { HomeComponent } from './pages/home/home.component';
 
 export const routes: Routes = [
   {
-    path: 'not-found',
-    component: NotFoundComponent,
-    data: { title: 'Page Not Found' },
-  },
-  {
-    path: 'auth',
-    loadChildren: () =>
-      import('./pages/auth/auth.routes').then((auth) => auth.routes),
-  },
-  {
     path: '',
     component: LayoutComponent,
-    canActivateChild: [authGuard],
+    canActivate: [authGuard],
     children: [
-      {
-        path: 'users',
-        data: { title: 'Welfare Users' },
-        loadChildren: () =>
-          import('./pages/users/users.routes').then((users) => users.routes),
-      },
       {
         path: 'welfares',
         data: { title: 'Welfare Groups' },
@@ -74,8 +59,24 @@ export const routes: Routes = [
             (notifications) => notifications.routes
           ),
       },
-      { path: '', redirectTo: 'users', pathMatch: 'full' },
+      {
+        path: 'users',
+        data: { title: 'Welfare Users' },
+        loadChildren: () =>
+          import('./pages/users/users.routes').then((users) => users.routes),
+      },
     ],
   },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'not-found',
+    component: NotFoundComponent,
+    data: { title: 'Page Not Found' },
+  },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: 'not-found' },
 ];

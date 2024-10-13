@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SkipSelf } from '@angular/core';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { DynamicViewComponent } from '../../../shared/data-view/view.component';
 import { DynamicCustomDataBase } from '../../../shared/data-view/view.service';
@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { UsersService } from '../users.service';
 import { User } from '../user.model';
 import { PageDirective } from '../../../shared/page/page.directive';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'iwms-view',
@@ -54,8 +55,12 @@ export class ViewComponent extends PageDirective {
   spouseDataView$!: Observable<DynamicCustomDataBase<string | number | Date>[]>;
   childDataView$!: Observable<DynamicCustomDataBase<string>[]>[];
 
-  constructor(private service: UsersService) {
-    super();
+  constructor(
+    @SkipSelf() override authService: AuthService,
+    
+    private service: UsersService
+  ) {
+    super(authService);
 
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];

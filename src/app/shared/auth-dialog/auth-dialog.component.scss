@@ -1,21 +1,46 @@
-::ng-deep {
-    :root {
-        --mdc-dialog-container-shape: 4px;
-    }
-}
-
-form {
-    height: fit-content;
-
-}
-
 :host {
-    ::ng-deep {
-        button.login-btn {
-            span.mdc-button__label {
-                display: flex;
-                gap: 16px;
-            }
+    display: block;
+    height: 100%;
+}
+
+.header {
+    margin-top: 40px;
+}
+
+.form-container {
+    margin: 16px;
+
+    form {
+        max-width: 80%;
+
+        margin: 0 auto;
+
+        .double-column {
+            display: flex;
+            gap: 12px;
         }
+
+        .loader {
+            display: block;
+            width: fit-content;
+            margin: 54px auto;
+        }
+
+        @media screen and (min-width: 560px) {
+            max-width: 80%;
+        }
+
+        @media screen and (min-width: 780px) {
+            max-width: 80%;
+        }
+
+        @media screen and (min-width: 960px) {
+            max-width: 80%;
+        }
+
+        @media screen and (min-width: 1200px) {
+            max-width: 80%;
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, SkipSelf } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { AsyncPipe, DOCUMENT } from '@angular/common';
 
@@ -20,6 +20,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'iwms-list',
@@ -36,7 +37,6 @@ import { HeaderComponent } from '../../../shared/header/header.component';
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends GridContainerDirective {
-  pageTitle: string = '';
   columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
   statusProperties: StatusProperties = MOCK.STATUS;
   actionProperties: ActionProperties = MOCK.ACTIONS;
@@ -69,11 +69,13 @@ export class ListComponent extends GridContainerDirective {
   minRentCtrl: FormControl = new FormControl();
 
   filterOptions = [{ key: 1, label: 'option' }];
-  
+
   constructor(
+    @SkipSelf() override authService: AuthService,
+    
     private _usersService: AccountsService
   ) {
-    super();
+    super(authService);
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });

@@ -26,7 +26,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBarRef = snackBar.open(errorResponse?.message, `Retry`, {
           panelClass: `.api-error-alert.server`,
-          duration: 200,
+          duration: 1500,
         });
 
         snackBarRef.onAction().subscribe(() => {
@@ -40,7 +40,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBarRef = snackBar.open(errorResponse?.message, `OK`, {
           panelClass: `.api-error-alert.browser`,
-          duration: 200,
+          duration: 1500,
         });
 
         snackBarRef.onAction().subscribe(() => {

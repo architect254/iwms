@@ -466,13 +466,27 @@ export class UsersService extends ApiService {
   }
 
   getUsers(
-    page: number = 1,
-    take: number = 100,
-    searchQueryObj: { [key: string]: string } = {}
+    page: number,
+    take: number,
+    searchQueries: [string, string][]
   ): Observable<User[]> {
-    const searchParams = new HttpParams().appendAll(searchQueryObj);
+    let queryString = '';
+    searchQueries?.forEach((searchQuery, currentIndex) => {
+      const [param, value] = searchQuery;
+      const query = `${param}=${value}`;
+      if (currentIndex == 0) {
+        queryString = `?${query}`;
+      }
+      if (currentIndex > 0 && currentIndex < searchQueries.length) {
+        queryString = `${queryString}&${query}`;
+      }
+    });
+    queryString = `${
+      queryString ? queryString + '&' : ''
+    }page=${page}&take=${take}`;
+
     return this.http.get<User[]>(this.endpoint, {
-      params: searchParams.append('page', page).append('take', take),
+      params: new HttpParams({ fromString: queryString }),
     });
   }
 

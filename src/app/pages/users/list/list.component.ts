@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, SkipSelf } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
 
@@ -33,6 +33,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'iwms-list',
@@ -60,8 +61,6 @@ import { MatSortModule } from '@angular/material/sort';
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends GridContainerDirective {
-  pageTitle: string = '';
-
   columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
   filterColumns: FilterColumn[] = MOCK.FILTER_COLUMNS as FilterColumn[];
   statusProperties: StatusProperties = MOCK.STATUS;
@@ -75,11 +74,15 @@ export class ListComponent extends GridContainerDirective {
   page: number = 1;
   take: number = 100;
 
-  searchQueryDTO: SearchQueryDto = new SearchQueryDto();
-  searchQueryObj!: { [key: string]: string };
+  searchQueryDTO!: SearchQueryDto;
+  searchQueries!: [string, string][];
 
-  constructor(private service: UsersService) {
-    super();
+  constructor(
+    @SkipSelf() override authService: AuthService,
+    
+    private service: UsersService
+  ) {
+    super(authService);
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });
@@ -87,16 +90,12 @@ export class ListComponent extends GridContainerDirective {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData();
+    this.fetchData(this.page, this.take, this.searchQueries);
   }
 
-  fetchData(
-    page: number = this.page,
-    take: number = this.take,
-    searchQueryObj = this.searchQueryObj
-  ) {
+  fetchData(page: number, take: number, searchQueries: [string, string][]) {
     this.$subscriptions$.add(
-      this.service.getUsers(page, take, searchQueryObj).subscribe((users) => {
+      this.service.getUsers(page, take, searchQueries).subscribe((users) => {
         this.data = users.map((user) => {
           return {
             id: user.id,
@@ -117,9 +116,8 @@ export class ListComponent extends GridContainerDirective {
   }
 
   doApplyFilter(filters: FilterOption[]) {
-    this.searchQueryDTO = Object.create(this.searchQueryDTO);
-    this.searchQueryObj = {};
-
+    this.searchQueryDTO = new SearchQueryDto();
+    this.searchQueries = [];
     filters.forEach((filter) => {
       if (Object.hasOwn(this.searchQueryDTO, filter.key)) {
         const filterParam: { [key: string]: string } = {
@@ -128,11 +126,10 @@ export class ListComponent extends GridContainerDirective {
         Object.assign(this.searchQueryDTO, filterParam);
       }
     });
-    this.searchQueryObj = Object.fromEntries(
-      Object.entries(this.searchQueryDTO).filter(([key, value]) => !!value)
-    );
-
-    this.fetchData(this.page, this.take, this.searchQueryObj);
+    Object.entries(this.searchQueryDTO)
+      .filter(([key, value]) => !!value)
+      .forEach(([key, value]) => this.searchQueries.push([key, value]));
+    this.fetchData(this.page, this.take, this.searchQueries);
   }
 
   override setTwitterCardMeta(): void {
