@@ -13,13 +13,14 @@ export const authGuard: CanActivateFn = async (route, state) => {
     authService.isAuthenticated$.pipe(
       map(async (isAuthenticated: boolean) => {
         if (!isAuthenticated) {
-          if (route.url.toString().includes('home')) {
+          if (state.url == '/home') {
             return true;
           } else {
             return new RedirectCommand(router.parseUrl('/home'));
           }
         } else {
-          if (route.url.toString().includes('home')) {
+          console.log('route', state.url);
+          if (state.url == '/home' || state.url == '/') {
             let nextRoute = '';
 
             return await firstValueFrom(
