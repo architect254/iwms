@@ -12,6 +12,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'users',
+        data: { title: 'Welfare Users' },
+        loadChildren: () =>
+          import('./pages/users/users.routes').then((users) => users.routes),
+      },
+      {
         path: 'welfares',
         data: { title: 'Welfare Groups' },
         loadChildren: () =>
@@ -59,12 +65,6 @@ export const routes: Routes = [
             (notifications) => notifications.routes
           ),
       },
-      {
-        path: 'users',
-        data: { title: 'Welfare Users' },
-        loadChildren: () =>
-          import('./pages/users/users.routes').then((users) => users.routes),
-      },
     ],
   },
   {
@@ -77,6 +77,6 @@ export const routes: Routes = [
     component: NotFoundComponent,
     data: { title: 'Page Not Found' },
   },
-  { path: '', redirectTo: '/users', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: 'not-found' },
 ];
