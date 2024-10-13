@@ -77,6 +77,6 @@ export const routes: Routes = [
     component: NotFoundComponent,
     data: { title: 'Page Not Found' },
   },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/users', pathMatch: 'full' },
   { path: '**', redirectTo: 'not-found' },
 ];
