@@ -29,13 +29,13 @@ export const routes: Routes = [
           welfares: welfaresResolver,
           welfare: welfareResolver,
         },
-        data: { title: 'Edit User Details' },
+        data: { title: 'Edit User Details', action: 'update' },
       },
       {
         path: 'add',
         component: UpsertComponent,
         resolve: { welfares: welfaresResolver },
-        data: { title: 'Add User Details' },
+        data: { title: 'Add User Details', action: 'create' },
       },
       {
         path: '',

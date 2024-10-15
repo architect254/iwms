@@ -7,7 +7,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DynamicCustomFormControlBase } from './form.service';
-import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import {
+  MatDatepicker,
+  MatDatepickerModule,
+} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
@@ -24,14 +27,18 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule,
     MatIconModule,
   ],
-  providers: [MatDatepickerModule,MatDatepicker],
+  providers: [MatDatepickerModule, MatDatepicker],
 })
 export class DynamicFormControlComponent {
   @Input() control!: DynamicCustomFormControlBase<ValueType>;
   @Input() form!: FormGroup;
 
-  get isValid() {
-    return this.form.controls[this.control.key].valid;
+  get isNotValid() {
+    return (
+      (this.form.controls[this.control.key].touched ||
+        this.form.controls[this.control.key].dirty) &&
+      !this.form.controls[this.control.key].valid
+    );
   }
 }
 export type ValueType = string | number | Date;

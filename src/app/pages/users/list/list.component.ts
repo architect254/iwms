@@ -1,28 +1,14 @@
-import { Component, Inject, OnInit, SkipSelf } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
-import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
+import { Component, SkipSelf } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-import { Observable, of } from 'rxjs';
-
 import { UsersService } from '../users.service';
-import { User } from '../user.model';
 
-import { GridContainerDirective } from '../../../shared/grid-container/grid-container.directive';
-import {
-  ColumnProperties,
-  StatusProperties,
-  ActionProperties,
-  GridComponent,
-  FilterColumn,
-} from '../../../shared/grid/grid.component';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Data, Router, RouterModule } from '@angular/router';
-import {
-  FilterOption,
-  GridSearchComponent,
-} from '../../../shared/grid/grid-search/grid-search.component';
+import { GridDirective } from '../../../shared/grid-container/grid-container.directive';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Data, RouterModule } from '@angular/router';
+import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,6 +20,20 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { AuthService } from '../../../core/services/auth.service';
+import {
+  ACTIONS,
+  FILTER_OPTIONS,
+  FilterRequestDto,
+  GRID_COLUMNS,
+  STATUS,
+} from './model';
+import {
+  GridColumn,
+  StatusConfig,
+  Action,
+  FilterOption,
+} from '../../../shared/grid/model';
+import { GridComponent } from '../../../shared/grid/grid.component';
 
 @Component({
   selector: 'iwms-list',
@@ -60,26 +60,23 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
-export class ListComponent extends GridContainerDirective {
-  columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
-  filterColumns: FilterColumn[] = MOCK.FILTER_COLUMNS as FilterColumn[];
-  statusProperties: StatusProperties = MOCK.STATUS;
-  actionProperties: ActionProperties = MOCK.ACTIONS;
+export class ListComponent extends GridDirective {
+  columns: GridColumn[] = GRID_COLUMNS;
+  filters: FilterOption[] = FILTER_OPTIONS;
+  status: StatusConfig = STATUS;
+  actions: Action[] = ACTIONS;
 
   defaultSortColumn!: string;
   defaultSortColumnDirection!: 'asc' | 'desc';
 
   data: any[] = [];
 
-  page: number = 1;
-  take: number = 100;
-
-  searchQueryDTO!: SearchQueryDto;
-  searchQueries!: [string, string][];
+  declare FilterRequestDto: FilterRequestDto;
+  declare filterRequest: [string, string][];
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    
+
     private service: UsersService
   ) {
     super(authService);
@@ -90,12 +87,12 @@ export class ListComponent extends GridContainerDirective {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData(this.page, this.take, this.searchQueries);
+    this.fetchData(this.page, this.take, this.filterRequest);
   }
 
-  fetchData(page: number, take: number, searchQueries: [string, string][]) {
+  override fetchData(page: number, take: number, filterRequest: [string, string][]) {
     this.$subscriptions$.add(
-      this.service.getUsers(page, take, searchQueries).subscribe((users) => {
+      this.service.getUsers(page, take, filterRequest).subscribe((users) => {
         this.data = users.map((user) => {
           return {
             id: user.id,
@@ -104,32 +101,16 @@ export class ListComponent extends GridContainerDirective {
             phone_number: user.phone_number,
             email: user.email,
             profile_image: user.profile_image_url,
-            role: user.role,
-            welfare: user.membership?.welfare?.name,
+            user_role: user.user_role,
             status: user.membership?.status || 'Active',
+            welfare: user.membership?.welfare?.name,
+            membership_role: user.membership?.membership_role,
             create_date: user.create_date,
             update_date: user.update_date,
           };
         });
       })
     );
-  }
-
-  doApplyFilter(filters: FilterOption[]) {
-    this.searchQueryDTO = new SearchQueryDto();
-    this.searchQueries = [];
-    filters.forEach((filter) => {
-      if (Object.hasOwn(this.searchQueryDTO, filter.key)) {
-        const filterParam: { [key: string]: string } = {
-          [filter.key]: filter.value,
-        };
-        Object.assign(this.searchQueryDTO, filterParam);
-      }
-    });
-    Object.entries(this.searchQueryDTO)
-      .filter(([key, value]) => !!value)
-      .forEach(([key, value]) => this.searchQueries.push([key, value]));
-    this.fetchData(this.page, this.take, this.searchQueries);
   }
 
   override setTwitterCardMeta(): void {
@@ -226,202 +207,3 @@ export class ListComponent extends GridContainerDirective {
     ]);
   }
 }
-export class SearchQueryDto {
-  first_name?: string;
-  last_name?: string;
-  id_number?: string;
-  birth_date?: Date;
-  phone_number?: string;
-  email?: string;
-  role?: string;
-  status?: string;
-  groupId?: number;
-}
-export const MOCK = {
-  FILTER_COLUMNS: [
-    {
-      key: 'first_name',
-      label: 'First Name',
-      position: 0,
-      type: 'string',
-      icon: 'badge',
-      combinator: 'Includes',
-    },
-    {
-      key: 'last_name',
-      label: 'Last Name',
-      position: 1,
-      type: 'string',
-      icon: 'badge',
-      combinator: 'Includes',
-    },
-    {
-      key: 'id_number',
-      label: 'National ID Number',
-      position: 2,
-      type: 'number',
-      icon: 'fingerprint',
-      combinator: 'Includes',
-    },
-    {
-      key: 'birth_date',
-      label: 'Date of Birth',
-      position: 3,
-      type: 'date',
-      icon: 'cake',
-      combinator: 'Is',
-    },
-    {
-      key: 'phone_number',
-      label: 'Phone Number',
-      position: 4,
-      type: 'number',
-      icon: 'call_log',
-      combinator: 'Is',
-    },
-    {
-      key: 'email',
-      label: 'Email',
-      position: 5,
-      type: 'string',
-      icon: 'email',
-      combinator: 'Includes',
-    },
-    {
-      key: 'role',
-      label: 'User Role',
-      position: 6,
-      type: 'list',
-      icon: 'checklist',
-      combinator: 'Is',
-      options: [
-        { key: 'Site Admin', value: 'Site Admin' },
-        { key: 'Welfare Manager', value: 'Welfare Manager' },
-        { key: 'Welfare Accountant', value: 'Welfare Accountant' },
-        { key: 'Welfare Secretary', value: 'Welfare Secretary' },
-        { key: 'Welfare Client Member', value: 'Welfare Client Member' },
-      ],
-      colors: {
-        'Site Admin': 'red',
-        'Welfare Manager': 'orange',
-        'Welfare Accountant': 'blue',
-        'Welfare Secretary': 'purple',
-        'Welfare Client Member': 'green',
-      },
-    },
-    {
-      key: 'group',
-      label: 'Welfare Group',
-      position: 7,
-      type: 'string',
-      icon: 'group',
-      combinator: 'Is',
-    },
-  ],
-  COLUMNS: [
-    {
-      key: 'select',
-      label: 'Select',
-      position: 0,
-      type: 'select',
-      width: '250px',
-    },
-    {
-      key: 'name',
-      label: 'Full Name',
-      position: 1,
-      type: 'string',
-      width: '250px',
-    },
-    {
-      key: 'id_number',
-      label: 'National ID Number',
-      position: 2,
-      type: 'number',
-      width: '250px',
-    },
-    {
-      key: 'phone_number',
-      label: 'Phone Number',
-      position: 3,
-      type: 'number',
-      width: '250px',
-    },
-    {
-      key: 'email',
-      label: 'Email',
-      position: 4,
-      type: 'string',
-      width: '250px',
-    },
-    {
-      key: 'role',
-      label: 'User Role',
-      position: 5,
-      type: 'status',
-      width: '250px',
-    },
-    {
-      key: 'welfare',
-      label: 'Welfare Group Name',
-      position: 6,
-      type: 'string',
-      width: '250px',
-    },
-    {
-      key: 'status',
-      label: 'Membership Status',
-      position: 7,
-      type: 'status',
-      width: '250px',
-    },
-    {
-      key: 'create_date',
-      label: 'Date First Created',
-      position: 8,
-      type: 'date',
-      width: '250px',
-    },
-    {
-      key: 'update_date',
-      label: 'Date Last Updated',
-      position: 9,
-      type: 'date',
-      width: '250px',
-    },
-  ],
-  STATUS: {
-    status: {
-      labels: {
-        'Site Admin': 'Site Admin',
-        'Welfare Manager': 'Welfare Manager',
-        'Welfare Accountant': 'Welfare Accountant',
-        'Welfare Secretary': 'Welfare Secretary',
-        'Welfare Client Member': 'Welfare Client Member',
-        Active: 'Active',
-        Inactive: 'Inactive',
-      },
-      colors: {
-        'Site Admin': 'red',
-        'Welfare Manager': 'orange',
-        'Welfare Accountant': 'blue',
-        'Welfare Secretary': 'purple',
-        'Welfare Client Member': 'green',
-        Active: 'green',
-        Inactive: 'red',
-      },
-    },
-  },
-  ACTIONS: {
-    action: {
-      actions: [
-        {
-          name: 'click',
-          implementation: () => {
-            undefined;
-          },
-        },
-      ],
-    },
-  },
-};

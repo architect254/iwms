@@ -5,7 +5,7 @@ import { DynamicViewComponent } from '../../../shared/data-view/view.component';
 import { DynamicCustomDataBase } from '../../../shared/data-view/view.service';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable } from 'rxjs';
-import { MembershipsService } from '../memberships.service';
+import { WelfaresService } from '../welfares.service';
 
 @Component({
   selector: 'iwms-view',
@@ -19,7 +19,7 @@ export class ViewComponent {
   pageTitle: string = '';
   dataView$: Observable<DynamicCustomDataBase<any>[]>;
 
-  constructor(private route: ActivatedRoute, service: MembershipsService) {
+  constructor(private route: ActivatedRoute, service: WelfaresService) {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
     });

@@ -1,26 +1,19 @@
-import { Component, Inject, OnInit, SkipSelf } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
-import { AsyncPipe, DOCUMENT } from '@angular/common';
+import { Component, SkipSelf } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-import { Observable, of } from 'rxjs';
-
 import { WelfaresService } from '../welfares.service';
-import { Welfare } from '../welfare';
 
-import { GridContainerDirective } from '../../../shared/grid-container/grid-container.directive';
-import {
-  ColumnProperties,
-  StatusProperties,
-  ActionProperties,
-  GridComponent,
-} from '../../../shared/grid/grid.component';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Data, Router } from '@angular/router';
+import { GridDirective } from '../../../shared/grid-container/grid-container.directive';
+import { GridComponent } from '../../../shared/grid/grid.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Data } from '@angular/router';
 import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
 import { HeaderComponent } from '../../../shared/header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { FilterOption, GridColumn } from '../../../shared/grid/model';
+import { FILTER_OPTIONS, FilterRequestDto, GRID_COLUMNS } from './model';
 
 @Component({
   selector: 'iwms-list',
@@ -36,44 +29,22 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
-export class ListComponent extends GridContainerDirective {
-  columnProperties: ColumnProperties[] = MOCK.COLUMNS as ColumnProperties[];
-  statusProperties: StatusProperties = MOCK.STATUS;
-  actionProperties: ActionProperties = MOCK.ACTIONS;
+export class ListComponent extends GridDirective {
+  columns: GridColumn[] = GRID_COLUMNS;
+  filters: FilterOption[] = FILTER_OPTIONS;
+
   defaultSortColumn!: string;
   defaultSortColumnDirection!: 'asc' | 'desc';
 
-  users$: Observable<Welfare[]> = of([]);
+  data: any[] = [];
 
-  data = [
-    {
-      name: 'Jared Bada',
-      age: 21,
-      status: 'stopped',
-      action: 'run',
-    },
-    {
-      name: 'Jared Bada',
-      age: 21,
-      status: 'waiting',
-      action: 'run',
-    },
-    {
-      name: 'Jared Bada',
-      age: 21,
-      status: 'running',
-      action: 'stop',
-    },
-  ];
-
-  minRentCtrl: FormControl = new FormControl();
-
-  filterOptions = [{ key: 1, label: 'option' }];
+  declare filtersDTO: FilterRequestDto;
+  declare filterRequest: [string, string][];
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    
-    private _usersService: WelfaresService
+
+    private service: WelfaresService
   ) {
     super(authService);
     this.route.data.subscribe((data: Data) => {
@@ -83,9 +54,27 @@ export class ListComponent extends GridContainerDirective {
 
   override ngOnInit(): void {
     super.ngOnInit();
+    this.fetchData(this.page, this.take, this.filterRequest);
   }
 
-  onSelectFilterOption(type: any) {}
+  fetchData(page: number, take: number, filterRequest: [string, string][]) {
+    this.$subscriptions$.add(
+      this.service
+        .getWelfares(page, take, filterRequest)
+        .subscribe((welfares) => {
+          this.data = welfares.map((welfare) => {
+            return {
+              id: welfare.id,
+              name: welfare.name,
+              phone_number: welfare.phone_number,
+              email: welfare.email,
+              create_date: welfare.create_date,
+              update_date: welfare.update_date,
+            };
+          });
+        })
+    );
+  }
 
   override setTwitterCardMeta(): void {
     this.setMeta([
@@ -181,48 +170,3 @@ export class ListComponent extends GridContainerDirective {
     ]);
   }
 }
-export const MOCK = {
-  COLUMNS: [
-    {
-      key: 'select',
-      label: 'Select',
-      position: 0,
-      type: 'select',
-      width: '250px',
-    },
-    { key: 'name', label: 'Name', position: 1, type: 'string', width: '250px' },
-    { key: 'age', label: 'Age', position: 2, type: 'number', width: '250px' },
-    {
-      key: 'status',
-      label: 'Status',
-      position: 20,
-      type: 'status',
-      width: '250px',
-    },
-    {
-      key: 'action',
-      label: 'Action',
-      position: 21,
-      type: 'action',
-      width: '250px',
-    },
-  ],
-  STATUS: {
-    status: {
-      labels: { stopped: 'STOPPED', waiting: 'WAITING', running: 'RUNNING' },
-      colors: { stopped: 'red', waiting: 'orange', running: 'green' },
-    },
-  },
-  ACTIONS: {
-    action: {
-      actions: [
-        {
-          name: 'click',
-          implementation: () => {
-            undefined;
-          },
-        },
-      ],
-    },
-  },
-};

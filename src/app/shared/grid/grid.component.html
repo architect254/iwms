@@ -46,7 +46,7 @@
       matSortDisableClear
       [matSortDirection]="defaultSortColumnDirection"
     >
-      @for (column of columnProperties; track column.position) {
+      @for (column of columns; track column.position) {
       <ng-container [matColumnDef]="column!.key">
         @switch (column?.type) { @case ('status') {
         <th
@@ -65,10 +65,10 @@
         >
           <strong
             [style.color]="
-              statusProperties[column!.type]!.colors[row[column!.key]]
+              status!.colors[row[column!.key]]
             "
             >{{
-              statusProperties[column!.type]!.labels[row[column!.key]]
+              status!.labels[row[column!.key]]
                 | uppercase
             }}</strong
           >
@@ -86,7 +86,7 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
-            @for (action of actionProperties[column.key]!.actions!; track
+            @for (action of actions[column.key]!.actions!; track
             $index) {
             <button mat-menu-item (click)="action?.implementation()">
               {{ action.name }}</button

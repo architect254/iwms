@@ -17,9 +17,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { FilterColumn } from '../grid.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { CdkObserveContent } from '@angular/cdk/observers';
+import { FilterOption } from '../model';
 
 @Component({
   selector: 'iwms-grid-search',
@@ -42,7 +42,7 @@ import { CdkObserveContent } from '@angular/cdk/observers';
 })
 export class GridSearchComponent implements OnInit {
   @Input() title: string = '';
-  @Input() filterOptions: any = [];
+  @Input() filters: any = [];
 
   @Output() applyFilter: EventEmitter<FilterOption[]> = new EventEmitter();
 
@@ -51,7 +51,7 @@ export class GridSearchComponent implements OnInit {
   });
   selectedFilterControl: FormControl = new FormControl();
 
-  selectedFilterOption: FilterColumn | null = null;
+  selectedFilterOption: FilterOption | null = null;
   selectedFilterOptions: FilterOption[] = [];
 
   startDate = new Date(2000, 0, 1);
@@ -83,7 +83,7 @@ export class GridSearchComponent implements OnInit {
     }
   }
 
-  onSelectFilterOption(option: FilterColumn) {
+  onSelectFilterOption(option: FilterOption) {
     this.selectedFilterOption = option;
 
     this.selectedFilterControl.enable();
@@ -154,16 +154,4 @@ export class GridSearchComponent implements OnInit {
 
     this.applyFilter.emit(this.selectedFilterOptions);
   }
-}
-export interface FilterOption {
-  key: string;
-  label: string;
-  type: string;
-  position: number;
-  icon: string;
-  placeholder: string;
-  combinator: string;
-  value: string;
-  options?: { key: string; value: string }[];
-  colors?: { [key: string]: string };
 }

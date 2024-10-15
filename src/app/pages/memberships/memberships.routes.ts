@@ -12,23 +12,23 @@ export const routes: Routes = [
       {
         path: 'view/:id',
         component: ViewComponent,
-        data: { title: 'View Welfare Membership Details' },
+        data: { title: 'View Welfare Group Details' },
       },
       {
         path: 'edit/:id',
         component: UpsertComponent,
-        data: { title: 'Edit Welfare Membership Details' },
+        data: { title: 'Edit Welfare Group Details' },
       },
       {
         path: 'add',
         component: UpsertComponent,
-        data: { title: 'Add Welfare Membership Details' },
+        data: { title: 'Add Welfare Group Details' },
       },
       {
         path: '',
-        component: ListComponent,
         pathMatch: 'full',
-        data: { title: 'Welfare Memberships List' },
+        component: ListComponent,
+        data: { title: 'Welfare Groups List' },
       },
     ],
   },

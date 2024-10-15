@@ -12,6 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { Action, GridColumn, StatusConfig } from './model';
 
 @Component({
   selector: 'iwms-grid',
@@ -39,9 +40,9 @@ export class GridComponent {
     this.dataSource = new MatTableDataSource(data);
   }
 
-  @Input() columnProperties: ColumnProperties[] = [];
-  @Input() statusProperties: StatusProperties = {};
-  @Input() actionProperties: ActionProperties = {};
+  @Input() columns!: GridColumn[];
+  @Input() status?: StatusConfig;
+  @Input() actions?: Action[];
 
   @Input() defaultSortColumn: string = '';
   @Input() defaultSortColumnDirection: 'asc' | 'desc' = 'asc';
@@ -57,8 +58,8 @@ export class GridComponent {
   constructor(private router: Router) {}
 
   get displayedColumns() {
-    return this.columnProperties.map(
-      (columnProperties) => columnProperties.key
+    return this.columns.map(
+      (column) => column.key
     );
   }
 
@@ -106,44 +107,4 @@ export class GridComponent {
     const url = `/${this.name}s/view/${id}`.toLocaleLowerCase();
     this.router.navigateByUrl(url);
   }
-}
-export type DataType =
-  | 'select'
-  | 'string'
-  | 'number'
-  | 'date'
-  | 'status'
-  | 'action';
-
-export interface ColumnProperties {
-  key: string;
-  label: string;
-  type: DataType;
-  position: number;
-  width: string;
-}
-export interface FilterColumn {
-  key: string;
-  label: string;
-  type: string;
-  position: number;
-  icon: string;
-  placeholder: string;
-  combinator: string;
-  value: string;
-  options?: { key: string; value: string }[];
-  colors?: { [key: string]: string };
-}
-export interface StatusProperties {
-  [columnKey: string]: {
-    labels: { [value: string]: string };
-    colors: { [value: string]: string };
-  };
-}
-export interface ActionProperties {
-  [columnKey: string]: { actions: ActionDefinition[] };
-}
-export interface ActionDefinition {
-  name: string;
-  implementation: (...dependencies: any) => any;
 }

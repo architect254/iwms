@@ -26,7 +26,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
             return await firstValueFrom(
               authService.currentTokenUserValue$.pipe(
                 map((user) => {
-                  if (user?.role == 'Site Admin') {
+                  if (user?.user_role == 'Site Admin') {
                     nextRoute = '/users';
                   } else {
                     nextRoute = '/memberships';
