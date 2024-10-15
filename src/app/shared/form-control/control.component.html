@@ -44,14 +44,20 @@
   } @case ('dropdown') {
   <mat-form-field appearance="outline" class="form-field selector-control">
     <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
-    <mat-select [id]="control.key" [formControlName]="control.key">
+    <mat-select
+      [id]="control.key"
+      [formControlName]="control.key"
+      [disabled]="!control.options"
+    >
       @for (type of control.options; track type) {
       <mat-option [value]="type?.id">{{ type?.name }}</mat-option>
       }
     </mat-select>
     <mat-icon matPrefix>{{ control.icon }}</mat-icon>
   </mat-form-field>
-  } } @if (!isValid) {
+  @if (!control.options) {
+  <mat-hint>{{control.placeholder}}</mat-hint>
+  } } } @if (isNotValid) {
   <mat-error class="errorMessage">{{ control.label }} is required</mat-error>
   }
 </div>

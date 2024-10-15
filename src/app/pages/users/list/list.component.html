@@ -1,10 +1,10 @@
 <iwms-header [title]="pageTitle">
-  <iwms-grid-search [filterOptions]="filterColumns" (applyFilter)="doApplyFilter($event)"></iwms-grid-search
+  <iwms-grid-search [filters]="filters" (applyFilter)="doApplyFilter($event)"></iwms-grid-search
 ></iwms-header>
 <iwms-grid
   name="User"
   [data]="data"
-  [columnProperties]="columnProperties"
-  [statusProperties]="statusProperties"
-  [actionProperties]="actionProperties"
+  [columns]="columns"
+  [status]="status"
+  [actions]="actions"
 ></iwms-grid>

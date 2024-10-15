@@ -1,11 +1,11 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { GridContainerDirective } from './grid-container.directive';
+import { GridDirective } from './grid-container.directive';
 
-describe('GridContainerDirective', () => {
-  let component: GridContainerDirective;
-  let fixture: ComponentFixture<GridContainerDirective>;
+describe('GridDirective', () => {
+  let component: GridDirective;
+  let fixture: ComponentFixture<GridDirective>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -14,7 +14,7 @@ describe('GridContainerDirective', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GridContainerDirective);
+    fixture = TestBed.createComponent(GridDirective);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

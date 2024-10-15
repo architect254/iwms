@@ -4,8 +4,10 @@ import { ResolveFn } from '@angular/router';
 import { membershipResolver } from './membership.resolver';
 
 describe('membershipResolver', () => {
-  const executeResolver: ResolveFn<boolean> = (...resolverParameters) => 
-      TestBed.runInInjectionContext(() => membershipResolver(...resolverParameters));
+  const executeResolver: ResolveFn<boolean> = (...resolverParameters) =>
+    TestBed.runInInjectionContext(() =>
+      membershipResolver(...resolverParameters)
+    );
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

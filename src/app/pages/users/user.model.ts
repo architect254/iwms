@@ -9,10 +9,13 @@ export class BaseEntity implements BaseEntity {}
 
 export enum UserRole {
   SITE_ADMIN = 'Site Admin',
+  CLIENT = 'Client',
+}
+export enum MembershipRole {
   WELFARE_MANAGER = 'Welfare Manager',
   WELFARE_ACCOUNTANT = 'Welfare Accountant',
   WELFARE_SECRETARY = 'Welfare Secretary',
-  WELFARE_CLIENT_MEMBER = 'Welfare Client Member',
+  WELFARE_MEMBER = 'Welfare Member',
 }
 export interface Child extends BaseEntity {
   first_name: string;
@@ -30,9 +33,10 @@ export interface User extends BaseEntity {
   first_name: string;
   last_name: string;
   id_number: string;
+  birth_date: Date;
   phone_number: string;
   email: string;
-  role: UserRole;
+  user_role: UserRole;
   profile_image_url: string;
   membership?: Membership;
   spouse?: Spouse;
@@ -41,4 +45,16 @@ export interface User extends BaseEntity {
 
 export class Child implements Child {}
 export class Spouse implements Spouse {}
-export class User implements User {}
+export class User implements User {
+  first_name!: string;
+  last_name!: string;
+  id_number!: string;
+  birth_date!: Date;
+  phone_number!: string;
+  email!: string;
+  user_role!: UserRole;
+  profile_image_url!: string;
+  membership?: Membership;
+  spouse?: Spouse;
+  children?: Child[];
+}

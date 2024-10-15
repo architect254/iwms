@@ -12,7 +12,8 @@ import {
 } from '../../shared/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
-import { of, Observable, catchError } from 'rxjs';
+import { of, Observable } from 'rxjs';
+import { FilterRequestDto } from './list/model';
 
 @Injectable({
   providedIn: 'root',
@@ -266,24 +267,22 @@ export class WelfaresService extends ApiService {
   }
 
   createWelfare(payload: any): Observable<Welfare> {
-    return this.http
-      .post<Welfare>(this.endpoint, payload)
-      ;
+    return this.http.post<Welfare>(this.endpoint, payload);
   }
 
   updateWelfare(id: number | string, payload: any): Observable<Welfare> {
     const endpoint = this.endpoint + '/' + id;
-    return this.http
-      .put<Welfare>(endpoint, payload)
-      ;
+    return this.http.put<Welfare>(endpoint, payload);
   }
 
-  getWelfares(page: number = 1, take: number = 100): Observable<Welfare[]> {
-    return this.http
-      .get<Welfare[]>(this.endpoint, {
-        params: new HttpParams().set('page', page).set('take', take),
-      })
-      ;
+  getWelfares(
+    page: number = 1,
+    take: number = 100,
+    filters?: [string, string][]
+  ): Observable<Welfare[]> {
+    return this.http.get<Welfare[]>(this.endpoint, {
+      params: new HttpParams().set('page', page).set('take', take),
+    });
   }
 
   getWelfareById(id: number | string): Observable<Welfare> {

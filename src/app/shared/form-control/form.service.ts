@@ -26,7 +26,7 @@ export class DynamicCustomFormControlBase<T> {
   order: number;
   controlType: string;
   type: string;
-  options: { id: string | number | undefined; name: string }[];
+  options: { id: string | number; name: string }[];
   dateConfig?: { minDate: Date; maxDate: Date; startDate: Date };
   constructor(
     options: {
@@ -40,7 +40,7 @@ export class DynamicCustomFormControlBase<T> {
       order?: number;
       controlType?: string;
       type?: string;
-      options?: { id: string | number | undefined; name: string }[];
+      options?: { id: string | number; name: string }[];
       dateConfig?: { minDate: Date; maxDate: Date; startDate: Date };
     } = {}
   ) {
