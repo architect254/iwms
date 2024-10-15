@@ -40,6 +40,8 @@ export class GridComponent {
     this.dataSource = new MatTableDataSource(data);
   }
 
+  @Input() disableAddition:boolean = false
+
   @Input() columns!: GridColumn[];
   @Input() status?: StatusConfig;
   @Input() actions?: Action[];
@@ -104,7 +106,8 @@ export class GridComponent {
   // }
 
   viewData(id: number) {
-    const url = `/${this.name}s/view/${id}`.toLocaleLowerCase();
+    const name = this.name.split(' ').join('-').toLocaleLowerCase()
+    const url = `/${name}s/view/${id}`.toLocaleLowerCase();
     this.router.navigateByUrl(url);
   }
 }

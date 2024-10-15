@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
-import { userResolver, welfareResolver } from './user.resolver';
+import { userResolver } from './user.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
 import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
 
@@ -17,7 +17,6 @@ export const routes: Routes = [
         resolve: {
           user: userResolver,
           welfares: welfaresResolver,
-          welfare: welfareResolver,
         },
         data: { title: 'View User Details' },
       },
@@ -27,7 +26,6 @@ export const routes: Routes = [
         resolve: {
           user: userResolver,
           welfares: welfaresResolver,
-          welfare: welfareResolver,
         },
         data: { title: 'Edit User Details', action: 'update' },
       },

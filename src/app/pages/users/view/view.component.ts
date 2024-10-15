@@ -6,7 +6,7 @@ import { DynamicCustomDataBase } from '../../../shared/data-view/view.service';
 import { ActivatedRoute, Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UsersService } from '../users.service';
-import { Child, Spouse, User } from '../user.model';
+import { Child, Spouse, User } from '../model';
 import { PageDirective } from '../../../shared/page/page.directive';
 import { AuthService } from '../../../core/services/auth.service';
 import {
@@ -15,8 +15,8 @@ import {
   userDataView,
   welfareDataView,
 } from './model';
-import { Membership } from '../../memberships/membership';
-import { Welfare } from '../../welfares/welfare';
+import { Membership } from '../../memberships/model';
+import { Welfare } from '../../welfares/model';
 
 @Component({
   selector: 'iwms-view',
@@ -27,8 +27,9 @@ import { Welfare } from '../../welfares/welfare';
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends PageDirective {
-  pageTitle: string = '';
-  editUrl: string = '';
+  pageTitle!: string;
+  editUrl!: string;
+  listUrl: string = '/users';
 
   user!: User;
   membership?: Membership;

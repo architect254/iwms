@@ -5,7 +5,7 @@ import {
   CustomDateControl,
   CustomDropdownControl,
 } from '../../../shared/form-control/form.service';
-import { Welfare } from '../../welfares/welfare';
+import { Welfare } from '../../welfares/model';
 
 export const coreUserDetailsFormControls = () => {
   const controls: DynamicCustomFormControlBase<string>[] = [

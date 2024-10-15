@@ -1,2 +1,11 @@
-<iwms-header [title]="pageTitle"></iwms-header>
-<iwms-dynamic-view [dataset]="dataView$ | async"></iwms-dynamic-view>
+<iwms-header
+  [title]="pageTitle"
+  [editUrl]="editUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
+
+<!-- #membership -->
+@if (membership) {
+<iwms-dynamic-view [dataset]="membershipDataView$ | async"></iwms-dynamic-view>
+}

@@ -1,6 +1,7 @@
 import {
   FilterOption,
   GridColumn,
+  StatusConfig,
 } from '../../../shared/grid/model';
 
 export const FILTER_OPTIONS: FilterOption[] = [
@@ -39,66 +40,76 @@ export const GRID_COLUMNS: GridColumn[] = [
   },
   {
     key: 'name',
-    label: 'Welfare Name',
+    label: 'Name',
     position: 1,
     type: 'string',
     width: '250px',
   },
   {
     key: 'phone_number',
-    label: 'Welfare Phone No.',
+    label: 'Phone No.',
     position: 2,
     type: 'number',
     width: '250px',
   },
   {
     key: 'email',
-    label: 'Welfare Email',
+    label: 'Email',
     position: 3,
     type: 'string',
     width: '250px',
   },
   {
-    key: 'manager',
-    label: 'Welfare Manager',
+    key: 'status',
+    label: 'Account Status',
     position: 4,
-    type: 'string',
+    type: 'status',
     width: '250px',
   },
   {
-    key: 'manager',
-    label: 'Welfare Accountant',
+    key: 'membership_role',
+    label: 'Membership Role',
     position: 5,
-    type: 'string',
-    width: '250px',
-  },
-  {
-    key: 'manager',
-    label: 'Welfare Secretary',
-    position: 6,
-    type: 'string',
+    type: 'status',
     width: '250px',
   },
   {
     key: 'create_date',
-    label: 'Date First Created',
-    position: 7,
+    label: 'First Created',
+    position: 6,
     type: 'date',
     width: '250px',
   },
   {
     key: 'update_date',
-    label: 'Date Last Updated',
-    position: 8,
+    label: 'Last Updated',
+    position: 7,
     type: 'date',
     width: '250px',
   },
 ];
+export const STATUS: StatusConfig = {
+  labels: {
+    'Welfare Manager': 'Welfare Manager',
+    'Welfare Accountant': 'Welfare Accountant',
+    'Welfare Secretary': 'Welfare Secretary',
+    'Welfare Member': 'Welfare Member',
+    Active: 'Active',
+    Inactive: 'Inactive',
+  },
+  colors: {
+    'Welfare Manager': 'orange',
+    'Welfare Accountant': 'blue',
+    'Welfare Secretary': 'purple',
+    'Welfare Member': 'cyan',
+    Active: 'green',
+    Inactive: 'black',
+  },
+};
 export interface FilterRequestDto {
   name?: string;
   phone_number?: string;
   email?: string;
-  manager?: string;
-  accountant?: string;
-  secretary?: string;
+  status?: string;
+  membership_role?: string;
 }

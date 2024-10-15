@@ -5,7 +5,7 @@
       >Viewing <strong>{{ dataSource.data.length }} </strong>Results</small
     >
     <div class="action-btns">
-      <button mat-flat-button class="basic-btn" aria-label="" routerLink="add">
+      <button mat-flat-button class="basic-btn" aria-label="" routerLink="add" [disabled]="disableAddition">
         <mat-icon fontIcon="add" class="btn-icon"></mat-icon
         ><span>Add {{ name }}</span>
       </button>

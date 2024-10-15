@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, of } from 'rxjs';
-import { User } from './user.model';
+import { User } from './model';
 import {
   CustomDateControl,
   CustomDropdownControl,
@@ -16,7 +16,7 @@ import {
 } from '../../shared/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
-import { Welfare } from '../welfares/welfare';
+import { Welfare } from '../welfares/model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Membership } from './membership';
+import { Membership } from './model';
 import {
   CustomDropdownControl,
   CustomTextboxControl,

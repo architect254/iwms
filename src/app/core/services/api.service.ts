@@ -4,14 +4,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { environment } from '../../../environments/environment';
 
 export const API_SERVER_URL = new InjectionToken<string>(
   'Dynamic API Server URL'
 );
 
 export const apiServerUrlFactory = (): string => {
-  if (true) {
+  if (false) {
     return 'https://iwms-be-api.onrender.com';
   } else {
     return `http://iwms.com`;

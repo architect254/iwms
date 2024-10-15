@@ -16,8 +16,8 @@ export class HeaderComponent {
 
   @Input() editUrl: string = '';
   @Input() viewUrl: string = '';
+  @Input() listUrl: string = '';
 
-  @Input() displayList: boolean = false;
   @Input() displayBack: boolean = false;
 
   constructor(public location: Location) {}

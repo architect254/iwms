@@ -20,7 +20,7 @@ import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
 import { ApiService } from './api.service';
 import { SignInDto, SignUpDto } from '../../shared/auth-dialog/auth.dto';
-import { User } from '../../pages/users/user.model';
+import { User } from '../../pages/users/model';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;

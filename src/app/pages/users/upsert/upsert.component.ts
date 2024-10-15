@@ -15,9 +15,9 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PageDirective } from '../../../shared/page/page.directive';
-import { Welfare } from '../../welfares/welfare';
-import { Child, MembershipRole, Spouse, User, UserRole } from '../user.model';
-import { Membership } from '../../memberships/membership';
+import { Welfare } from '../../welfares/model';
+import { Child, MembershipRole, Spouse, User, UserRole } from '../model';
+import { Membership } from '../../memberships/model';
 import { ValueType } from '../../../shared/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
 import {
@@ -49,6 +49,7 @@ export class UpsertComponent extends PageDirective {
   pageTitle!: string;
   pageAction!: 'update' | 'create';
   viewUrl!: string;
+  listUrl: string = '/users';
 
   user?: User;
   membership?: Membership;

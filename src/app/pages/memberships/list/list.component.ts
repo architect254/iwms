@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { FilterOption, GridColumn } from '../../../shared/grid/model';
 import { FILTER_OPTIONS, FilterRequestDto, GRID_COLUMNS } from './model';
 import { MembershipService } from '../memberships.service';
+import { buildMemberName, buildName } from '../model';
 
 @Component({
   selector: 'iwms-list',
@@ -64,11 +65,11 @@ export class ListComponent extends GridDirective {
           this.data = memberships.map((membership) => {
             return {
               id: membership.id,
-              name: `${membership.member.first_name} ${membership.member.last_name}`,
-              phone_number: membership.member.phone_number,
-              email: membership.member.email,
+              name: buildMemberName(membership),
+              phone_number: membership.member?.phone_number,
+              email: membership.member?.email,
               status: membership.status,
-              role: membership.membership_role,
+              membership_role: membership.membership_role,
               create_date: membership.create_date,
               update_date: membership.update_date,
             };

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Welfare } from './welfare';
+import { Welfare } from './model';
 import {
   CustomDropdownControl,
   CustomTextboxControl,

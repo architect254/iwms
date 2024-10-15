@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ResolveFn } from '@angular/router';
 
 import { membershipsResolver } from './memberships.resolver';
-import { Membership } from './membership';
+import { Membership } from './model';
 
 describe('membershipsResolver', () => {
   const executeResolver: ResolveFn<Membership[] | null> = (

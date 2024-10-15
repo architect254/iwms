@@ -18,22 +18,23 @@ export const routes: Routes = [
           import('./pages/users/users.routes').then((users) => users.routes),
       },
       {
-        path: 'welfares',
+        path: 'welfare-groups',
         data: { title: 'Welfare Groups' },
         loadChildren: () =>
           import('./pages/welfares/welfares.routes').then(
             (welfares) => welfares.routes
           ),
       },
+      {
+        path: 'memberships',
+        data: { title: 'Welfare Memberships' },
+        loadChildren: () =>
+          import('./pages/memberships/memberships.routes').then(
+            (memberships) => memberships.routes
+          ),
+      },
       { path: '', redirectTo: '/users', pathMatch: 'full' },
-      // {
-      //   path: 'memberships',
-      //   data: { title: 'Welfare Memberships' },
-      //   loadChildren: () =>
-      //     import('./pages/memberships/memberships.routes').then(
-      //       (memberships) => memberships.routes
-      //     ),
-      // },
+
       // {
       //   path: 'contributions',
       //   data: { title: 'Welfare Members Contributions' },

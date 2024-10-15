@@ -1,4 +1,4 @@
-import { Membership } from '../memberships/membership';
+import { Membership } from '../memberships/model';
 
 export interface BaseEntity {
   id: number;

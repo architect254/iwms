@@ -1,2 +1,11 @@
-<iwms-header [title]="pageTitle"></iwms-header>
-<iwms-dynamic-view [dataset]="dataView$ | async"></iwms-dynamic-view>
+<iwms-header
+  [title]="pageTitle"
+  [editUrl]="editUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
+
+<!-- #welfare -->
+@if (welfare) {
+<iwms-dynamic-view [dataset]="welfareDataView$ | async"></iwms-dynamic-view>
+}

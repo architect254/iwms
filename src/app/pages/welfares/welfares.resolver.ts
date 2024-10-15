@@ -1,8 +1,7 @@
 import { ResolveFn } from '@angular/router';
 import { WelfaresService } from './welfares.service';
 import { inject } from '@angular/core';
-import { catchError } from 'rxjs';
-import { Welfare } from './welfare';
+import { Welfare } from './model';
 
 export const welfaresResolver: ResolveFn<Welfare[] | null> = (route, state) => {
   const welfaresService = inject(WelfaresService);

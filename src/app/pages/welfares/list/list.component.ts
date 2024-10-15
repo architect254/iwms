@@ -14,6 +14,8 @@ import { HeaderComponent } from '../../../shared/header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { FilterOption, GridColumn } from '../../../shared/grid/model';
 import { FILTER_OPTIONS, FilterRequestDto, GRID_COLUMNS } from './model';
+import { MembershipRole } from '../../users/model';
+import { buildName } from '../../memberships/model';
 
 @Component({
   selector: 'iwms-list',
@@ -68,6 +70,9 @@ export class ListComponent extends GridDirective {
               name: welfare.name,
               phone_number: welfare.phone_number,
               email: welfare.email,
+              manager: buildName('manager', welfare.memberships),
+              accountant: buildName('accountant', welfare.memberships),
+              secretary: buildName('secretary', welfare.memberships),
               create_date: welfare.create_date,
               update_date: welfare.update_date,
             };

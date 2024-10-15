@@ -1,5 +1,5 @@
-import { Membership } from '../memberships/membership';
-import { BaseEntity } from '../users/user.model';
+import { Membership, MembershipRole } from '../memberships/model';
+import { BaseEntity } from '../users/model';
 
 export interface Welfare extends BaseEntity {
   name: string;

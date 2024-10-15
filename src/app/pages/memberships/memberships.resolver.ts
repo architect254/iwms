@@ -1,5 +1,5 @@
 import { ResolveFn } from '@angular/router';
-import { Membership } from './membership';
+import { Membership } from './model';
 
 export const membershipsResolver: ResolveFn<Membership[] | null> = (
   route,

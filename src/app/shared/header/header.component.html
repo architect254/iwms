@@ -7,7 +7,7 @@
 
   <!-- #region naviation buttons-->
 
-  @if (displayList || editUrl || viewUrl || displayBack) {
+  @if (listUrl || editUrl || viewUrl || displayBack) {
   <div class="header-nav-btns">
     @if(editUrl){
     <button
@@ -27,8 +27,13 @@
     >
       <mat-icon fontIcon="wysiwyg" class="btn-icon"></mat-icon>
     </button>
-    } @if (displayList) {
-    <button mat-icon-button class="basic-btn" aria-label="" routerLink="/users">
+    } @if (listUrl) {
+    <button
+      mat-icon-button
+      class="basic-btn"
+      aria-label=""
+      [routerLink]="[listUrl]"
+    >
       <mat-icon fontIcon="format_list_numbered" class="btn-icon"></mat-icon>
     </button>
     } @if (displayBack) {

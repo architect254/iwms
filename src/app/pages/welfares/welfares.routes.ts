@@ -3,6 +3,7 @@ import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
 import { ContainerLayoutComponent } from '../../shared/layout/container-layout.component';
+import { welfareResolver } from './welfare.resolver';
 
 export const routes: Routes = [
   {
@@ -12,11 +13,13 @@ export const routes: Routes = [
       {
         path: 'view/:id',
         component: ViewComponent,
+        resolve: { welfare: welfareResolver },
         data: { title: 'View Welfare Group Details' },
       },
       {
         path: 'edit/:id',
         component: UpsertComponent,
+        resolve: { welfare: welfareResolver },
         data: { title: 'Edit Welfare Group Details' },
       },
       {

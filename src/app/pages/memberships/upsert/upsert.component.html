@@ -1,36 +1,22 @@
-<iwms-header [title]="pageTitle"></iwms-header>
+<iwms-header
+  [title]="pageTitle"
+  [viewUrl]="viewUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
 
-<mat-stepper orientation="vertical">
-  <mat-step>
-    <ng-template matStepLabel>Personal Details</ng-template>
-    <ng-template matStepContent>
-      <iwms-dynamic-form
-        [controls]="personalDetailsFormControls$ | async"
-        (notifyValidity)="onValidityNotified($event, 'Personal Details')"
-      ></iwms-dynamic-form>
-      <button [disabled]="!isProceedAllowed['Personal Details']" mat-button matStepperNext>Proceed</button>
-    </ng-template>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Marital Details</ng-template>
-    <ng-template matStepContent>
-      <iwms-dynamic-form
-        [controls]="maritalDetailsFormControls$ | async"
-        (notifyValidity)="onValidityNotified($event, 'Marital Details')"
-      ></iwms-dynamic-form>
-      <button mat-button matStepperPrevious>Back</button>
-      <button [disabled]="!isProceedAllowed['Marital Details']" mat-button matStepperNext>Proceed</button>
-    </ng-template>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Family Details</ng-template>
-    <ng-template matStepContent>
-      <iwms-dynamic-form
-        [controls]="familyDetailsFormControls$ | async"
-        (notifyValidity)="onValidityNotified($event, 'Family Details')"
-      ></iwms-dynamic-form>
-      <button mat-button matStepperPrevious>Back</button>
-      <button [disabled]="!isProceedAllowed['Personal Details']" mat-flat-button matStepperNext>Save</button>
-    </ng-template>
-  </mat-step>
-</mat-stepper>
+<iwms-dynamic-form
+  [controls]="membershipDetailsFormControls$ | async"
+  [isSubmitting$]="isSubmitting$"
+  [triggerValidityNotification$]="triggerValidityNotification$"
+  (notifyValidity)="onValidityNotified($event)"
+></iwms-dynamic-form>
+
+<button
+  mat-flat-button
+  class="save-btn"
+  [disabled]="!isProceedAllowed"
+  (click)="save()"
+>
+  Save Membership
+</button>
