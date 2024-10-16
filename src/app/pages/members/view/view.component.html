@@ -1,0 +1,11 @@
+<iwms-header
+  [title]="pageTitle"
+  [editUrl]="editUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
+
+<!-- #member -->
+@if (member) {
+<iwms-dynamic-view [dataset]="memberDataView$ | async"></iwms-dynamic-view>
+}

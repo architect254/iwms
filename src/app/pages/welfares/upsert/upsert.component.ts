@@ -6,18 +6,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 
-import { DynamicFormComponent } from '../../../shared/form-control/form.component';
+import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import { DynamicCustomFormControlBase } from '../../../shared/form-control/form.service';
-import { HeaderComponent } from '../../../shared/header/header.component';
+import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/form.service';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { PageDirective } from '../../../shared/page/page.directive';
+import { Page } from '../../../shared/directives/page/page.directive';
 import { Welfare } from '../../welfares/model';
-import { ValueType } from '../../../shared/form-control/control.component';
+import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
-import { WelfareDetailsFormControls } from './model';
+import { welfareDetailsFormControls } from './model';
 import { WelfaresService } from '../welfares.service';
 
 @Component({
@@ -37,7 +37,7 @@ import { WelfaresService } from '../welfares.service';
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
-export class UpsertComponent extends PageDirective {
+export class UpsertComponent extends Page {
   pageTitle!: string;
   pageAction!: 'update' | 'create';
   viewUrl!: string;
@@ -47,7 +47,7 @@ export class UpsertComponent extends PageDirective {
 
   welfareDetailsFormControls$: Observable<
     DynamicCustomFormControlBase<ValueType>[]
-  > = WelfareDetailsFormControls();
+  > = welfareDetailsFormControls();
 
   $triggerValidityNotification = new BehaviorSubject(false);
   $isSubmitting = new BehaviorSubject(false);

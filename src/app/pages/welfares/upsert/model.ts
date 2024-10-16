@@ -3,10 +3,10 @@ import {
   DynamicCustomFormControlBase,
   CustomTextboxControl,
   CustomDropdownControl,
-} from '../../../shared/form-control/form.service';
+} from '../../../shared/components/form-control/form.service';
 import { Welfare } from '../../welfares/model';
 
-export const WelfareDetailsFormControls = () => {
+export function welfareDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<string>[] = [
     new CustomTextboxControl({
       key: 'name',
@@ -38,8 +38,9 @@ export const WelfareDetailsFormControls = () => {
     }),
   ];
   return of(controls.sort((a, b) => a.order - b.order));
-};
-export const ChooseWelfareFormControls = (welfares: Welfare[] | undefined) => {
+}
+
+export function chooseWelfareFormControls(welfares?: Welfare[]) {
   let controls: DynamicCustomFormControlBase<string>[];
   if (welfares?.length) {
     const welfareOptions = welfares?.map((welfare) => {
@@ -68,4 +69,4 @@ export const ChooseWelfareFormControls = (welfares: Welfare[] | undefined) => {
     ];
   }
   return of(controls.sort((a, b) => a.order - b.order));
-};
+}

@@ -8,13 +8,13 @@ import {
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { PageDirective } from './shared/page/page.directive';
+import { Page } from './shared/directives/page/page.directive';
 import { SwUpdate } from '@angular/service-worker';
 import { first, tap } from 'rxjs';
-import { AppShellComponent } from './app-shell/app-shell.component';
 import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { AuthComponent } from './shared/auth-dialog/auth-dialog.component';
+import { AuthComponent } from './shared/views/auth-dialog/auth-dialog.component';
 import { AuthService } from './core/services/auth.service';
+import { AppShellComponent } from './shared/views/app-shell/app-shell.component';
 
 @Component({
   selector: 'root',
@@ -24,7 +24,7 @@ import { AuthService } from './core/services/auth.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent extends PageDirective {
+export class AppComponent extends Page {
   private readonly platform = inject(PLATFORM_ID);
 
   constructor(

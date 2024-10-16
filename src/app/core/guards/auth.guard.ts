@@ -1,43 +1,36 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 
-import { first, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = async (route, state) => {
+export const authGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
+
+  const isAuthenticated = await firstValueFrom(authService.isAuthenticated$);
+
+  return isAuthenticated;
+};
+export const noAuthGuard: CanActivateFn = async () => {
+  const authService = inject(AuthService);
+
+  const isAuthenticated = await firstValueFrom(authService.isAuthenticated$);
+
+  return !isAuthenticated;
+};
+export const roleGuard: CanActivateFn = async (route) => {
   const router = inject(Router);
 
-  return await firstValueFrom(
-    authService.isAuthenticated$.pipe(
-      map(async (isAuthenticated: boolean) => {
-        if (!isAuthenticated) {
-          if (state.url == '/home') {
-            return true;
-          } else {
-            return new RedirectCommand(router.parseUrl('/home'));
-          }
-        } else {
-          console.log('route', state.url);
-          if (state.url == '/home' || state.url == '/') {
-            let nextRoute = '';
+  const authService = inject(AuthService);
 
-            return await firstValueFrom(
-              authService.currentTokenUserValue$.pipe(
-                map((user) => {
-                  if (user?.user_role == 'Site Admin') {
-                    nextRoute = '/users';
-                  } else {
-                    nextRoute = '/memberships';
-                  }
-                  return new RedirectCommand(router.parseUrl(nextRoute));
-                })
-              )
-            );
-          } else return true;
-        }
-      })
-    )
-  );
+  const account = await firstValueFrom(authService.currentTokenUserValue$);
+
+  const { type, redirectUrl } = route.data['role'];
+
+  if (account?.type == type) {
+    return true;
+  } else {
+    return router.createUrlTree(['/', redirectUrl]);
+  }
 };

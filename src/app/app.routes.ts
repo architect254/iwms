@@ -1,21 +1,28 @@
 import { Routes } from '@angular/router';
 
-import { LayoutComponent } from './shared/layout/layout.component';
-import { NotFoundComponent } from './shared/not-found/not-found.component';
-import { authGuard } from './core/guards/auth.guard';
+import { LayoutComponent } from './shared/views/layout/layout.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { authGuard, noAuthGuard, roleGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './pages/home/home.component';
+import { AccountType } from './pages/accounts/model';
 
 export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [authGuard],
+    canMatch: [authGuard],
     children: [
       {
-        path: 'users',
-        data: { title: 'Welfare Users' },
+        path: 'accounts',
+        data: {
+          title: 'Welfare User Accounts',
+          role: { type: AccountType.Admin, redirectUrl: 'members' },
+        },
+        canMatch: [roleGuard],
         loadChildren: () =>
-          import('./pages/users/users.routes').then((users) => users.routes),
+          import('./pages/accounts/accounts.routes').then(
+            (accounts) => accounts.routes
+          ),
       },
       {
         path: 'welfare-groups',
@@ -26,14 +33,14 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'memberships',
-        data: { title: 'Welfare Memberships' },
+        path: 'members',
+        data: { title: 'Welfare Members' },
         loadChildren: () =>
-          import('./pages/memberships/memberships.routes').then(
-            (memberships) => memberships.routes
+          import('./pages/members/members.routes').then(
+            (members) => members.routes
           ),
       },
-      { path: '', redirectTo: '/users', pathMatch: 'full' },
+      { path: '', redirectTo: '/accounts', pathMatch: 'full' },
 
       // {
       //   path: 'contributions',
@@ -70,15 +77,15 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'home',
+    path: '',
+    pathMatch: 'full',
     component: HomeComponent,
-    canActivate: [authGuard],
+    canActivate: [noAuthGuard],
   },
   {
     path: 'not-found',
     component: NotFoundComponent,
     data: { title: 'Page Not Found' },
   },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: 'not-found' },
 ];

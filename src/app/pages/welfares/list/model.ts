@@ -1,7 +1,4 @@
-import {
-  FilterOption,
-  GridColumn,
-} from '../../../shared/grid/model';
+import { FilterOption, GridColumn } from '../../../shared/views/grid/model';
 
 export const FILTER_OPTIONS: FilterOption[] = [
   {
@@ -29,6 +26,7 @@ export const FILTER_OPTIONS: FilterOption[] = [
     combinator: 'Includes',
   },
 ];
+
 export const GRID_COLUMNS: GridColumn[] = [
   {
     key: 'select',
@@ -94,6 +92,7 @@ export const GRID_COLUMNS: GridColumn[] = [
     width: '250px',
   },
 ];
+
 export interface FilterRequestDto {
   name?: string;
   phone_number?: string;

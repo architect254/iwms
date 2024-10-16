@@ -4,12 +4,12 @@ import {
   CustomDropdownControl,
   CustomTextboxControl,
   DynamicCustomFormControlBase,
-} from '../../shared/form-control/form.service';
+} from '../../shared/components/form-control/form.service';
 import {
   CustomListData,
   CustomTextData,
   DynamicCustomDataBase,
-} from '../../shared/data-view/view.service';
+} from '../../shared/components/data-view/view.service';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 import { of, Observable } from 'rxjs';

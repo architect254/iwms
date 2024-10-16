@@ -4,18 +4,17 @@ import { AsyncPipe } from '@angular/common';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { WelfaresService } from '../welfares.service';
-
-import { GridDirective } from '../../../shared/grid-container/grid-container.directive';
-import { GridComponent } from '../../../shared/grid/grid.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Data } from '@angular/router';
-import { GridSearchComponent } from '../../../shared/grid/grid-search/grid-search.component';
-import { HeaderComponent } from '../../../shared/header/header.component';
 import { AuthService } from '../../../core/services/auth.service';
-import { FilterOption, GridColumn } from '../../../shared/grid/model';
-import { FILTER_OPTIONS, FilterRequestDto, GRID_COLUMNS } from './model';
-import { MembershipRole } from '../../users/model';
-import { buildName } from '../../memberships/model';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { ListPage } from '../../../shared/directives/list-page/list-page.directive';
+import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
+import { GridComponent } from '../../../shared/views/grid/grid.component';
+import { GridColumn, FilterOption } from '../../../shared/views/grid/model';
+import { buildName } from '../../members/model';
+import { GRID_COLUMNS, FILTER_OPTIONS, FilterRequestDto } from './model';
+
 
 @Component({
   selector: 'iwms-list',
@@ -31,7 +30,7 @@ import { buildName } from '../../memberships/model';
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
-export class ListComponent extends GridDirective {
+export class ListComponent extends ListPage {
   columns: GridColumn[] = GRID_COLUMNS;
   filters: FilterOption[] = FILTER_OPTIONS;
 
@@ -70,9 +69,9 @@ export class ListComponent extends GridDirective {
               name: welfare.name,
               phone_number: welfare.phone_number,
               email: welfare.email,
-              manager: buildName('manager', welfare.memberships),
-              accountant: buildName('accountant', welfare.memberships),
-              secretary: buildName('secretary', welfare.memberships),
+              manager: buildName('manager', welfare.members),
+              accountant: buildName('accountant', welfare.members),
+              secretary: buildName('secretary', welfare.members),
               create_date: welfare.create_date,
               update_date: welfare.update_date,
             };

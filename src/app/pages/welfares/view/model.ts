@@ -2,13 +2,11 @@ import { Observable, of } from 'rxjs';
 import {
   DynamicCustomDataBase,
   CustomTextData,
-  CustomDateData,
-  CustomStatusData,
-} from '../../../shared/data-view/view.service';
+} from '../../../shared/components/data-view/view.service';
 
-export const welfareDataView = (): Observable<
+export function welfareDataView(): Observable<
   DynamicCustomDataBase<string | number | Date>[]
-> => {
+> {
   const data: DynamicCustomDataBase<string>[] = [
     new CustomTextData({
       key: 'name',
@@ -48,4 +46,4 @@ export const welfareDataView = (): Observable<
     }),
   ];
   return of(data.sort((a, b) => a.order - b.order));
-};
+}

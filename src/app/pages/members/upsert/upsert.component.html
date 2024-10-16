@@ -1,0 +1,22 @@
+<iwms-header
+  [title]="pageTitle"
+  [viewUrl]="viewUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
+
+<iwms-dynamic-form
+  [controls]="memberDetailsFormControls$ | async"
+  [isSubmitting$]="isSubmitting$"
+  [triggerValidityNotification$]="triggerValidityNotification$"
+  (notifyValidity)="onValidityNotified($event)"
+></iwms-dynamic-form>
+
+<button
+  mat-flat-button
+  class="save-btn"
+  [disabled]="!isProceedAllowed"
+  (click)="save()"
+>
+  Save Member
+</button>

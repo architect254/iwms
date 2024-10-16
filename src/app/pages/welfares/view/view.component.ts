@@ -1,16 +1,16 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, SkipSelf } from '@angular/core';
-import { HeaderComponent } from '../../../shared/header/header.component';
-import { DynamicViewComponent } from '../../../shared/data-view/view.component';
-import { DynamicCustomDataBase } from '../../../shared/data-view/view.service';
+import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { DynamicViewComponent } from '../../../shared/components/data-view/view.component';
+import { DynamicCustomDataBase } from '../../../shared/components/data-view/view.service';
 import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
-import { PageDirective } from '../../../shared/page/page.directive';
+import { Page } from '../../../shared/directives/page/page.directive';
 import { AuthService } from '../../../core/services/auth.service';
 import { welfareDataView } from './model';
 import { Welfare } from '../../welfares/model';
 import { WelfaresService } from '../welfares.service';
-import { buildName } from '../../memberships/model';
+import { buildName } from '../../members/model';
 
 @Component({
   selector: 'iwms-view',
@@ -20,7 +20,7 @@ import { buildName } from '../../memberships/model';
   templateUrl: './view.component.html',
   styleUrl: './view.component.scss',
 })
-export class ViewComponent extends PageDirective {
+export class ViewComponent extends Page {
   pageTitle!: string;
   editUrl!: string;
   listUrl: string = '/welfare-grous';
@@ -64,7 +64,7 @@ export class ViewComponent extends PageDirective {
                   ) {
                     view.value = buildName(
                       view.key,
-                      this.welfare?.memberships!
+                      this.welfare?.members!
                     );
                   }
                 }
