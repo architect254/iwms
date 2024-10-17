@@ -1,0 +1,16 @@
+<mat-form-field appearance="outline" class="form-field selector-control">
+  <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
+  <mat-select
+    [id]="control.key"
+    [formControlName]="control.key"
+    [disabled]="!control.options"
+  >
+    @for (option of control.options; track option) {
+    <mat-option [value]="option?.id">{{ option?.name }}</mat-option>
+    }
+  </mat-select>
+  <mat-icon matPrefix>{{ control.icon }}</mat-icon>
+</mat-form-field>
+@if (!control.options) {
+<mat-hint>{{ control.placeholder }}</mat-hint>
+}

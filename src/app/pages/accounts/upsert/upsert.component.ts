@@ -8,7 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/form.service';
+import {
+  CustomDropdownControl,
+  DynamicCustomFormControlBase,
+} from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { AccountsService } from '../accounts.service';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -55,7 +58,7 @@ export class UpsertComponent extends Page {
   pageTitle!: string;
   pageAction!: 'update' | 'create';
   viewUrl!: string;
-  listUrl: string = '/users';
+  listUrl: string = '/accounts';
 
   account?: Account;
   member?: Member;
@@ -116,7 +119,7 @@ export class UpsertComponent extends Page {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
       this.pageAction = data['action'];
-      this.viewUrl = `/users/view/${this.route.snapshot.paramMap.get('id')}`;
+      this.viewUrl = `/accounts/${this.route.snapshot.paramMap.get('id')}`;
 
       this.account = data['account'];
       this.member = this.account?.member;
@@ -254,9 +257,11 @@ export class UpsertComponent extends Page {
           (form: DynamicCustomFormControlBase<ValueType>[]) => {
             form.forEach((control: DynamicCustomFormControlBase<ValueType>) => {
               if (control) {
-                control.options = this.welfares.map((welfare) => {
-                  return { id: welfare.id, name: welfare.name };
-                });
+                (<CustomDropdownControl>control).options = this.welfares.map(
+                  (welfare) => {
+                    return { id: welfare.id, name: welfare.name };
+                  }
+                );
               }
             });
           }

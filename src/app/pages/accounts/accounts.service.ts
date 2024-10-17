@@ -21,18 +21,18 @@ export class AccountsService extends ApiService {
   }
 
   getAccounts(
-    page: number,
-    take: number,
-    searchQueries: [string, string][]
+    page: number = 1,
+    take: number = 100,
+    filters?: [string, string][]
   ): Observable<Account[]> {
     let queryString = '';
-    searchQueries?.forEach((searchQuery, currentIndex) => {
-      const [param, value] = searchQuery;
+    filters?.forEach((filter, currentIndex) => {
+      const [param, value] = filter;
       const query = `${param}=${value}`;
       if (currentIndex == 0) {
         queryString = `?${query}`;
       }
-      if (currentIndex > 0 && currentIndex < searchQueries.length) {
+      if (currentIndex > 0 && currentIndex < filters.length) {
         queryString = `${queryString}&${query}`;
       }
     });
@@ -43,6 +43,11 @@ export class AccountsService extends ApiService {
     return this.http.get<Account[]>(this.endpoint, {
       params: new HttpParams({ fromString: queryString }),
     });
+  }
+
+  searchAccounts(accountName: string): Observable<Account[]> {
+    const endpoint = this.endpoint + 'by-name';
+    return this.http.get<Account[]>(endpoint);
   }
 
   getAccountById(id: number | string): Observable<Account> {

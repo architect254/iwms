@@ -23,7 +23,7 @@ import { buildName } from '../../members/model';
 export class ViewComponent extends Page {
   pageTitle!: string;
   editUrl!: string;
-  listUrl: string = '/welfare-grous';
+  listUrl: string = '/welfare-groups';
 
   welfare?: Welfare;
 
@@ -40,7 +40,9 @@ export class ViewComponent extends Page {
 
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
-      this.editUrl = `/welfare-groups/edit/${this.route.snapshot.paramMap.get('id')}`;
+      this.editUrl = `/welfare-groups/${this.route.snapshot.paramMap.get(
+        'id'
+      )}/update`;
 
       this.welfare = data['welfare'];
 
@@ -62,10 +64,7 @@ export class ViewComponent extends Page {
                     view.key == 'accountant' ||
                     view.key == 'secretary'
                   ) {
-                    view.value = buildName(
-                      view.key,
-                      this.welfare?.members!
-                    );
+                    view.value = buildName(view.key, this.welfare?.members!);
                   }
                 }
               }

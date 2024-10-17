@@ -12,10 +12,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormControlComponent, ValueType } from './control.component';
-import {
-  DynamicCustomFormControlBase,
-  DynamicCustomFormControlService,
-} from './form.service';
+import { DynamicCustomFormControlBase, toFormGroup } from './model';
 import { filter, Observable, of, Subscription, tap } from 'rxjs';
 
 @Component({
@@ -23,7 +20,6 @@ import { filter, Observable, of, Subscription, tap } from 'rxjs';
   selector: 'iwms-dynamic-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
-  providers: [DynamicCustomFormControlService],
   imports: [
     CommonModule,
     DynamicFormControlComponent,
@@ -44,10 +40,10 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
 
   formData = '';
 
-  constructor(private fcs: DynamicCustomFormControlService) {}
+  constructor() {}
 
   ngOnInit() {
-    this.form = this.fcs.toFormGroup(
+    this.form = toFormGroup(
       this.controls as DynamicCustomFormControlBase<ValueType>[]
     );
     this.$subscriptions$.add(

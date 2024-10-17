@@ -2,13 +2,17 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, inject, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, startWith } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/form.service';
+import {
+  CustomDropdownControl,
+  CustomSearchControl,
+  DynamicCustomFormControlBase,
+} from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -19,6 +23,9 @@ import { ValueType } from '../../../shared/components/form-control/control.compo
 import { AuthService } from '../../../core/services/auth.service';
 import { welfareDetailsFormControls } from './model';
 import { WelfaresService } from '../welfares.service';
+import { Account } from '../../accounts/model';
+import { get } from 'http';
+import { buildAccountName } from '../../members/model';
 
 @Component({
   selector: 'iwms-upsert',
@@ -49,6 +56,9 @@ export class UpsertComponent extends Page {
     DynamicCustomFormControlBase<ValueType>[]
   > = welfareDetailsFormControls();
 
+  accountOptions!: Account[];
+  filteredAccountOptions!: Observable<string[]>;
+
   $triggerValidityNotification = new BehaviorSubject(false);
   $isSubmitting = new BehaviorSubject(false);
 
@@ -64,11 +74,12 @@ export class UpsertComponent extends Page {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
       this.pageAction = data['action'];
-      this.viewUrl = `/welfare-groups/view/${this.route.snapshot.paramMap.get(
+      this.viewUrl = `/welfare-groups/${this.route.snapshot.paramMap.get(
         'id'
       )}`;
 
       this.welfare = data['welfare'];
+      this.accountOptions = data['accounts'];
       if (this.pageAction == 'update') {
         if (this.welfare) {
           this.welfareDetailsFormControls$.forEach(
@@ -82,6 +93,22 @@ export class UpsertComponent extends Page {
                         string | number | Date
                       >
                     )[control.key] as string | number | Date;
+
+                    if (
+                      control.key == 'manager' ||
+                      control.key == 'accountant' ||
+                      control.key == 'secretary'
+                    ) {
+                      (control as CustomSearchControl).options =
+                        this.accountOptions.map((account) => {
+                          return {
+                            id: account.id,
+                            name: buildAccountName(account),
+                          };
+                        });
+
+                      (control as CustomSearchControl).search
+                    }
                   }
                 }
               );

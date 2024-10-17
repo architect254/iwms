@@ -33,6 +33,7 @@ import {
   API_SERVER_URL,
   apiServerUrlFactory,
 } from './core/services/api.service';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -61,5 +62,6 @@ export const appConfig: ApplicationConfig = {
     { provide: API_SERVER_URL, useFactory: apiServerUrlFactory, multi: true },
     AuthService,
     JwtHelperService,
+    provideNativeDateAdapter(),
   ],
 };

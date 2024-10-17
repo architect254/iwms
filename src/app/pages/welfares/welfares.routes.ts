@@ -4,6 +4,7 @@ import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
 import { ContainerLayoutComponent } from '../../shared/views/layout/container-layout.component';
 import { welfareResolver } from './welfare.resolver';
+import { accountsResolver } from '../accounts/accounts.resolver';
 
 export const routes: Routes = [
   {
@@ -11,21 +12,21 @@ export const routes: Routes = [
     component: ContainerLayoutComponent,
     children: [
       {
-        path: 'view/:id',
-        component: ViewComponent,
-        resolve: { welfare: welfareResolver },
-        data: { title: 'View Welfare Group Details' },
-      },
-      {
-        path: 'edit/:id',
-        component: UpsertComponent,
-        resolve: { welfare: welfareResolver },
-        data: { title: 'Edit Welfare Group Details' },
-      },
-      {
         path: 'add',
         component: UpsertComponent,
         data: { title: 'Add Welfare Group Details' },
+      },
+      {
+        path: ':id/update',
+        component: UpsertComponent,
+        resolve: { welfare: welfareResolver, accounts: accountsResolver },
+        data: { title: 'Update Welfare Group Details', action: 'update' },
+      },
+      {
+        path: ':id',
+        component: ViewComponent,
+        resolve: { welfare: welfareResolver },
+        data: { title: 'View Welfare Group Details' },
       },
       {
         path: '',

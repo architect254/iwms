@@ -1,17 +1,13 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
+import { DynamicCustomFormControlBase } from './model';
+import { CustomTextControlComponent } from './controls/text-control.component';
+import { CustomDropdownControlComponent } from './controls/dropdown-control.component';
+import { CustomSearchControlComponent } from './controls/search-control.component';
+import { CustomDateControlComponent } from './controls/date-control.component';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-
-import { DynamicCustomFormControlBase } from './form.service';
-import {
-  MatDatepicker,
-  MatDatepickerModule,
-} from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   standalone: true,
@@ -22,15 +18,14 @@ import { MatNativeDateModule } from '@angular/material/core';
     CommonModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatIconModule,
+    CustomTextControlComponent,
+    CustomDropdownControlComponent,
+    CustomSearchControlComponent,
+    CustomDateControlComponent,
   ],
-  providers: [MatDatepickerModule, MatDatepicker],
 })
 export class DynamicFormControlComponent {
-  @Input() control!: DynamicCustomFormControlBase<ValueType>;
+  @Input() control!: any;
   @Input() form!: FormGroup;
 
   get isNotValid() {

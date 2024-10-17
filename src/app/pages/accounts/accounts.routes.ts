@@ -29,7 +29,6 @@ export const routes: Routes = [
       {
         path: ':id',
         component: ViewComponent,
-        pathMatch: 'full',
         resolve: {
           account: accountResolver,
           welfares: welfaresResolver,

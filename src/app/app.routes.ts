@@ -26,7 +26,11 @@ export const routes: Routes = [
       },
       {
         path: 'welfare-groups',
-        data: { title: 'Welfare Groups' },
+        data: {
+          title: 'Welfare Groups',
+          role: { type: AccountType.Admin, redirectUrl: 'members' },
+        },
+        canMatch: [roleGuard],
         loadChildren: () =>
           import('./pages/welfares/welfares.routes').then(
             (welfares) => welfares.routes

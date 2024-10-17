@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/form.service';
+import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';

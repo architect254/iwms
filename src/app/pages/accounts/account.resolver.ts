@@ -4,7 +4,7 @@ import { Account } from './model';
 import { AccountsService } from './accounts.service';
 
 
-export const accountResolver: ResolveFn<Account> = (route, state) => {
+export const accountResolver: ResolveFn<Account> = (route) => {
   const id = route.paramMap.get('id');
   const accountsService = inject(AccountsService);
   return accountsService.getAccountById(id!);

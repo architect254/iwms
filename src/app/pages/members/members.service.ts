@@ -4,7 +4,7 @@ import {
   CustomDropdownControl,
   CustomTextboxControl,
   DynamicCustomFormControlBase,
-} from '../../shared/components/form-control/form.service';
+} from '../../shared/components/form-control/model';
 import {
   CustomListData,
   CustomTextData,

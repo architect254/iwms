@@ -29,7 +29,7 @@ import { Welfare } from '../../welfares/model';
 export class ViewComponent extends Page {
   pageTitle!: string;
   editUrl!: string;
-  listUrl: string = '/users';
+  listUrl: string = '/accounts';
 
   account!: Account;
   member?: Member;
@@ -38,8 +38,9 @@ export class ViewComponent extends Page {
   spouse?: Spouse;
   children?: Child[];
 
-  accountDataView$: Observable<DynamicCustomDataBase<string | number | Date>[]> =
-    accountDataView();
+  accountDataView$: Observable<
+    DynamicCustomDataBase<string | number | Date>[]
+  > = accountDataView();
   welfareDataView$: Observable<
     DynamicCustomDataBase<string | number | Date>[]
   > = welfareDataView();
@@ -58,7 +59,9 @@ export class ViewComponent extends Page {
 
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
-      this.editUrl = `/users/edit/${this.route.snapshot.paramMap.get('id')}`;
+      this.editUrl = `/accounts/${this.route.snapshot.paramMap.get(
+        'id'
+      )}/update`;
 
       this.account = data['account'];
       this.member = this.account?.member;

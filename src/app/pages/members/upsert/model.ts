@@ -4,7 +4,7 @@ import {
   CustomTextboxControl,
   CustomDropdownControl,
   CustomDateControl,
-} from '../../../shared/components/form-control/form.service';
+} from '../../../shared/components/form-control/model';
 import { Welfare } from '../../welfares/model';
 
 export function memberDetailsFormControls() {

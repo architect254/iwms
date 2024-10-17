@@ -1,10 +1,14 @@
-import { of } from 'rxjs';
+import { filter, Observable, of } from 'rxjs';
 import {
   DynamicCustomFormControlBase,
   CustomTextboxControl,
   CustomDropdownControl,
-} from '../../../shared/components/form-control/form.service';
+  CustomSearchControl,
+} from '../../../shared/components/form-control/model';
 import { Welfare } from '../../welfares/model';
+import { inject } from '@angular/core';
+import { AccountsService } from '../../accounts/accounts.service';
+import { Account } from '../../accounts/model';
 
 export function welfareDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<string>[] = [
@@ -35,6 +39,37 @@ export function welfareDetailsFormControls() {
       type: 'email',
       required: true,
       order: 3,
+    }),
+    new CustomSearchControl({
+      key: 'manager',
+      label: 'Manager',
+      value: '',
+      placeholder: 'John Doe',
+      icon: 'badge',
+      required: true,
+      order: 4,
+      search: (name: string): Observable<Account[]> => {
+        return inject(AccountsService).searchAccounts(name);
+      },
+    }),
+
+    new CustomSearchControl({
+      key: 'accountant',
+      label: 'Accountant',
+      value: '',
+      placeholder: 'John Doe',
+      icon: 'badge',
+      required: true,
+      order: 5,
+    }),
+    new CustomSearchControl({
+      key: 'secretary',
+      label: 'Secretary',
+      value: '',
+      placeholder: 'John Doe',
+      icon: 'badge',
+      required: true,
+      order: 4,
     }),
   ];
   return of(controls.sort((a, b) => a.order - b.order));
