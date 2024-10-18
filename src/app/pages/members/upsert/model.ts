@@ -1,26 +1,18 @@
-import { of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import {
   DynamicCustomFormControlBase,
   CustomTextboxControl,
   CustomDropdownControl,
   CustomDateControl,
 } from '../../../shared/components/form-control/model';
-import { Welfare } from '../../welfares/model';
+import { WelfaresService } from '../../welfares/welfares.service';
+import { ValueType } from '../../../shared/components/form-control/control.component';
 
 export function memberDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<string>[] = [
     new CustomTextboxControl({
-      key: 'first_name',
-      label: 'First Name',
-      value: '',
-      placeholder: 'John',
-      icon: 'badge',
-      required: true,
-      order: 1,
-    }),
-    new CustomTextboxControl({
-      key: 'last_name',
-      label: 'Last Name',
+      key: 'name',
+      label: 'Full Name',
       value: '',
       placeholder: 'Doe',
       icon: 'badge',
@@ -98,33 +90,39 @@ export function memberDetailsFormControls() {
   return of(controls.sort((a, b) => a.order - b.order));
 }
 
-export function chooseWelfareFormControls(welfares?: Welfare[]) {
-  let controls: DynamicCustomFormControlBase<string>[];
-  if (welfares?.length) {
-    const welfareOptions = welfares?.map((welfare) => {
-      return { id: welfare?.id!, name: welfare?.name! };
-    });
-    controls = [
-      new CustomDropdownControl({
-        key: 'id',
-        label: 'Welfare Name',
-        options: welfareOptions,
-        icon: 'groups',
-        required: false,
-        order: 1,
-      }),
-    ];
-  } else {
-    controls = [
-      new CustomDropdownControl({
-        key: 'id',
-        label: 'Welfare Name',
-        icon: 'groups',
-        required: false,
-        order: 1,
-        placeholder: 'No Welfares. Please create one...',
-      }),
-    ];
-  }
-  return of(controls.sort((a, b) => a.order - b.order));
+export function chooseWelfareFormControls(
+  service: WelfaresService
+): Observable<DynamicCustomFormControlBase<ValueType>[]> {
+  return service.getWelfares().pipe(
+    map((welfares) => {
+      return welfares.map((welfare) => {
+        return { id: welfare?.id!, name: welfare?.name! };
+      });
+    }),
+    switchMap((welfareOptions) => {
+      return of([
+        new CustomDropdownControl({
+          key: 'id',
+          label: 'Welfare Group',
+          options: welfareOptions,
+          icon: 'groups',
+          required: false,
+          order: 1,
+        }) as DynamicCustomFormControlBase<ValueType>,
+      ]);
+    }),
+    catchError((error) =>
+      of([
+        new CustomDropdownControl({
+          key: 'id',
+          label: 'Welfare Group',
+          options: undefined,
+          placeholder: 'There are no welfare groups currently. Create one',
+          icon: 'groups',
+          required: false,
+          order: 1,
+        }) as DynamicCustomFormControlBase<ValueType>,
+      ])
+    )
+  );
 }

@@ -1,4 +1,4 @@
-import { Component, SkipSelf } from '@angular/core';
+import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -9,10 +9,24 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { ListPage } from '../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
 import { GridComponent } from '../../../shared/views/grid/grid.component';
-import { GridColumn, FilterOption } from '../../../shared/views/grid/model';
+import {
+  GridColumn,
+  FilterOption,
+  Action,
+  StatusConfig,
+} from '../../../shared/views/grid/model';
 import { MembersService } from '../members.service';
-import { buildAccountName } from '../model';
-import { GRID_COLUMNS, FILTER_OPTIONS, FilterRequestDto } from './model';
+import { actions, columns, status, filters, FilterRequest } from './model';
+
+export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
+
+export const FILTERS = new InjectionToken<FilterOption[]>(
+  'grid filter columns'
+);
+
+export const STATUS = new InjectionToken<StatusConfig>('grid status config');
+
+export const ACTIONS = new InjectionToken<Action[]>('grid actions');
 
 @Component({
   selector: 'iwms-list',
@@ -25,19 +39,27 @@ import { GRID_COLUMNS, FILTER_OPTIONS, FilterRequestDto } from './model';
     GridSearchComponent,
     ReactiveFormsModule,
   ],
+  providers: [
+    { provide: COLUMNS, useValue: columns },
+    { provide: FILTERS, useValue: filters },
+    { provide: STATUS, useValue: status },
+    { provide: ACTIONS, useValue: actions },
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  columns: GridColumn[] = GRID_COLUMNS;
-  filters: FilterOption[] = FILTER_OPTIONS;
+  columns = inject(COLUMNS);
+  filters = inject(FILTERS);
+  status = inject(STATUS);
+  actions = inject(ACTIONS);
 
   defaultSortColumn!: string;
   defaultSortColumnDirection!: 'asc' | 'desc';
 
   data: any[] = [];
 
-  declare filtersDTO: FilterRequestDto;
+  declare filtersDTO: FilterRequest;
   declare filterRequest: [string, string][];
 
   constructor(
@@ -57,17 +79,17 @@ export class ListComponent extends ListPage {
   }
 
   fetchData(page: number, take: number, filterRequest: [string, string][]) {
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.service
         .getMembers(page, take, filterRequest)
         .subscribe((members) => {
           this.data = members.map((member) => {
             return {
               id: member.id,
-              name: buildAccountName(member.account),
+              name: member.account.name,
               phone_number: member.account?.phone_number,
               email: member.account?.email,
-              status: member.account?.status,
+              state: member.account?.state,
               role: member.role,
               create_date: member.create_date,
               update_date: member.update_date,

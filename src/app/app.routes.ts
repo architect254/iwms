@@ -4,7 +4,7 @@ import { LayoutComponent } from './shared/views/layout/layout.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { authGuard, noAuthGuard, roleGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './pages/home/home.component';
-import { AccountType } from './pages/accounts/model';
+import { Class } from './pages/accounts/model';
 
 export const routes: Routes = [
   {
@@ -16,7 +16,7 @@ export const routes: Routes = [
         path: 'accounts',
         data: {
           title: 'Welfare User Accounts',
-          role: { type: AccountType.Admin, redirectUrl: 'members' },
+          role: { classification: Class.Admin, redirectUrl: 'members' },
         },
         canMatch: [roleGuard],
         loadChildren: () =>
@@ -28,7 +28,7 @@ export const routes: Routes = [
         path: 'welfare-groups',
         data: {
           title: 'Welfare Groups',
-          role: { type: AccountType.Admin, redirectUrl: 'members' },
+          role: { classification: Class.Admin, redirectUrl: 'members' },
         },
         canMatch: [roleGuard],
         loadChildren: () =>

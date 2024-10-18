@@ -62,6 +62,5 @@ export const appConfig: ApplicationConfig = {
     { provide: API_SERVER_URL, useFactory: apiServerUrlFactory, multi: true },
     AuthService,
     JwtHelperService,
-    provideNativeDateAdapter(),
   ],
 };

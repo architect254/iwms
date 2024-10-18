@@ -1,9 +1,13 @@
-import { FilterOption, GridColumn } from '../../../shared/views/grid/model';
+import {
+  Action,
+  FilterOption,
+  GridColumn,
+} from '../../../shared/views/grid/model';
 
-export const FILTER_OPTIONS: FilterOption[] = [
+export const filters: FilterOption[] = [
   {
     key: 'name',
-    label: 'Welfare Name',
+    label: 'Welfare Group',
     position: 0,
     type: 'string',
     icon: 'badge',
@@ -11,7 +15,7 @@ export const FILTER_OPTIONS: FilterOption[] = [
   },
   {
     key: 'phone_number',
-    label: 'Welfare Phone No.',
+    label: 'Phone No.',
     position: 1,
     type: 'number',
     icon: 'call_log',
@@ -19,7 +23,7 @@ export const FILTER_OPTIONS: FilterOption[] = [
   },
   {
     key: 'email',
-    label: 'Welfare Email',
+    label: 'Email',
     position: 2,
     type: 'string',
     icon: 'email',
@@ -27,7 +31,7 @@ export const FILTER_OPTIONS: FilterOption[] = [
   },
 ];
 
-export const GRID_COLUMNS: GridColumn[] = [
+export const columns: GridColumn[] = [
   {
     key: 'select',
     label: 'Select',
@@ -93,7 +97,16 @@ export const GRID_COLUMNS: GridColumn[] = [
   },
 ];
 
-export interface FilterRequestDto {
+export const actions: Action[] = [
+  {
+    name: 'click',
+    implementation: () => {
+      undefined;
+    },
+  },
+];
+
+export interface FilterRequest {
   name?: string;
   phone_number?: string;
   email?: string;

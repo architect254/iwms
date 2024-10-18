@@ -5,12 +5,12 @@
 </mat-toolbar>
 <header class="header">
   <h1 class="mat-headline-5 text-center">
-    {{ action$ | async }} To <strong>IWMS</strong>
+    {{ action | async }} To <strong>IWMS</strong>
   </h1>
 </header>
 <section class="form-container">
   <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="authForm">
-    @switch (action$ | async) { @case ('Sign In') {
+    @switch (action | async) { @case ('Sign In') {
     <mat-form-field appearance="outline" class="w-100">
       <mat-label>Email</mat-label>
       <input
@@ -75,60 +75,30 @@
     </button>
     <small
       >Don't have an account?
-      <a class="icon-link text-primary" (click)="action$ = 'Sign Up'"
+      <a class="icon-link text-primary" (click)="action = 'Sign Up'"
         >Create One</a
       ></small
     >
     }@case ('Sign Up') {
-    <section class="double-column">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>First Name</mat-label>
-        <input
-          type="text"
-          name="first_name"
-          formControlName="first_name"
-          matInput
-          placeholder="Ex. John"
-        />
-        <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
-        <mat-error *ngIf="first_name?.errors">
-          <span
-            class="is-danger"
-            *ngIf="
-              first_name?.invalid &&
-              first_name?.touched &&
-              first_name?.hasError('required')
-            "
-          >
-            First Name is <strong>required*</strong>
-          </span>
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Last Name</mat-label>
-        <input
-          type="text"
-          name="last_name"
-          formControlName="last_name"
-          matInput
-          placeholder="Ex. Doe"
-        />
-        <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
-        <mat-error *ngIf="last_name?.errors">
-          <span
-            class="is-danger"
-            *ngIf="
-              last_name?.invalid &&
-              last_name?.touched &&
-              last_name?.hasError('required')
-            "
-          >
-            Last Name is <strong>required*</strong>
-          </span>
-        </mat-error>
-      </mat-form-field>
-    </section>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Full Name</mat-label>
+      <input
+        type="text"
+        name="name"
+        formControlName="name"
+        matInput
+        placeholder="Ex. John Doe"
+      />
+      <mat-icon matPrefix class="material-icons-two-toned">contacts</mat-icon>
+      <mat-error *ngIf="name?.errors">
+        <span
+          class="is-danger"
+          *ngIf="name?.invalid && name?.touched && name?.hasError('required')"
+        >
+          Ful Name is <strong>required*</strong>
+        </span>
+      </mat-error>
+    </mat-form-field>
 
     <section class="double-column">
       <mat-form-field appearance="outline" class="w-100">
@@ -332,7 +302,7 @@
     </button>
     <small
       >Already have an account?
-      <a class="icon-link text-primary" (click)="action$ = 'Sign In'"
+      <a class="icon-link text-primary" (click)="action = 'Sign In'"
         >Sign in</a
       ></small
     >

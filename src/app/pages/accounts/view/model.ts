@@ -11,14 +11,8 @@ export function accountDataView(): Observable<
 > {
   const data: DynamicCustomDataBase<string | number | Date>[] = [
     new CustomTextData({
-      key: 'first_name',
-      label: 'First name',
-      icon: 'badge',
-      order: 1,
-    }),
-    new CustomTextData({
-      key: 'last_name',
-      label: 'Last Name',
+      key: 'name',
+      label: 'Full Name',
       icon: 'badge',
       order: 2,
     }),

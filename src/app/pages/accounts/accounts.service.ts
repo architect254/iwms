@@ -45,11 +45,6 @@ export class AccountsService extends ApiService {
     });
   }
 
-  searchAccounts(accountName: string): Observable<Account[]> {
-    const endpoint = this.endpoint + 'by-name';
-    return this.http.get<Account[]>(endpoint);
-  }
-
   getAccountById(id: number | string): Observable<Account> {
     const endpoint = `${this.endpoint}/${id}`;
     return this.http.get<Account>(endpoint);

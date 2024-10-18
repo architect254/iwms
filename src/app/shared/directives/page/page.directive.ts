@@ -8,12 +8,10 @@ import {
   SkipSelf,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SimpleSnackBar } from '@angular/material/snack-bar';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subscription, tap } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { AuthComponent } from '../../views/auth-dialog/auth-dialog.component';
 
 @Directive({
   standalone: true,
@@ -30,11 +28,9 @@ export abstract class Page implements OnInit, OnDestroy {
   protected dialog: MatDialog = inject(MatDialog);
   protected dialogRef!: MatDialogRef<any>;
 
-  protected $subscriptions$: Subscription = new Subscription();
+  protected subscriptions: Subscription = new Subscription();
 
-  constructor(
-    @SkipSelf() protected authService: AuthService,
-  ) {}
+  constructor(@SkipSelf() protected authService: AuthService) {}
 
   ngOnInit(): void {
     this.applyTitle();
@@ -83,8 +79,6 @@ export abstract class Page implements OnInit, OnDestroy {
   abstract setFacebookOpenGraphMeta(): void;
 
   ngOnDestroy(): void {
-    if (this.$subscriptions$) {
-      this.$subscriptions$.unsubscribe();
-    }
+    this.subscriptions.unsubscribe();
   }
 }

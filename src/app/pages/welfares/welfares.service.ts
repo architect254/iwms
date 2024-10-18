@@ -13,7 +13,7 @@ import {
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
-import { FilterRequestDto } from './list/model';
+import { FilterRequest } from './list/model';
 
 @Injectable({
   providedIn: 'root',

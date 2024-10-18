@@ -8,27 +8,32 @@ export interface BaseEntity {
 
 export class BaseEntity implements BaseEntity {}
 
-export enum AccountStatus {
+export enum State {
   Active = 'Active',
   InActive = 'InActive',
 }
 
-export enum AccountType {
+export enum Class {
   Admin = 'Admin',
   Client = 'Client',
 }
 
+export enum Gender {
+  Male = 'Male',
+  Female = 'Female',
+}
+
 export interface Child extends BaseEntity {
-  first_name: string;
-  last_name: string;
+  name: string;
+  gender: Gender;
   birth_date: string;
 }
 
 export class Child implements Child {}
 
 export interface Spouse extends BaseEntity {
-  first_name: string;
-  last_name: string;
+  name: string;
+  gender: Gender;
   id_number: string;
   phone_number: string;
   email: string;
@@ -37,14 +42,14 @@ export interface Spouse extends BaseEntity {
 export class Spouse implements Spouse {}
 
 export interface Account extends BaseEntity {
-  first_name: string;
-  last_name: string;
-  id_number: string;
+  name: string;
+  gender: Gender;
   birth_date: Date;
+  id_number: string;
   phone_number: string;
   email: string;
-  type: AccountType;
-  status: AccountStatus;
+  class: Class;
+  state: State;
   profile_image_url: string;
   member?: Member;
   spouse?: Spouse;

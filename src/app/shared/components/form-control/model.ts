@@ -96,7 +96,7 @@ export class CustomSearchControl extends DynamicCustomFormControlBase<string> {
       controlType?: string;
       type?: string;
       options?: { id: string | number; name: string }[];
-      search?: (name: string) => Observable<any[]>;
+      search?(name: string): Observable<any[]>;
     } = {}
   ) {
     super(config);

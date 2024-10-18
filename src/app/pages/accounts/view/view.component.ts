@@ -1,9 +1,15 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, OnInit, SkipSelf } from '@angular/core';
+import {
+  Component,
+  inject,
+  InjectionToken,
+  OnInit,
+  SkipSelf,
+} from '@angular/core';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { DynamicViewComponent } from '../../../shared/components/data-view/view.component';
 import { DynamicCustomDataBase } from '../../../shared/components/data-view/view.service';
-import { ActivatedRoute, Data } from '@angular/router';
+import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AccountsService } from '../accounts.service';
 import { Child, Spouse, Account } from '../model';
@@ -17,12 +23,46 @@ import {
 } from './model';
 import { Member } from '../../members/model';
 import { Welfare } from '../../welfares/model';
+import { ValueType } from '../../../shared/components/form-control/control.component';
+
+export const ACCOUNT_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('account data view');
+
+export const WELFARE_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('welfare data view');
+
+export const SPOUSE_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('spouse data view');
+
+export const CHILD_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('spouse data view');
 
 @Component({
   selector: 'iwms-view',
   standalone: true,
   imports: [AsyncPipe, HeaderComponent, DynamicViewComponent, JsonPipe],
-  providers: [],
+  providers: [
+    {
+      provide: ACCOUNT_DATA_VIEW,
+      useFactory: accountDataView,
+    },
+    {
+      provide: WELFARE_DATA_VIEW,
+      useFactory: welfareDataView,
+    },
+    {
+      provide: SPOUSE_DATA_VIEW,
+      useFactory: spouseDataView,
+    },
+    {
+      provide: CHILD_DATA_VIEW,
+      useFactory: childDataView,
+    },
+  ],
   templateUrl: './view.component.html',
   styleUrl: './view.component.scss',
 })
@@ -38,17 +78,10 @@ export class ViewComponent extends Page {
   spouse?: Spouse;
   children?: Child[];
 
-  accountDataView$: Observable<
-    DynamicCustomDataBase<string | number | Date>[]
-  > = accountDataView();
-  welfareDataView$: Observable<
-    DynamicCustomDataBase<string | number | Date>[]
-  > = welfareDataView();
-  spouseDataView$: Observable<DynamicCustomDataBase<string | number | Date>[]> =
-    spouseDataView();
-  childDataView$: Observable<DynamicCustomDataBase<string>[]>[] = [
-    childDataView(),
-  ];
+  accountDataView = inject(ACCOUNT_DATA_VIEW);
+  welfareDataView = inject(WELFARE_DATA_VIEW);
+  spouseDataView = inject(SPOUSE_DATA_VIEW);
+  childDataView = [inject(CHILD_DATA_VIEW)];
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -69,7 +102,7 @@ export class ViewComponent extends Page {
       this.spouse = this.account?.spouse;
       this.children = this.account?.children;
 
-      this.accountDataView$.forEach(
+      this.accountDataView.forEach(
         (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
           dataView.forEach(
             (view: DynamicCustomDataBase<string | number | Date>) => {
@@ -94,7 +127,7 @@ export class ViewComponent extends Page {
       );
 
       if (this.welfare) {
-        this.welfareDataView$.forEach(
+        this.welfareDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
@@ -113,7 +146,7 @@ export class ViewComponent extends Page {
       }
 
       if (this.spouse) {
-        this.spouseDataView$.forEach(
+        this.spouseDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
@@ -134,27 +167,25 @@ export class ViewComponent extends Page {
       if (this.children?.length) {
         this.children.forEach((child, index) => {
           if (index > 0) {
-            this.childDataView$.push(childDataView());
+            this.childDataView.push(childDataView());
           }
         });
-        this.childDataView$.forEach(
+        this.childDataView.forEach(
           (
-            dataViewGroup: Observable<DynamicCustomDataBase<string>[]>,
+            dataViewGroup: Observable<DynamicCustomDataBase<ValueType>[]>,
             dataViewGoupIndex
           ) => {
             dataViewGroup.forEach(
-              (dataView: DynamicCustomDataBase<string>[]) => {
+              (dataView: DynamicCustomDataBase<ValueType>[]) => {
                 if (dataView) {
-                  dataView.forEach(
-                    (view: DynamicCustomDataBase<string | number | Date>) => {
-                      view.value = ((
-                        this.children as unknown as Record<
-                          string,
-                          string | number | Date
-                        >[]
-                      )?.[dataViewGoupIndex])[view.key];
-                    }
-                  );
+                  dataView.forEach((view: DynamicCustomDataBase<ValueType>) => {
+                    view.value = ((
+                      this.children as unknown as Record<
+                        string,
+                        string | number | Date
+                      >[]
+                    )?.[dataViewGoupIndex])[view.key];
+                  });
                 }
               }
             );

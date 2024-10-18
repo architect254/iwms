@@ -60,14 +60,14 @@ import { Page } from '../../directives/page/page.directive';
 })
 export class LayoutComponent extends Page {
   private breakpointObserver = inject(BreakpointObserver);
-  isHandset$: Observable<boolean> = this.breakpointObserver
+  isHandset: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
       map((result) => result.matches),
       shareReplay()
     );
 
-  account$!: Observable<any>;
+  account!: Observable<any>;
   isApiLoading: boolean = false;
 
   breadcrumbs: BreadCrumb[] = [];
@@ -82,9 +82,9 @@ export class LayoutComponent extends Page {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.account$ = this.authService.currentTokenUserValue$;
-    this.$subscriptions$.add(
-      this.loadingService.isLoading$.subscribe((isLoading) => {
+    this.account = this.authService.currentTokenUserValue;
+    this.subscriptions.add(
+      this.loadingService.isLoading.subscribe((isLoading) => {
         this.isApiLoading = isLoading;
         this.cdr.detectChanges();
       })

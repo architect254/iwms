@@ -22,9 +22,9 @@
     </ng-template>
     <ng-template matStepContent>
       <iwms-dynamic-form
-        [controls]="coreUserDetailsFormControls$ | async"
-        [isSubmitting$]="isSubmitting$"
-        [triggerValidityNotification$]="triggerValidityNotification$"
+        [controls]="coreUserDetailsFormControls | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
         (notifyValidity)="onValidityNotified($event, 'Core Account Details')"
       ></iwms-dynamic-form>
 
@@ -72,16 +72,16 @@
     <ng-template matStepContent>
       @if (canCreateNewWelfare && checks['Create New Welfare']) {
       <iwms-dynamic-form
-        [controls]="newWelfareDetailsFormControls$ | async"
-        [isSubmitting$]="isSubmitting$"
-        [triggerValidityNotification$]="triggerValidityNotification$"
+        [controls]="newWelfareDetailsFormControls | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
         (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
       ></iwms-dynamic-form>
       }@else{
       <iwms-dynamic-form
-        [controls]="welfareDetailsFormControls$ | async"
-        [isSubmitting$]="isSubmitting$"
-        [triggerValidityNotification$]="triggerValidityNotification$"
+        [controls]="chooseWelfareFormControls | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
         (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
       ></iwms-dynamic-form>
       }
@@ -117,9 +117,9 @@
       </div>
       @if (!checks['Not Married']) {
       <iwms-dynamic-form
-        [controls]="spouseDetailsFormControls$ | async"
-        [isSubmitting$]="isSubmitting$"
-        [triggerValidityNotification$]="triggerValidityNotification$"
+        [controls]="spouseDetailsFormControls | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
         (notifyValidity)="onValidityNotified($event, 'Spouse Details')"
       ></iwms-dynamic-form>
       }
@@ -158,9 +158,9 @@
         Child Details [{{ $index + 1 }}]
       </h5>
       <iwms-dynamic-form
-        [controls]="childrenDetailsFormControls$[$index] | async"
-        [isSubmitting$]="isSubmitting$"
-        [triggerValidityNotification$]="triggerValidityNotification$"
+        [controls]="childrenDetailsFormControls[$index] | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
         (notifyValidity)="
           onValidityNotified($event, 'Children Details', $index, true)
         "

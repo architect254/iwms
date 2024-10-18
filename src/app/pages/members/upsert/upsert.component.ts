@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject, SkipSelf } from '@angular/core';
+import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -14,12 +14,19 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Page } from '../../../shared/directives/page/page.directive';
-import { Welfare } from '../../welfares/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
-import { memberDetailsFormControls } from './model';
+import { chooseWelfareFormControls, memberDetailsFormControls } from './model';
 import { MembersService } from '../members.service';
 import { Member } from '../model';
+
+export const MEMBER_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('member details form controls');
+
+export const CHOOSE_WELFARE_FORM_CONTROL = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>>
+>('choose welfare form control');
 
 @Component({
   selector: 'iwms-upsert',
@@ -34,7 +41,16 @@ import { Member } from '../model';
     MatSnackBarModule,
     JsonPipe,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: MEMBER_DETAILS_FORM_CONTROLS,
+      useFactory: memberDetailsFormControls,
+    },
+    {
+      provide: CHOOSE_WELFARE_FORM_CONTROL,
+      useFactory: chooseWelfareFormControls,
+    },
+  ],
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
@@ -47,12 +63,10 @@ export class UpsertComponent extends Page {
 
   member?: Member;
 
-  memberDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  > = memberDetailsFormControls();
+  memberDetailsFormControls = inject(MEMBER_DETAILS_FORM_CONTROLS);
 
-  $triggerValidityNotification = new BehaviorSubject(false);
-  $isSubmitting = new BehaviorSubject(false);
+  private _triggerValidityNotification = new BehaviorSubject(false);
+  private _isSubmitting = new BehaviorSubject(false);
 
   isProceedAllowed: boolean = false;
 
@@ -66,14 +80,12 @@ export class UpsertComponent extends Page {
     this.route.data.subscribe((data: Data) => {
       this.pageTitle = data['title'];
       this.pageAction = data['action'];
-      this.viewUrl = `/members/view/${this.route.snapshot.paramMap.get(
-        'id'
-      )}`;
+      this.viewUrl = `/members/view/${this.route.snapshot.paramMap.get('id')}`;
 
       this.member = data['member'];
       if (this.pageAction == 'update') {
         if (this.member) {
-          this.memberDetailsFormControls$.forEach(
+          this.memberDetailsFormControls.forEach(
             (form: DynamicCustomFormControlBase<ValueType>[]) => {
               form.forEach(
                 (control: DynamicCustomFormControlBase<ValueType>) => {
@@ -98,20 +110,20 @@ export class UpsertComponent extends Page {
     super.ngOnInit();
   }
 
-  get isSubmitting$(): Observable<boolean> {
-    return this.$isSubmitting.asObservable();
+  get isSubmitting(): Observable<boolean> {
+    return this._isSubmitting.asObservable();
   }
 
-  set isSubmitting$(isIt: boolean) {
-    this.$isSubmitting.next(isIt);
+  set isSubmitting(isIt: boolean) {
+    this._isSubmitting.next(isIt);
   }
 
-  get triggerValidityNotification$() {
-    return this.$triggerValidityNotification.asObservable();
+  get triggerValidityNotification(): Observable<boolean> {
+    return this._triggerValidityNotification.asObservable();
   }
 
   set triggerValidityNotification(doTrigger: boolean) {
-    this.$triggerValidityNotification.next(doTrigger);
+    this._triggerValidityNotification.next(doTrigger);
   }
 
   onValidityNotified(formData: string) {
@@ -122,27 +134,27 @@ export class UpsertComponent extends Page {
   }
 
   save() {
-    this.isSubmitting$ = true;
+    this.isSubmitting = true;
 
     const payload: any = {
       memberDto: this.member,
     };
 
-    let serviceAction$;
+    let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction$ = this.service.updateMember(
+      serviceAction = this.service.updateMember(
         this.member?.id as number,
         payload
       );
     } else {
-      serviceAction$ = this.service.createMember(payload);
+      serviceAction = this.service.createMember(payload);
     }
 
-    this.$subscriptions$.add(
-      serviceAction$.subscribe({
+    this.subscriptions.add(
+      serviceAction.subscribe({
         next: ({ id }) => {
-          this.isSubmitting$ = false;
+          this.isSubmitting = false;
 
           this.router.navigate(['/', 'members', 'view', id]);
 
@@ -162,7 +174,7 @@ export class UpsertComponent extends Page {
           });
         },
         error: (err) => {
-          this.isSubmitting$ = false;
+          this.isSubmitting = false;
         },
       })
     );

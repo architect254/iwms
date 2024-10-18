@@ -3,62 +3,70 @@
     #drawer
     class="sidenav"
     fixedInViewport
-    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-    [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    [opened]="(isHandset$ | async) === false"
+    [attr.role]="(isHandset | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset | async) ? 'over' : 'side'"
+    [opened]="(isHandset | async) === false"
   >
     <mat-toolbar class="mobile-navigation"><logo></logo></mat-toolbar>
     <mat-nav-list class="secondary-navigation">
-      <mat-list-item [activated]="isActive('accounts')">
-        <a matListItemTitle routerLink="/accounts" routerLinkActive="sn-active"
-          >User Accounts</a
-        >
+      <mat-list-item routerLink="/accounts" [activated]="isActive('accounts')">
+        <a matListItemTitle routerLinkActive="nav-active">User Accounts</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>group</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="isActive('welfare-groups')">
-        <a matListItemTitle routerLink="/welfare-groups" routerLinkActive="sn-active"
-          >Welfares</a
-        >
+      <mat-list-item
+        routerLink="/welfare-groups"
+        [activated]="isActive('welfare-groups')"
+      >
+        <a matListItemTitle routerLinkActive="nav-active">Welfares</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>accessibility_new</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="isActive('members')">
-        <a matListItemTitle routerLink="/members">Members</a>
+      <mat-list-item routerLink="/members" [activated]="isActive('members')">
+        <a matListItemTitle routerLinkActive="nav-active">Members</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>contacts</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="isActive('contributions')">
-        <a matListItemTitle routerLink="/contributions">Contributions</a>
+      <mat-list-item
+        routerLink="/contributions"
+        [activated]="isActive('contributions')"
+      >
+        <a matListItemTitle routerLinkActive="nav-active">Contributions</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>currency_exchange</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="isActive('finance')">
-        <a matListItemTitle routerLink="/finance">Finance</a>
+      <mat-list-item routerLink="/finance" [activated]="isActive('finance')">
+        <a matListItemTitle routerLinkActive="nav-active">Finance</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>account_balance</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item [activated]="isActive('transactions')">
-        <a matListItemTitle routerLink="/transactions">Transactions</a>
+      <mat-list-item
+        routerLink="/transactions"
+        [activated]="isActive('transactions')"
+      >
+        <a matListItemTitle routerLinkActive="nav-active">Transactions</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>payments</mat-icon>
         </button>
       </mat-list-item>
 
-      <mat-list-item [activated]="isActive('reports')">
-        <a matListItemTitle routerLink="/transactions">Reports</a>
+      <mat-list-item routerLink="/reports" [activated]="isActive('reports')">
+        <a matListItemTitle routerLinkActive="nav-active">Reports</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>summarize</mat-icon>
         </button>
       </mat-list-item>
 
-      <mat-list-item [activated]="isActive('notifications')">
-        <a matListItemTitle routerLink="/notifications">Notifications</a>
+      <mat-list-item
+        routerLink="/notifications"
+        [activated]="isActive('notifications')"
+      >
+        <a matListItemTitle routerLinkActive="nav-active">Notifications</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>campaign</mat-icon>
         </button>
@@ -74,7 +82,7 @@
     }
     <mat-toolbar id="toolbar">
       <mat-toolbar-row class="container primary-toolbar">
-        @if (isHandset$ | async) {
+        @if (isHandset | async) {
         <button
           type="button"
           aria-label="Toggle sidenav"
@@ -89,10 +97,7 @@
         </header>
         <span class="spacer"></span>
         <mat-nav-list class="primary-navigation">
-          <a
-            mat-flat-button
-            class="primary-nav-buttons"
-            routerLink="/home"
+          <a mat-flat-button class="primary-nav-buttons" routerLink="/home"
             ><mat-icon
               aria-hidden="false"
               aria-label="Example home icon"
@@ -101,10 +106,7 @@
             Home</a
           >
 
-          <a
-            mat-flat-button
-            class="primary-nav-buttons"
-            href=""
+          <a mat-flat-button class="primary-nav-buttons" href=""
             ><mat-icon
               aria-hidden="false"
               aria-label="Example home icon"
@@ -112,10 +114,7 @@
             ></mat-icon>
             About Us</a
           >
-          <a
-            mat-flat-button
-            class="primary-nav-buttons"
-            href=""
+          <a mat-flat-button class="primary-nav-buttons" href=""
             ><mat-icon
               aria-hidden="false"
               aria-label="Example home icon"
@@ -131,10 +130,8 @@
             aria-label="Example icon button with a vertical three dot icon"
           >
             <mat-icon fontIcon="account_circle"></mat-icon>
-            @if ((account$ | async)) {
-            <span style="color: white">{{
-              (account$ | async)?.first_name + " " + (account$ | async)?.last_name
-            }}</span
+            @if ((account | async)) {
+            <span style="color: white">{{ (account | async)?.name }}</span
             >}
           </a>
 

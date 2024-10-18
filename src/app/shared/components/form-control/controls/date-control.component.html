@@ -1,28 +1,30 @@
-<mat-form-field appearance="outline" class="form-field">
-  <mat-label>{{ control!.label }}</mat-label>
-  <input
-    matInput
-    [id]="control!.key"
-    [name]="control!.key"
-    [type]="control!.type"
-    [formControlName]="control!.key"
-    [matDatepicker]="picker"
-    [min]="control!.dateConfig!.minDate"
-    [max]="control!.dateConfig!.maxDate"
-    [placeholder]="control.placeholder ?? 'Choose a date'"
-  />
-  <mat-icon matPrefix class="material-icons-two-toned">{{
-    control!.icon
-  }}</mat-icon>
+<div [formGroup]="form">
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>{{ control!.label }}</mat-label>
+    <input
+      matInput
+      [id]="control!.key"
+      [name]="control!.key"
+      [type]="control!.type"
+      [formControlName]="control!.key"
+      [matDatepicker]="picker"
+      [min]="control!.dateConfig!.minDate"
+      [max]="control!.dateConfig!.maxDate"
+      [placeholder]="control.placeholder ?? 'Choose a date'"
+    />
+    <mat-icon matPrefix class="material-icons-two-toned">{{
+      control!.icon
+    }}</mat-icon>
 
-  <mat-datepicker-toggle
-    matSuffix
-    matDatepickerToggleIcon
-    [for]="picker"
-  ></mat-datepicker-toggle>
-  <mat-datepicker
-    #picker
-    startView="year"
-    [startAt]="control!.dateConfig!.startDate"
-  ></mat-datepicker>
-</mat-form-field>
+    <mat-datepicker-toggle
+      matSuffix
+      matDatepickerToggleIcon
+      [for]="picker"
+    ></mat-datepicker-toggle>
+    <mat-datepicker
+      #picker
+      startView="year"
+      [startAt]="control!.dateConfig!.startDate"
+    ></mat-datepicker>
+  </mat-form-field>
+</div>

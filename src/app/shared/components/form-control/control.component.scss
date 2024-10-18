@@ -1,3 +1,7 @@
-.form-field {
-    width: 100%;
+:host {
+    ::ng-deep {
+        .form-field {
+            width: 100%;
+        }
+    }
 }

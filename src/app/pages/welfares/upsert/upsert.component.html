@@ -6,9 +6,9 @@
 ></iwms-header>
 
 <iwms-dynamic-form
-  [controls]="welfareDetailsFormControls$ | async"
-  [isSubmitting$]="isSubmitting$"
-  [triggerValidityNotification$]="triggerValidityNotification$"
+  [controls]="welfareDetailsFormControls | async"
+  [isSubmitting]="isSubmitting"
+  [triggerValidityNotification]="triggerValidityNotification"
   (notifyValidity)="onValidityNotified($event)"
 ></iwms-dynamic-form>
 

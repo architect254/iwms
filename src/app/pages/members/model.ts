@@ -35,14 +35,5 @@ export function buildName(role: string, members: Member[]): string {
     (member) => member.role == RoleMap[role]
   )?.account;
 
-  return buildAccountName(account!);
-}
-
-export function buildAccountName(account: Account): string {
-  const first_name = account?.first_name;
-  const last_name = account?.last_name;
-  if (!(first_name || last_name)) {
-    return 'N/A';
-  }
-  return `${first_name} ${last_name}`;
+  return account?.name || 'N/A';
 }

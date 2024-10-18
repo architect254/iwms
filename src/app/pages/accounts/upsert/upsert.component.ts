@@ -1,41 +1,60 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject, SkipSelf } from '@angular/core';
+import {
+  Component,
+  Inject,
+  inject,
+  InjectionToken,
+  SkipSelf,
+} from '@angular/core';
 import { Data } from '@angular/router';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { AuthService } from '../../../core/services/auth.service';
+import { ValueType } from '../../../shared/components/form-control/control.component';
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
-
 import {
-  CustomDropdownControl,
   DynamicCustomFormControlBase,
+  CustomDropdownControl,
 } from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { AccountsService } from '../accounts.service';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Page } from '../../../shared/directives/page/page.directive';
-import { Welfare } from '../../welfares/model';
-import {
-  Child,
-  Spouse,
-  Account,
-  AccountType,
-  AccountApplication,
-} from '../model';
 import { Member, MemberRole } from '../../members/model';
-import { ValueType } from '../../../shared/components/form-control/control.component';
-import { AuthService } from '../../../core/services/auth.service';
+import { Welfare } from '../../welfares/model';
+import { AccountsService } from '../accounts.service';
+import { Account, Spouse, Child, Class, AccountApplication } from '../model';
 import {
   childDetailsFormControls,
   coreUserDetailsFormControls,
   newWelfareDetailsFormControls,
   spouseDetailsFormControls,
-  welfareDetailsFormControls,
+  chooseWelfareFormControls,
 } from './model';
+import { WelfaresService } from '../../welfares/welfares.service';
+
+export const CORE_USER_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('core user details form controls');
+
+export const NEW_WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('new welfare details form controls');
+
+export const CHOOSE_WELFARE_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('choose welfare form control');
+
+export const SPOUSE_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('spouse details form controls');
+
+export const CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('child details form controls');
 
 @Component({
   selector: 'iwms-upsert',
@@ -50,7 +69,29 @@ import {
     MatSnackBarModule,
     JsonPipe,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: CORE_USER_DETAILS_FORM_CONTROLS,
+      useFactory: coreUserDetailsFormControls,
+    },
+    {
+      provide: NEW_WELFARE_DETAILS_FORM_CONTROLS,
+      useFactory: newWelfareDetailsFormControls,
+    },
+    {
+      provide: CHOOSE_WELFARE_FORM_CONTROLS,
+      useFactory: chooseWelfareFormControls,
+      deps: [WelfaresService],
+    },
+    {
+      provide: SPOUSE_DETAILS_FORM_CONTROLS,
+      useFactory: spouseDetailsFormControls,
+    },
+    {
+      provide: CHILD_DETAILS_FORM_CONTROLS,
+      useFactory: childDetailsFormControls,
+    },
+  ],
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
@@ -69,21 +110,11 @@ export class UpsertComponent extends Page {
 
   welfares!: Welfare[];
 
-  coreUserDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  > = coreUserDetailsFormControls();
-  newWelfareDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  > = newWelfareDetailsFormControls();
-  welfareDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  > = welfareDetailsFormControls(this.welfares);
-  spouseDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  > = spouseDetailsFormControls();
-  childrenDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  >[] = [childDetailsFormControls()];
+  coreUserDetailsFormControls = inject(CORE_USER_DETAILS_FORM_CONTROLS);
+  newWelfareDetailsFormControls = inject(NEW_WELFARE_DETAILS_FORM_CONTROLS);
+  chooseWelfareFormControls = inject(CHOOSE_WELFARE_FORM_CONTROLS);
+  spouseDetailsFormControls = inject(SPOUSE_DETAILS_FORM_CONTROLS);
+  childrenDetailsFormControls = [inject(CHILD_DETAILS_FORM_CONTROLS)];
 
   readonly isSelected: IsSelected = [true, false, false, false];
 
@@ -106,8 +137,8 @@ export class UpsertComponent extends Page {
 
   validChildren: boolean[] = [false];
 
-  $triggerValidityNotification = new BehaviorSubject(false);
-  $isSubmitting = new BehaviorSubject(false);
+  private _triggerValidityNotification = new BehaviorSubject(false);
+  private _isSubmitting = new BehaviorSubject(false);
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -132,7 +163,7 @@ export class UpsertComponent extends Page {
 
       if (this.pageAction == 'update') {
         if (this.account) {
-          this.coreUserDetailsFormControls$.forEach(
+          this.coreUserDetailsFormControls.forEach(
             (form: DynamicCustomFormControlBase<ValueType>[]) => {
               form.forEach(
                 (control: DynamicCustomFormControlBase<ValueType>) => {
@@ -156,10 +187,10 @@ export class UpsertComponent extends Page {
             }
           );
 
-          this.tryDisplayingMemberControls(this.account.type);
+          this.tryDisplayingMemberControls(this.account.class);
           if (this.member) {
             if (this.welfare) {
-              this.welfareDetailsFormControls$.forEach(
+              this.chooseWelfareFormControls.forEach(
                 (form: DynamicCustomFormControlBase<ValueType>[]) => {
                   form.forEach(
                     (control: DynamicCustomFormControlBase<ValueType>) => {
@@ -179,7 +210,7 @@ export class UpsertComponent extends Page {
           this.isProceedAllowed['Core Account Details'] = true;
 
           if (this.spouse) {
-            this.spouseDetailsFormControls$.forEach(
+            this.spouseDetailsFormControls.forEach(
               (form: DynamicCustomFormControlBase<ValueType>[]) => {
                 form.forEach(
                   (control: DynamicCustomFormControlBase<ValueType>) => {
@@ -205,7 +236,7 @@ export class UpsertComponent extends Page {
           if (this.children) {
             this.children.forEach((child, childIndex) => {
               if (childIndex > 0) {
-                this.childrenDetailsFormControls$.push(
+                this.childrenDetailsFormControls.push(
                   childDetailsFormControls()
                 );
 
@@ -213,7 +244,7 @@ export class UpsertComponent extends Page {
               }
             });
 
-            this.childrenDetailsFormControls$.forEach(
+            this.childrenDetailsFormControls.forEach(
               (
                 formGroup: Observable<
                   DynamicCustomFormControlBase<ValueType>[]
@@ -251,22 +282,6 @@ export class UpsertComponent extends Page {
           }
         }
       }
-
-      if (this.welfares) {
-        this.welfareDetailsFormControls$.forEach(
-          (form: DynamicCustomFormControlBase<ValueType>[]) => {
-            form.forEach((control: DynamicCustomFormControlBase<ValueType>) => {
-              if (control) {
-                (<CustomDropdownControl>control).options = this.welfares.map(
-                  (welfare) => {
-                    return { id: welfare.id, name: welfare.name };
-                  }
-                );
-              }
-            });
-          }
-        );
-      }
     });
   }
 
@@ -286,20 +301,20 @@ export class UpsertComponent extends Page {
     );
   }
 
-  get isSubmitting$(): Observable<boolean> {
-    return this.$isSubmitting.asObservable();
+  get isSubmitting(): Observable<boolean> {
+    return this._isSubmitting.asObservable();
   }
 
-  set isSubmitting$(isIt: boolean) {
-    this.$isSubmitting.next(isIt);
+  set isSubmitting(isIt: boolean) {
+    this._isSubmitting.next(isIt);
   }
 
-  get triggerValidityNotification$() {
-    return this.$triggerValidityNotification.asObservable();
+  get triggerValidityNotification():Observable<boolean> {
+    return this._triggerValidityNotification.asObservable();
   }
 
   set triggerValidityNotification(doTrigger: boolean) {
-    this.$triggerValidityNotification.next(doTrigger);
+    this._triggerValidityNotification.next(doTrigger);
   }
 
   check(checked: boolean, section: string) {
@@ -341,11 +356,12 @@ export class UpsertComponent extends Page {
     }
   }
 
-  tryDisplayingMemberControls(type: AccountType) {
-    const accountType = [AccountType.Client];
+  tryDisplayingMemberControls(classification: Class) {
+    const accountClassifications = [Class.Client];
 
-    this.displayMemberControls = accountType.includes(type);
-    this.coreUserDetailsFormControls$.forEach((formGroup) => {
+    this.displayMemberControls =
+      accountClassifications.includes(classification);
+    this.coreUserDetailsFormControls.forEach((formGroup) => {
       formGroup.forEach((control) => {
         if (control.key == 'role' || control.key == 'm_status') {
           control.visible = this.displayMemberControls;
@@ -382,7 +398,7 @@ export class UpsertComponent extends Page {
   }
 
   addChild() {
-    this.childrenDetailsFormControls$.push(childDetailsFormControls());
+    this.childrenDetailsFormControls.push(childDetailsFormControls());
     this.validChildren.push(false);
   }
 
@@ -398,7 +414,7 @@ export class UpsertComponent extends Page {
         const { role, m_status } = data;
 
         this.account = <AccountApplication>{ ...data };
-        this.tryDisplayingMemberControls(this.account?.type!);
+        this.tryDisplayingMemberControls(this.account?.class!);
 
         if (this.displayMemberControls) {
           this.member = <Member>{ role, status: m_status };
@@ -414,7 +430,7 @@ export class UpsertComponent extends Page {
         }
         this.isProceedAllowed['Core Account Details'] = true;
 
-        this.coreUserDetailsFormControls$.forEach(
+        this.coreUserDetailsFormControls.forEach(
           (controls: DynamicCustomFormControlBase<any>[]) => {
             controls.forEach((control) => {
               if (control.key == 'welfare') {
@@ -457,7 +473,7 @@ export class UpsertComponent extends Page {
   }
 
   save() {
-    this.isSubmitting$ = true;
+    this.isSubmitting = true;
 
     const payload: any = {
       accountDto: this.account,
@@ -478,21 +494,21 @@ export class UpsertComponent extends Page {
       payload['childrenDto'] = this.children;
     }
 
-    let serviceAction$;
+    let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction$ = this.service.updateAccount(
+      serviceAction = this.service.updateAccount(
         this.account?.id as number,
         payload
       );
     } else {
-      serviceAction$ = this.service.createAccount(payload);
+      serviceAction = this.service.createAccount(payload);
     }
 
-    this.$subscriptions$.add(
-      serviceAction$.subscribe({
+    this.subscriptions.add(
+      serviceAction.subscribe({
         next: ({ id }) => {
-          this.isSubmitting$ = false;
+          this.isSubmitting = false;
 
           this.router.navigate(['/', 'accounts', 'view', id]);
 
@@ -512,7 +528,7 @@ export class UpsertComponent extends Page {
           });
         },
         error: (err) => {
-          this.isSubmitting$ = false;
+          this.isSubmitting = false;
         },
       })
     );

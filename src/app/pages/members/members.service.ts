@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Member } from './model';
-import {
-  CustomDropdownControl,
-  CustomTextboxControl,
-  DynamicCustomFormControlBase,
-} from '../../shared/components/form-control/model';
-import {
-  CustomListData,
-  CustomTextData,
-  DynamicCustomDataBase,
-} from '../../shared/components/data-view/view.service';
+
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
-import { of, Observable } from 'rxjs';
-import { FilterRequestDto } from './list/model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -21,7 +21,14 @@ import { CustomDropdownControl } from '../model';
     AsyncPipe,
   ],
 })
-export class CustomDropdownControlComponent {
+export class CustomDropdownControlComponent implements OnInit {
+  ngOnInit(): void {
+    if (!this.control.options) {
+      this.form.disable();
+    } else {
+      this.form.enable();
+    }
+  }
   @Input() control!: CustomDropdownControl;
   @Input() form!: FormGroup;
 }

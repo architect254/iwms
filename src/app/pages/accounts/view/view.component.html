@@ -7,12 +7,12 @@
 <!-- #core_user -->
 
 <h4 class="core-account-header mat-headline-large">Core Account Details</h4>
-<iwms-dynamic-view [dataset]="accountDataView$ | async"></iwms-dynamic-view>
+<iwms-dynamic-view [dataset]="accountDataView | async"></iwms-dynamic-view>
 
 <!-- #welfare -->
 @if (welfare) {
 <h4 class="welfare-header mat-headline-large">Welfare Details</h4>
-<iwms-dynamic-view [dataset]="welfareDataView$ | async"></iwms-dynamic-view>
+<iwms-dynamic-view [dataset]="welfareDataView | async"></iwms-dynamic-view>
 }
 <!-- #spouse -->
 
@@ -21,7 +21,7 @@
 
 <iwms-dynamic-view
   class="spouse-section"
-  [dataset]="spouseDataView$ | async"
+  [dataset]="spouseDataView | async"
 ></iwms-dynamic-view>
 }
 
@@ -36,6 +36,6 @@
 </h5>
 <iwms-dynamic-view
   class="child-section"
-  [dataset]="childDataView$[$index] | async"
+  [dataset]="childDataView[$index] | async"
 ></iwms-dynamic-view>
 }}

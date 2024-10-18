@@ -5,22 +5,26 @@ import {
   StatusConfig,
 } from '../../../shared/views/grid/model';
 
-export const FILTER_OPTIONS: FilterOption[] = [
+export const filters: FilterOption[] = [
   {
-    key: 'first_name',
-    label: 'First Name',
+    key: 'name',
+    label: 'Full Name',
     position: 0,
     type: 'string',
     icon: 'badge',
     combinator: 'Includes',
   },
   {
-    key: 'last_name',
-    label: 'Last Name',
+    key: 'gender',
+    label: 'Gender',
     position: 1,
-    type: 'string',
+    type: 'list',
     icon: 'badge',
-    combinator: 'Includes',
+    combinator: 'Is',
+    options: [
+      { key: 'Male', value: 'Male' },
+      { key: 'Female', value: 'Female' },
+    ],
   },
   {
     key: 'id_number',
@@ -28,7 +32,7 @@ export const FILTER_OPTIONS: FilterOption[] = [
     position: 2,
     type: 'number',
     icon: 'fingerprint',
-    combinator: 'Includes',
+    combinator: 'Is',
   },
   {
     key: 'birth_date',
@@ -55,38 +59,88 @@ export const FILTER_OPTIONS: FilterOption[] = [
     combinator: 'Includes',
   },
   {
-    key: 'role',
-    label: 'Account Role',
+    key: 'class',
+    label: 'Account Classification',
     position: 6,
     type: 'list',
     icon: 'checklist',
     combinator: 'Is',
     options: [
-      { key: 'Site Admin', value: 'Site Admin' },
-      { key: 'Welfare Manager', value: 'Welfare Manager' },
-      { key: 'Welfare Accountant', value: 'Welfare Accountant' },
-      { key: 'Welfare Secretary', value: 'Welfare Secretary' },
-      { key: 'Welfare Client Member', value: 'Welfare Client Member' },
+      { key: 'Admin', value: 'Admin' },
+      { key: 'Client', value: 'Client' },
     ],
     colors: {
-      'Site Admin': 'red',
-      'Welfare Manager': 'orange',
-      'Welfare Accountant': 'blue',
-      'Welfare Secretary': 'purple',
-      'Welfare Client Member': 'green',
+      Admin: 'red',
+      Client: 'green',
+    },
+  },
+  {
+    key: 'state',
+    label: 'Account State',
+    position: 7,
+    type: 'list',
+    icon: 'checklist',
+    combinator: 'Is',
+    options: [
+      { key: 'Active', value: 'Active' },
+      { key: 'InActive', value: 'InActive' },
+    ],
+    colors: {
+      Active: 'orange',
+      InActive: 'gray',
+    },
+  },
+  {
+    key: 'role',
+    label: 'Membership Role',
+    position: 8,
+    type: 'list',
+    icon: 'checklist',
+    combinator: 'Is',
+    options: [
+      { key: 'Manager', value: 'Manager' },
+      { key: 'Accountant', value: 'Accountant' },
+      { key: 'Secretary', value: 'Secretary' },
+      { key: 'Member', value: 'Member' },
+    ],
+    colors: {
+      Manager: 'yellow',
+      Accountant: 'blue',
+      Secretary: 'purple',
+      Member: 'green',
+    },
+  },
+  {
+    key: 'status',
+    label: 'Membership Status',
+    position: 9,
+    type: 'list',
+    icon: 'checklist',
+    combinator: 'Is',
+    options: [
+      { key: 'Normal', value: 'Normal' },
+      { key: 'Bereaved', value: 'Bereaved' },
+      { key: 'Deceased', value: 'Deceased' },
+      { key: 'Deactivated', value: 'Deactivated' },
+    ],
+    colors: {
+      Normal: 'green',
+      Bereaved: 'orange',
+      Deceased: 'red',
+      Deactivated: 'grey',
     },
   },
   {
     key: 'group',
     label: 'Welfare Group',
-    position: 7,
+    position: 10,
     type: 'string',
     icon: 'group',
     combinator: 'Is',
   },
 ];
 
-export const GRID_COLUMNS: GridColumn[] = [
+export const columns: GridColumn[] = [
   {
     key: 'select',
     label: 'Select',
@@ -123,38 +177,38 @@ export const GRID_COLUMNS: GridColumn[] = [
     width: '250px',
   },
   {
-    key: 'status',
-    label: 'Account Status',
+    key: 'class',
+    label: 'Account Classification',
     position: 5,
     type: 'status',
     width: '250px',
   },
   {
-    key: 'type',
-    label: 'Account Type',
+    key: 'state',
+    label: 'Account State',
     position: 6,
     type: 'status',
     width: '250px',
   },
   {
-    key: 'welfare',
-    label: 'Welfare Group Name',
+    key: 'role',
+    label: 'Membership Role',
     position: 7,
-    type: 'string',
+    type: 'status',
     width: '250px',
   },
   {
-    key: 'role',
-    label: 'Membership Role',
+    key: 'status',
+    label: 'Membership Status',
     position: 8,
     type: 'status',
     width: '250px',
   },
   {
-    key: 'm_status',
-    label: 'Membership Status',
+    key: 'welfare',
+    label: 'Welfare Group',
     position: 9,
-    type: 'status',
+    type: 'string',
     width: '250px',
   },
   {
@@ -173,7 +227,7 @@ export const GRID_COLUMNS: GridColumn[] = [
   },
 ];
 
-export const STATUS: StatusConfig = {
+export const status: StatusConfig = {
   labels: {
     Admin: 'Admin',
     Manager: 'Manager',
@@ -183,6 +237,10 @@ export const STATUS: StatusConfig = {
     Client: 'Client',
     Active: 'Active',
     Inactive: 'Inactive',
+    Normal: 'Normal',
+    Bereaved: 'Bereaved',
+    Deceased: 'Deceased',
+    Deactivated: 'Deactivated',
   },
   colors: {
     Admin: 'red',
@@ -192,11 +250,15 @@ export const STATUS: StatusConfig = {
     Secretary: 'purple',
     Member: 'cyan',
     Active: 'green',
-    Inactive: 'black',
+    Inactive: 'gray',
+    Normal: 'green',
+    Bereaved: 'orange',
+    Deceased: 'red',
+    Deactivated: 'grey',
   },
 };
 
-export const ACTIONS: Action[] = [
+export const actions: Action[] = [
   {
     name: 'click',
     implementation: () => {
@@ -205,13 +267,14 @@ export const ACTIONS: Action[] = [
   },
 ];
 
-export interface FilterRequestDto {
-  first_name?: string;
-  last_name?: string;
+export interface FilterRequest {
+  name?: string;
   id_number?: string;
   birth_date?: Date;
   phone_number?: string;
   email?: string;
+  class?: string;
+  state?: string;
   role?: string;
   status?: string;
   groupId?: number;

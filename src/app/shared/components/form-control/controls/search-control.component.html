@@ -1,17 +1,19 @@
-<mat-form-field appearance="outline" class="form-field selector-control">
-  <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
-  <input
-    type="text"
-    [placeholder]="control.placeholder ?? 'Pick one'"
-    [attr.aria-label]="control.label"
-    matInput
-    [formControlName]="control.key"
-    [disabled]="!control.options"
-    [matAutocomplete]="auto"
-  />
-  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-    @for (option of control.options; track option) {
-    <mat-option [value]="option?.id">{{ option?.name }}</mat-option>
-    }
-  </mat-autocomplete>
-</mat-form-field>
+<div [formGroup]="form">
+  <mat-form-field appearance="outline" class="form-field selector-control">
+    <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
+    <input
+      type="text"
+      [placeholder]="control.placeholder ?? 'Pick one'"
+      [attr.aria-label]="control.label"
+      matInput
+      [formControlName]="control.key"
+      [matAutocomplete]="auto"
+    />
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+      @for (option of control.options; track option) {
+      <mat-option [value]="option.id">{{ option?.name }}</mat-option>
+      }
+    </mat-autocomplete>
+    <mat-icon matPrefix>{{ control.icon }}</mat-icon>
+  </mat-form-field>
+</div>

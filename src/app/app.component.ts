@@ -38,8 +38,8 @@ export class AppComponent extends Page {
       // console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)
       // console.log(document);
-      this.$subscriptions$.add(
-        this.authService.isAuthenticated$.subscribe({
+      this.subscriptions.add(
+        this.authService.isAuthenticated.subscribe({
           next: (isAuthenticated) => {
             console.log('isAuthenticated', isAuthenticated);
             if (!isAuthenticated) {
@@ -58,7 +58,7 @@ export class AppComponent extends Page {
       // console.log(this.document);
     }
 
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
         this.zone.run(() => {
           this.checkForNewVersion();

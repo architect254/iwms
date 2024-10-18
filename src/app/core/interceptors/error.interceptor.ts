@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { ErrorHandler, inject } from '@angular/core';
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -17,7 +17,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((apiError: HttpErrorResponse) => {
       if (apiError instanceof HttpErrorResponse) {
         errorResponse = new Error(
-          `${apiError?.statusText || ''}. ${
+          `{apiError?.statusText || ''}. {
             apiError?.error?.message
               ? apiError?.error?.message
               : apiError?.message
@@ -52,3 +52,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+class MyErrorHandler implements ErrorHandler {
+  handleError(error: Error) {
+    console.error(error);
+  }
+}

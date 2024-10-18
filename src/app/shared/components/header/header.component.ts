@@ -1,5 +1,5 @@
 import { DOCUMENT, Location } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { booleanAttribute, Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -18,7 +18,7 @@ export class HeaderComponent {
   @Input() viewUrl: string = '';
   @Input() listUrl: string = '';
 
-  @Input() displayBack: boolean = false;
+  @Input({ transform: booleanAttribute }) displayBack: boolean = false;
 
   constructor(public location: Location) {}
 }

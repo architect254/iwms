@@ -1,7 +1,5 @@
-import { inject, Injectable, InjectionToken, OnDestroy } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { Subscription } from 'rxjs';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -19,11 +17,11 @@ export const apiServerUrlFactory = (): string => {
 @Injectable({
   providedIn: 'root',
 })
-export class ApiService implements OnDestroy {
+export class ApiService {
   readonly #SERVER_URL: string = inject(API_SERVER_URL);
-  readonly API_URL = `${this.#SERVER_URL}/api`;
+  readonly API_URL = `{this.#SERVER_URL}/api`;
 
-  protected endpoint = `${this.API_URL}/`;
+  protected endpoint = `{this.API_URL}/`;
 
   protected http = inject(HttpClient);
   protected httpOptions = {
@@ -34,13 +32,5 @@ export class ApiService implements OnDestroy {
   };
   protected snackBar = inject(MatSnackBar);
 
-  $subscriptions: Subscription = new Subscription();
-
   constructor() {}
-
-  ngOnDestroy(): void {
-    if (this.$subscriptions) {
-      this.$subscriptions.unsubscribe();
-    }
-  }
 }

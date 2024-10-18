@@ -1,32 +1,25 @@
-import { of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import {
   DynamicCustomFormControlBase,
   CustomTextboxControl,
   CustomDateControl,
   CustomDropdownControl,
 } from '../../../shared/components/form-control/model';
-import { Welfare } from '../../welfares/model';
+import { ValueType } from '../../../shared/components/form-control/control.component';
+import { WelfaresService } from '../../welfares/welfares.service';
 
 export function coreUserDetailsFormControls() {
-  const controls: DynamicCustomFormControlBase<string>[] = [
+  const controls: DynamicCustomFormControlBase<ValueType>[] = [
     new CustomTextboxControl({
-      key: 'first_name',
-      label: 'First Name',
+      key: 'name',
+      label: 'Full Name',
       value: '',
-      placeholder: 'John',
+      placeholder: 'John Doe',
       icon: 'badge',
       required: true,
       order: 1,
     }),
-    new CustomTextboxControl({
-      key: 'last_name',
-      label: 'Last Name',
-      value: '',
-      placeholder: 'Doe',
-      icon: 'badge',
-      required: true,
-      order: 2,
-    }),
+
     new CustomTextboxControl({
       key: 'id_number',
       label: 'National ID No.',
@@ -124,7 +117,7 @@ export function coreUserDetailsFormControls() {
 }
 
 export function newWelfareDetailsFormControls() {
-  const controls: DynamicCustomFormControlBase<string>[] = [
+  const controls: DynamicCustomFormControlBase<ValueType>[] = [
     new CustomTextboxControl({
       key: 'name',
       label: 'Name',
@@ -157,39 +150,45 @@ export function newWelfareDetailsFormControls() {
   return of(controls.sort((a, b) => a.order - b.order));
 }
 
-export function welfareDetailsFormControls(welfares?: Welfare[]) {
-  let controls: DynamicCustomFormControlBase<string>[];
-  if (welfares?.length) {
-    const welfareOptions = welfares?.map((welfare) => {
-      return { id: welfare?.id!, name: welfare?.name! };
-    });
-    controls = [
-      new CustomDropdownControl({
-        key: 'id',
-        label: 'Welfare Name',
-        options: welfareOptions,
-        icon: 'groups',
-        required: false,
-        order: 1,
-      }),
-    ];
-  } else {
-    controls = [
-      new CustomDropdownControl({
-        key: 'id',
-        label: 'Welfare Name',
-        icon: 'groups',
-        required: false,
-        order: 1,
-        placeholder: 'No Welfares. Please create one...',
-      }),
-    ];
-  }
-  return of(controls.sort((a, b) => a.order - b.order));
+export function chooseWelfareFormControls(
+  service: WelfaresService
+): Observable<DynamicCustomFormControlBase<ValueType>[]> {
+  return service.getWelfares().pipe(
+    map((welfares) => {
+      return welfares.map((welfare) => {
+        return { id: welfare?.id!, name: welfare?.name! };
+      });
+    }),
+    switchMap((welfareOptions) => {
+      return of([
+        new CustomDropdownControl({
+          key: 'id',
+          label: 'Welfare Group',
+          options: welfareOptions,
+          icon: 'groups',
+          required: false,
+          order: 1,
+        }) as DynamicCustomFormControlBase<ValueType>,
+      ]);
+    }),
+    catchError((error) =>
+      of([
+        new CustomDropdownControl({
+          key: 'id',
+          label: 'Welfare Group',
+          options: undefined,
+          placeholder: 'There are no welfare groups currently. Create one',
+          icon: 'groups',
+          required: false,
+          order: 1,
+        }) as DynamicCustomFormControlBase<ValueType>,
+      ])
+    )
+  );
 }
 
 export function spouseDetailsFormControls() {
-  const controls: DynamicCustomFormControlBase<string>[] = [
+  const controls: DynamicCustomFormControlBase<ValueType>[] = [
     new CustomTextboxControl({
       key: 'first_name',
       label: 'First Name',
@@ -255,7 +254,7 @@ export function spouseDetailsFormControls() {
 }
 
 export function childDetailsFormControls() {
-  const controls: DynamicCustomFormControlBase<string>[] = [
+  const controls: DynamicCustomFormControlBase<ValueType>[] = [
     new CustomTextboxControl({
       key: 'first_name',
       label: 'First Name',

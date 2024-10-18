@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -7,7 +7,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 
 import { CustomSearchControl } from '../model';
-import { map, startWith, Subscription, switchMap } from 'rxjs';
+import { map, startWith, Subscription, switchMap, tap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -34,15 +34,16 @@ export class CustomSearchControlComponent implements OnInit, OnDestroy {
         .pipe(
           startWith(''),
           map((name) => name.toLowerCase()),
-          switchMap((name) => (<CustomSearchControl>this.control).search(name))
+          tap({
+            next: (name) => {
+              this.control.options = this.control.options.filter((option) =>
+                option.name.includes(name)
+              );
+            },
+          }),
+          switchMap((name) => this.control.search?.(name))
         )
-        .subscribe((searchOptions) => {
-          (<CustomSearchControl>this.control).options = searchOptions.map(
-            (option) => {
-              return { id: option.id, name: option.name };
-            }
-          );
-        })
+        .subscribe((options) => (this.control.options = options))
     );
   }
 

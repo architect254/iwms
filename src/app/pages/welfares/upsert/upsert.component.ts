@@ -1,8 +1,8 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject, SkipSelf } from '@angular/core';
+import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 
-import { BehaviorSubject, map, Observable, startWith } from 'rxjs';
+import { BehaviorSubject, map, Observable, startWith, tap } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 
@@ -21,11 +21,18 @@ import { Page } from '../../../shared/directives/page/page.directive';
 import { Welfare } from '../../welfares/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
-import { welfareDetailsFormControls } from './model';
+import { chooseWelfareFormControls, welfareDetailsFormControls } from './model';
 import { WelfaresService } from '../welfares.service';
 import { Account } from '../../accounts/model';
-import { get } from 'http';
-import { buildAccountName } from '../../members/model';
+import { AccountsService } from '../../accounts/accounts.service';
+
+export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('welfare details form controls');
+
+export const CHOOSE_WELFARE_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('choose welfare form controls');
 
 @Component({
   selector: 'iwms-upsert',
@@ -40,7 +47,18 @@ import { buildAccountName } from '../../members/model';
     MatSnackBarModule,
     JsonPipe,
   ],
-  providers: [],
+  viewProviders: [
+    {
+      provide: WELFARE_DETAILS_FORM_CONTROLS,
+      useFactory: welfareDetailsFormControls,
+      deps: [AccountsService],
+    },
+    {
+      provide: CHOOSE_WELFARE_FORM_CONTROLS,
+      useFactory: chooseWelfareFormControls,
+      deps: [WelfaresService],
+    },
+  ],
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
@@ -52,22 +70,21 @@ export class UpsertComponent extends Page {
 
   welfare?: Welfare;
 
-  welfareDetailsFormControls$: Observable<
-    DynamicCustomFormControlBase<ValueType>[]
-  > = welfareDetailsFormControls();
+  welfareDetailsFormControls = inject(WELFARE_DETAILS_FORM_CONTROLS);
 
   accountOptions!: Account[];
   filteredAccountOptions!: Observable<string[]>;
 
-  $triggerValidityNotification = new BehaviorSubject(false);
-  $isSubmitting = new BehaviorSubject(false);
+  private _triggerValidityNotification = new BehaviorSubject(false);
+  private _isSubmitting = new BehaviorSubject(false);
 
   isProceedAllowed: boolean = false;
 
   constructor(
     @SkipSelf() override authService: AuthService,
 
-    private service: WelfaresService
+    private service: WelfaresService,
+    private accountService: AccountsService
   ) {
     super(authService);
 
@@ -82,7 +99,7 @@ export class UpsertComponent extends Page {
       this.accountOptions = data['accounts'];
       if (this.pageAction == 'update') {
         if (this.welfare) {
-          this.welfareDetailsFormControls$.forEach(
+          this.welfareDetailsFormControls.forEach(
             (form: DynamicCustomFormControlBase<ValueType>[]) => {
               form.forEach(
                 (control: DynamicCustomFormControlBase<ValueType>) => {
@@ -93,22 +110,6 @@ export class UpsertComponent extends Page {
                         string | number | Date
                       >
                     )[control.key] as string | number | Date;
-
-                    if (
-                      control.key == 'manager' ||
-                      control.key == 'accountant' ||
-                      control.key == 'secretary'
-                    ) {
-                      (control as CustomSearchControl).options =
-                        this.accountOptions.map((account) => {
-                          return {
-                            id: account.id,
-                            name: buildAccountName(account),
-                          };
-                        });
-
-                      (control as CustomSearchControl).search
-                    }
                   }
                 }
               );
@@ -123,20 +124,20 @@ export class UpsertComponent extends Page {
     super.ngOnInit();
   }
 
-  get isSubmitting$(): Observable<boolean> {
-    return this.$isSubmitting.asObservable();
+  get isSubmitting(): Observable<boolean> {
+    return this._isSubmitting.asObservable();
   }
 
-  set isSubmitting$(isIt: boolean) {
-    this.$isSubmitting.next(isIt);
+  set isSubmitting(isIt: boolean) {
+    this._isSubmitting.next(isIt);
   }
 
-  get triggerValidityNotification$() {
-    return this.$triggerValidityNotification.asObservable();
+  get triggerValidityNotification(): Observable<boolean> {
+    return this._triggerValidityNotification.asObservable();
   }
 
   set triggerValidityNotification(doTrigger: boolean) {
-    this.$triggerValidityNotification.next(doTrigger);
+    this._triggerValidityNotification.next(doTrigger);
   }
 
   onValidityNotified(formData: string) {
@@ -147,27 +148,27 @@ export class UpsertComponent extends Page {
   }
 
   save() {
-    this.isSubmitting$ = true;
+    this.isSubmitting = true;
 
     const payload: any = {
       welfareDto: this.welfare,
     };
 
-    let serviceAction$;
+    let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction$ = this.service.updateWelfare(
+      serviceAction = this.service.updateWelfare(
         this.welfare?.id as number,
         payload
       );
     } else {
-      serviceAction$ = this.service.createWelfare(payload);
+      serviceAction = this.service.createWelfare(payload);
     }
 
-    this.$subscriptions$.add(
-      serviceAction$.subscribe({
+    this.subscriptions.add(
+      serviceAction.subscribe({
         next: ({ id }) => {
-          this.isSubmitting$ = false;
+          this.isSubmitting = false;
 
           this.router.navigate(['/', 'welfare-groups', 'view', id]);
 
@@ -187,7 +188,7 @@ export class UpsertComponent extends Page {
           });
         },
         error: (err) => {
-          this.isSubmitting$ = false;
+          this.isSubmitting = false;
         },
       })
     );

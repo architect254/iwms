@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, SkipSelf } from '@angular/core';
+import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { DynamicViewComponent } from '../../../shared/components/data-view/view.component';
 import { DynamicCustomDataBase } from '../../../shared/components/data-view/view.service';
@@ -11,12 +11,17 @@ import { welfareDataView } from './model';
 import { Welfare } from '../../welfares/model';
 import { WelfaresService } from '../welfares.service';
 import { buildName } from '../../members/model';
+import { ValueType } from '../../../shared/components/form-control/control.component';
+
+export const WELFARE_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('welfare data view');
 
 @Component({
   selector: 'iwms-view',
   standalone: true,
   imports: [AsyncPipe, HeaderComponent, DynamicViewComponent, JsonPipe],
-  providers: [],
+  providers: [{ provide: WELFARE_DATA_VIEW, useValue: welfareDataView }],
   templateUrl: './view.component.html',
   styleUrl: './view.component.scss',
 })
@@ -27,9 +32,7 @@ export class ViewComponent extends Page {
 
   welfare?: Welfare;
 
-  welfareDataView$: Observable<
-    DynamicCustomDataBase<string | number | Date>[]
-  > = welfareDataView();
+  welfareDataView = inject(WELFARE_DATA_VIEW);
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -47,7 +50,7 @@ export class ViewComponent extends Page {
       this.welfare = data['welfare'];
 
       if (this.welfare) {
-        this.welfareDataView$.forEach(
+        this.welfareDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {

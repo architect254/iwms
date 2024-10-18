@@ -5,7 +5,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
-import { CustomTextboxControl } from '../model';
+import { CustomTextboxControl, DynamicCustomFormControlBase } from '../model';
+import { ValueType } from '../control.component';
 
 @Component({
   standalone: true,

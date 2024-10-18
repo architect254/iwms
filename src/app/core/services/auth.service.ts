@@ -23,14 +23,14 @@ import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
 import { Account } from '../../pages/accounts/model';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
-  protected override endpoint = `${this.API_URL}/auth`;
+  protected override endpoint = `{this.API_URL}/auth`;
 
   private _storageService = inject(LocalStorageService);
 
   private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(
     this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN)
   );
-  public currentToken$: Observable<any> = this.currentTokenSubject
+  public currentToken: Observable<any> = this.currentTokenSubject
     .asObservable()
     .pipe(first());
 
@@ -40,8 +40,8 @@ export class AuthService extends ApiService {
     super();
   }
 
-  get currentTokenUserValue$(): Observable<Account | null> {
-    return this.currentToken$.pipe(
+  get currentTokenUserValue(): Observable<Account | null> {
+    return this.currentToken.pipe(
       map((token) => {
         if (token) {
           const payload: JwtPayload = jwtDecode(token);
@@ -51,8 +51,8 @@ export class AuthService extends ApiService {
     );
   }
 
-  get isAuthenticated$(): Observable<boolean> {
-    return this.currentToken$.pipe(
+  get isAuthenticated(): Observable<boolean> {
+    return this.currentToken.pipe(
       map((token) => {
         // return !this.jwtHelper
         //   .isTokenExpired(token, Date.now())
@@ -68,13 +68,13 @@ export class AuthService extends ApiService {
 
   signUp(credentials: SignUpDto) {
     return this.http
-      .post<void>(`${this.API_URL}/auth/sign-up`, credentials)
+      .post<void>(`{this.API_URL}/auth/sign-up`, credentials)
       .pipe(first());
   }
 
   signIn(credentials: SignInDto) {
     return this.http
-      .post<any>(`${this.API_URL}/auth/sign-in`, credentials)
+      .post<any>(`{this.API_URL}/auth/sign-in`, credentials)
       .pipe(
         first(),
         tap({
@@ -94,16 +94,12 @@ export class AuthService extends ApiService {
   }
 
   resetPassword(payload: any) {
-    return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload);
+    return this.http.post<any>(`{this.API_URL}/auth/reset-password`, payload);
   }
 
   logout() {
     this._storageService.clear();
     this.currentTokenSubject.next(null);
-  }
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
   }
 }
 export interface JwtPayload {

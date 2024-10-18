@@ -2,13 +2,13 @@
   [title]="pageTitle"
   [viewUrl]="viewUrl"
   [listUrl]="listUrl"
-  [displayBack]="true"
+  displayBack="true"
 ></iwms-header>
 
 <iwms-dynamic-form
-  [controls]="memberDetailsFormControls$ | async"
-  [isSubmitting$]="isSubmitting$"
-  [triggerValidityNotification$]="triggerValidityNotification$"
+  [controls]="memberDetailsFormControls | async"
+  [isSubmitting]="isSubmitting"
+  [triggerValidityNotification]="triggerValidityNotification"
   (notifyValidity)="onValidityNotified($event)"
 ></iwms-dynamic-form>
 

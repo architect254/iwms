@@ -1,6 +1,6 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, SkipSelf } from '@angular/core';
+import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSortModule } from '@angular/material/sort';
+import { MatSortModule, SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule, Data } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -17,13 +17,7 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { ListPage } from '../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
 import { AccountsService } from '../accounts.service';
-import {
-  GRID_COLUMNS,
-  FILTER_OPTIONS,
-  STATUS,
-  ACTIONS,
-  FilterRequestDto,
-} from './model';
+import { actions, columns, FilterRequest, filters, status } from './model';
 import { GridComponent } from '../../../shared/views/grid/grid.component';
 import {
   GridColumn,
@@ -31,6 +25,16 @@ import {
   StatusConfig,
   Action,
 } from '../../../shared/views/grid/model';
+
+export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
+
+export const FILTERS = new InjectionToken<FilterOption[]>(
+  'grid filter columns'
+);
+
+export const STATUS = new InjectionToken<StatusConfig>('grid status config');
+
+export const ACTIONS = new InjectionToken<Action[]>('grid actions');
 
 @Component({
   selector: 'iwms-list',
@@ -54,21 +58,27 @@ import {
     CommonModule,
     RouterModule,
   ],
+  providers: [
+    { provide: COLUMNS, useValue: columns },
+    { provide: FILTERS, useValue: filters },
+    { provide: STATUS, useValue: status },
+    { provide: ACTIONS, useValue: actions },
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  columns: GridColumn[] = GRID_COLUMNS;
-  filters: FilterOption[] = FILTER_OPTIONS;
-  status: StatusConfig = STATUS;
-  actions: Action[] = ACTIONS;
+  columns = inject(COLUMNS);
+  filters = inject(FILTERS);
+  status = inject(STATUS);
+  actions = inject(ACTIONS);
 
   defaultSortColumn!: string;
-  defaultSortColumnDirection!: 'asc' | 'desc';
+  defaultSortColumnDirection!: SortDirection;
 
   data: any[] = [];
 
-  declare FilterRequestDto: FilterRequestDto;
+  declare FilterRequestDto: FilterRequest;
   declare filterRequest: [string, string][];
 
   constructor(
@@ -92,23 +102,23 @@ export class ListComponent extends ListPage {
     take: number,
     filterRequest: [string, string][]
   ) {
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.service
         .getAccounts(page, take, filterRequest)
         .subscribe((accounts) => {
           this.data = accounts.map((account) => {
             return {
               id: account.id,
-              name: `${account.first_name} ${account.last_name}`,
+              name: account.name,
               id_number: account.id_number,
               phone_number: account.phone_number,
               email: account.email,
               profile_image: account.profile_image_url,
-              type: account.type,
-              status: account.status,
+              class: account.class,
+              state: account.state,
               welfare: account.member?.welfare?.name,
               role: account.member?.role,
-              m_status: account.member?.status,
+              status: account.member?.status,
               create_date: account.create_date,
               update_date: account.update_date,
             };

@@ -63,7 +63,7 @@ import { passwordsMismatchValidator } from './password.validator';
   styleUrl: './auth-dialog.component.scss',
 })
 export class AuthComponent extends Page {
-  $action = new BehaviorSubject<'Sign Up' | 'Sign In'>('Sign In');
+  private _action = new BehaviorSubject<'Sign Up' | 'Sign In'>('Sign In');
 
   private fb = inject(FormBuilder);
 
@@ -83,19 +83,16 @@ export class AuthComponent extends Page {
     super(authService);
   }
 
-  get action$(): Observable<'Sign Up' | 'Sign In'> {
-    return this.$action.asObservable();
+  get action(): Observable<'Sign Up' | 'Sign In'> {
+    return this._action.asObservable();
   }
 
-  set action$(action: 'Sign Up' | 'Sign In') {
-    this.$action.next(action);
+  set action(action: 'Sign Up' | 'Sign In') {
+    this._action.next(action);
   }
 
-  get first_name() {
-    return this.authForm.get(`first_name`);
-  }
-  get last_name() {
-    return this.authForm.get(`last_name`);
+  get name() {
+    return this.authForm.get(`name`);
   }
   get id_number() {
     return this.authForm.get(`id_number`);
@@ -121,8 +118,8 @@ export class AuthComponent extends Page {
   }
 
   buildForm() {
-    this.$subscriptions$.add(
-      this.action$.subscribe((action) => {
+    this.subscriptions.add(
+      this.action.subscribe((action) => {
         switch (action) {
           case 'Sign In':
             this.authForm = this.fb.group({
@@ -134,8 +131,7 @@ export class AuthComponent extends Page {
           case 'Sign Up':
             this.authForm = this.fb.group(
               {
-                first_name: [``, Validators.required],
-                last_name: [``, Validators.required],
+                name: [``, Validators.required],
                 id_number: [``, Validators.required],
                 birth_date: [``, Validators.required],
                 phone_number: [``, Validators.required],
@@ -173,7 +169,7 @@ export class AuthComponent extends Page {
 
   submitForm() {
     this.authForm.disable();
-    switch (this.$action.value) {
+    switch (this._action.value) {
       case 'Sign Up':
         this.signUp();
         break;
@@ -210,7 +206,7 @@ export class AuthComponent extends Page {
     //   });
     // }
 
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.authService
         .signUp(signUpPayload)
         .pipe(
@@ -245,7 +241,7 @@ export class AuthComponent extends Page {
       ...this.authForm.value,
     };
 
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.authService.signIn(signInPayload).subscribe({
         next: () => {
           this.isSigningIn = false;

@@ -1,4 +1,4 @@
-import { Component, SkipSelf } from '@angular/core';
+import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -11,10 +11,23 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { ListPage } from '../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
 import { GridComponent } from '../../../shared/views/grid/grid.component';
-import { GridColumn, FilterOption } from '../../../shared/views/grid/model';
+import {
+  GridColumn,
+  FilterOption,
+  Action,
+} from '../../../shared/views/grid/model';
 import { buildName } from '../../members/model';
-import { GRID_COLUMNS, FILTER_OPTIONS, FilterRequestDto } from './model';
+import { actions, columns, FilterRequest, filters } from './model';
+import { STATUS } from '../../accounts/list/list.component';
+import { SortDirection } from '@angular/material/sort';
 
+export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
+
+export const FILTERS = new InjectionToken<FilterOption[]>(
+  'grid filter columns'
+);
+
+export const ACTIONS = new InjectionToken<Action[]>('grid actions');
 
 @Component({
   selector: 'iwms-list',
@@ -27,19 +40,25 @@ import { GRID_COLUMNS, FILTER_OPTIONS, FilterRequestDto } from './model';
     GridSearchComponent,
     ReactiveFormsModule,
   ],
+  providers: [
+    { provide: COLUMNS, useValue: columns },
+    { provide: FILTERS, useValue: filters },
+    { provide: ACTIONS, useValue: actions },
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  columns: GridColumn[] = GRID_COLUMNS;
-  filters: FilterOption[] = FILTER_OPTIONS;
+  columns = inject(COLUMNS);
+  filters = inject(FILTERS);
+  actions = inject(ACTIONS);
 
   defaultSortColumn!: string;
-  defaultSortColumnDirection!: 'asc' | 'desc';
+  defaultSortColumnDirection!: SortDirection;
 
   data: any[] = [];
 
-  declare filtersDTO: FilterRequestDto;
+  declare filtersDTO: FilterRequest;
   declare filterRequest: [string, string][];
 
   constructor(
@@ -59,7 +78,7 @@ export class ListComponent extends ListPage {
   }
 
   fetchData(page: number, take: number, filterRequest: [string, string][]) {
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.service
         .getWelfares(page, take, filterRequest)
         .subscribe((welfares) => {

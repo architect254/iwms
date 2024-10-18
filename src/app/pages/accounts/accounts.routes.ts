@@ -1,10 +1,17 @@
 import { Routes } from '@angular/router';
+
+import { UpsertComponent } from './upsert/upsert.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
-import { UpsertComponent } from './upsert/upsert.component';
 import { accountResolver } from './account.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
 import { ContainerLayoutComponent } from '../../shared/views/layout/container-layout.component';
+import {
+  Action,
+  createGuard,
+  updateGuard,
+  viewGuard,
+} from '../../core/guards/state.guard';
 
 export const routes: Routes = [
   {
@@ -12,28 +19,32 @@ export const routes: Routes = [
     component: ContainerLayoutComponent,
     children: [
       {
-        path: 'add',
+        path: ':id',
         component: UpsertComponent,
-        resolve: { welfares: welfaresResolver },
-        data: { title: 'Add Account Details', action: 'create' },
-      },
-      {
-        path: ':id/update',
-        component: UpsertComponent,
+        canActivate: [updateGuard],
         resolve: {
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Update Account Details', action: 'update' },
+        data: { title: 'Update Account Details', action: Action.Update },
       },
       {
         path: ':id',
         component: ViewComponent,
+        canActivate: [viewGuard],
         resolve: {
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'View Account Details' },
+        data: { title: 'View Account Details', action: Action.View },
+      },
+      {
+        path: '',
+        component: UpsertComponent,
+        canActivate: [createGuard],
+
+        resolve: { welfares: welfaresResolver },
+        data: { title: 'Add Account Details', action: Action.Create },
       },
       {
         path: '',
