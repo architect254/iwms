@@ -13,12 +13,12 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Page } from '../../../shared/directives/page/page.directive';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { chooseWelfareFormControls, memberDetailsFormControls } from './model';
 import { MembersService } from '../members.service';
 import { Member } from '../model';
+import { EditableViewPage } from '../../../shared/directives/view-page/editable-view-page.directive';
 
 export const MEMBER_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -54,21 +54,12 @@ export const CHOOSE_WELFARE_FORM_CONTROL = new InjectionToken<
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
-export class UpsertComponent extends Page {
-  pageTitle!: string;
-  viewUrl!: string;
-  listUrl: string = '/members';
-
-  pageAction!: 'update' | 'create';
+export class UpsertComponent extends EditableViewPage {
+  override listUrl: string = '/members';
 
   member?: Member;
 
   memberDetailsFormControls = inject(MEMBER_DETAILS_FORM_CONTROLS);
-
-  private _triggerValidityNotification = new BehaviorSubject(false);
-  private _isSubmitting = new BehaviorSubject(false);
-
-  isProceedAllowed: boolean = false;
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -78,9 +69,9 @@ export class UpsertComponent extends Page {
     super(authService);
 
     this.route.data.subscribe((data: Data) => {
-      this.pageTitle = data['title'];
+      // this.pageTitle = data['title'];
       this.pageAction = data['action'];
-      this.viewUrl = `/members/view/${this.route.snapshot.paramMap.get('id')}`;
+      this.viewUrl = `/members/${this.route.snapshot.paramMap.get('id')}`;
 
       this.member = data['member'];
       if (this.pageAction == 'update') {
@@ -110,23 +101,7 @@ export class UpsertComponent extends Page {
     super.ngOnInit();
   }
 
-  get isSubmitting(): Observable<boolean> {
-    return this._isSubmitting.asObservable();
-  }
-
-  set isSubmitting(isIt: boolean) {
-    this._isSubmitting.next(isIt);
-  }
-
-  get triggerValidityNotification(): Observable<boolean> {
-    return this._triggerValidityNotification.asObservable();
-  }
-
-  set triggerValidityNotification(doTrigger: boolean) {
-    this._triggerValidityNotification.next(doTrigger);
-  }
-
-  onValidityNotified(formData: string) {
+   onValidityNotified(formData: string) {
     const data = JSON.parse(formData);
 
     this.member = <Member>{ ...data };

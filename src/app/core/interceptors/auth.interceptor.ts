@@ -16,7 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (token && isApiUrl && !whiteListedUrls.includes(req.url)) {
         req = req.clone({
           setHeaders: {
-            Authorization: `Bearer {token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
       }

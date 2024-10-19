@@ -1,7 +1,7 @@
 import { CanActivateFn } from '@angular/router';
 
 export enum Action {
-  Update = 'Update',
+  Edit = 'Edit',
   View = 'View',
   Create = 'Create',
 }
@@ -14,6 +14,6 @@ export const viewGuard: CanActivateFn = async (route) => {
   return route.data['action'] == Action.View;
 };
 
-export const updateGuard: CanActivateFn = async (route) => {
-  return route.data['action'] == Action.Update;
+export const editGuard: CanActivateFn = async (route) => {
+  return route.data['action'] == Action.Edit;
 };

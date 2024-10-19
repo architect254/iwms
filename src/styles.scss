@@ -3,10 +3,11 @@
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
 
-@use './app/shared/views/layout/layout.theme' as layout;
+@use './app/shared/views/navigation/navigation.theme' as navigation;
 @use './app/shared/views/grid/grid.theme' as grid;
 
 @use './app/pages/not-found/not-found.theme' as not-found;
+@use './app/pages/unauthorized/unauthorized.theme' as unauthorized;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -28,10 +29,11 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
   @include mat.typography-hierarchy($iwms-theme);
   @include mat.color-variants-backwards-compatibility($iwms-theme);
 
-  @include layout.theme($iwms-theme);
+  @include navigation.theme($iwms-theme);
   @include grid.theme($iwms-theme);
 
   @include not-found.theme($iwms-theme);
+  @include unauthorized.theme($iwms-theme);
 
   .reduced-size {
     @include mat.all-component-densities(-8);

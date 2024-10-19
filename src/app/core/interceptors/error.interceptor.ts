@@ -17,7 +17,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((apiError: HttpErrorResponse) => {
       if (apiError instanceof HttpErrorResponse) {
         errorResponse = new Error(
-          `{apiError?.statusText || ''}. {
+          `${apiError?.statusText || ''}. ${
             apiError?.error?.message
               ? apiError?.error?.message
               : apiError?.message
@@ -26,7 +26,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBarRef = snackBar.open(errorResponse?.message, `Retry`, {
           panelClass: `.api-error-alert.server`,
-          duration: 1500,
+          duration: 5000,
         });
 
         snackBarRef.onAction().subscribe(() => {
@@ -40,7 +40,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBarRef = snackBar.open(errorResponse?.message, `OK`, {
           panelClass: `.api-error-alert.browser`,
-          duration: 1500,
+          duration: 5000,
         });
 
         snackBarRef.onAction().subscribe(() => {

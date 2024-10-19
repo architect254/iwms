@@ -30,12 +30,14 @@ export abstract class Page implements OnInit, OnDestroy {
 
   protected subscriptions: Subscription = new Subscription();
 
-  constructor(@SkipSelf() protected authService: AuthService) {}
+  pageTitle!: string;
 
-  ngOnInit(): void {
+  constructor(@SkipSelf() protected authService: AuthService) {
     this.applyTitle();
     this.applyMetaTags();
   }
+
+  ngOnInit(): void {}
 
   applyTitle() {
     this.router.events
@@ -52,6 +54,7 @@ export abstract class Page implements OnInit, OnDestroy {
         map((route) => {
           const title = route.snapshot.data['title'];
           if (title) {
+            this.pageTitle = title;
             return title;
           }
           return 'My App Title';

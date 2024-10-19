@@ -2,14 +2,12 @@ import { Directive, inject, SkipSelf } from '@angular/core';
 import { Page } from '../page/page.directive';
 import { AuthService } from '../../../core/services/auth.service';
 import { DOCUMENT } from '@angular/common';
-import { FilterOption } from '../../views/grid/model';
+import { Filter, FilterOption } from '../../views/grid/model';
 
 @Directive({
   standalone: true,
 })
 export abstract class ListPage extends Page {
-  protected pageTitle: string = '';
-
   gridHeight: number = 0;
   gridWidth: number = 0;
 
@@ -17,9 +15,6 @@ export abstract class ListPage extends Page {
 
   protected page: number = 1;
   protected take: number = 100;
-
-  protected FilterRequestDto!: any;
-  protected filterRequest!: [string, string][];
 
   constructor(@SkipSelf() authService: AuthService) {
     super(authService);
@@ -43,24 +38,10 @@ export abstract class ListPage extends Page {
   protected abstract fetchData(
     page: number,
     take: number,
-    filterRequest: [string, string][]
+    filters: Filter[]
   ): void;
 
-  doApplyFilter(filters: FilterOption[]) {
-    this.filterRequest = [];
-    filters.forEach((filter) => {
-      if (Object.hasOwn(this.FilterRequestDto, filter.key)) {
-        const filterParam: { [key: string]: string | undefined } = {
-          [filter.key]: filter.value,
-        };
-        Object.assign(this.FilterRequestDto, filterParam);
-      }
-    });
-    Object.entries(this.FilterRequestDto)
-      .filter(([key, value]) => !!value)
-      .forEach(([key, value]) =>
-        this.filterRequest.push([key, value as string])
-      );
-    this.fetchData(this.page, this.take, this.filterRequest);
+  doApplyFilter(filters: Filter[]) {
+    this.fetchData(this.page, this.take, filters);
   }
 }

@@ -48,7 +48,7 @@ export function welfareDetailsFormControls(service: AccountsService) {
       required: true,
       order: 4,
       search(name: string) {
-        return service.getAccounts(1, 100, [['name', name]]).pipe(
+        return service.getAccounts(1, 100, [{ key: 'name', value: name }]).pipe(
           map((accounts) => {
             return accounts.map((account) => {
               return {
@@ -70,7 +70,7 @@ export function welfareDetailsFormControls(service: AccountsService) {
       required: true,
       order: 5,
       search(name: string) {
-        return service.getAccounts(1, 100, [['name', name]]).pipe(
+        return service.getAccounts(1, 100, [{ key: 'name', value: name }]).pipe(
           map((accounts) => {
             return accounts.map((account) => {
               return {
@@ -91,7 +91,7 @@ export function welfareDetailsFormControls(service: AccountsService) {
       required: true,
       order: 4,
       search(name: string) {
-        return service.getAccounts(1, 100, [['name', name]]).pipe(
+        return service.getAccounts(1, 100, [{ key: 'name', value: name }]).pipe(
           map((accounts) => {
             return accounts.map((account) => {
               return {

@@ -23,7 +23,7 @@ import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
 import { Account } from '../../pages/accounts/model';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
-  protected override endpoint = `{this.API_URL}/auth`;
+  protected override endpoint = `${this.API_URL}/auth`;
 
   private _storageService = inject(LocalStorageService);
 
@@ -68,13 +68,13 @@ export class AuthService extends ApiService {
 
   signUp(credentials: SignUpDto) {
     return this.http
-      .post<void>(`{this.API_URL}/auth/sign-up`, credentials)
+      .post<void>(`${this.API_URL}/auth/sign-up`, credentials)
       .pipe(first());
   }
 
   signIn(credentials: SignInDto) {
     return this.http
-      .post<any>(`{this.API_URL}/auth/sign-in`, credentials)
+      .post<any>(`${this.API_URL}/auth/sign-in`, credentials)
       .pipe(
         first(),
         tap({
@@ -94,7 +94,7 @@ export class AuthService extends ApiService {
   }
 
   resetPassword(payload: any) {
-    return this.http.post<any>(`{this.API_URL}/auth/reset-password`, payload);
+    return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload);
   }
 
   logout() {

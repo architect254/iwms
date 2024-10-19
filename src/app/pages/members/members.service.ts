@@ -4,6 +4,7 @@ import { Member } from './model';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Filter } from '../../shared/views/grid/model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,10 +28,11 @@ export class MembersService extends ApiService {
   getMembers(
     page: number = 1,
     take: number = 100,
-    filters?: [string, string][]
+    filters?: Filter[]
   ): Observable<Member[]> {
+    const queryString = this.buildFilterQueryString(page, take, filters);
     return this.http.get<Member[]>(this.endpoint, {
-      params: new HttpParams().set('page', page).set('take', take),
+      params: new HttpParams({ fromString: queryString }),
     });
   }
 

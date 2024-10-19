@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
-import { ContainerLayoutComponent } from '../../shared/views/layout/container-layout.component';
+import { ContainerLayoutComponent } from '../../shared/views/navigation/container-layout.component';
 import { welfareResolver } from './welfare.resolver';
 import { accountsResolver } from '../accounts/accounts.resolver';
 

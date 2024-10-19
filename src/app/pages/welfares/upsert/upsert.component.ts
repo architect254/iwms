@@ -2,22 +2,17 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 
-import { BehaviorSubject, map, Observable, startWith, tap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import {
-  CustomDropdownControl,
-  CustomSearchControl,
-  DynamicCustomFormControlBase,
-} from '../../../shared/components/form-control/model';
+import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Page } from '../../../shared/directives/page/page.directive';
 import { Welfare } from '../../welfares/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
@@ -25,6 +20,7 @@ import { chooseWelfareFormControls, welfareDetailsFormControls } from './model';
 import { WelfaresService } from '../welfares.service';
 import { Account } from '../../accounts/model';
 import { AccountsService } from '../../accounts/accounts.service';
+import { EditableViewPage } from '../../../shared/directives/view-page/editable-view-page.directive';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -47,7 +43,7 @@ export const CHOOSE_WELFARE_FORM_CONTROLS = new InjectionToken<
     MatSnackBarModule,
     JsonPipe,
   ],
-  viewProviders: [
+  providers: [
     {
       provide: WELFARE_DETAILS_FORM_CONTROLS,
       useFactory: welfareDetailsFormControls,
@@ -62,11 +58,8 @@ export const CHOOSE_WELFARE_FORM_CONTROLS = new InjectionToken<
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
 })
-export class UpsertComponent extends Page {
-  pageTitle!: string;
-  pageAction!: 'update' | 'create';
-  viewUrl!: string;
-  listUrl: string = '/welfare-groups';
+export class UpsertComponent extends EditableViewPage {
+  override listUrl: string = '/welfare-groups';
 
   welfare?: Welfare;
 
@@ -75,69 +68,49 @@ export class UpsertComponent extends Page {
   accountOptions!: Account[];
   filteredAccountOptions!: Observable<string[]>;
 
-  private _triggerValidityNotification = new BehaviorSubject(false);
-  private _isSubmitting = new BehaviorSubject(false);
-
-  isProceedAllowed: boolean = false;
-
   constructor(
     @SkipSelf() override authService: AuthService,
-
     private service: WelfaresService,
     private accountService: AccountsService
   ) {
     super(authService);
-
-    this.route.data.subscribe((data: Data) => {
-      this.pageTitle = data['title'];
-      this.pageAction = data['action'];
-      this.viewUrl = `/welfare-groups/${this.route.snapshot.paramMap.get(
-        'id'
-      )}`;
-
-      this.welfare = data['welfare'];
-      this.accountOptions = data['accounts'];
-      if (this.pageAction == 'update') {
-        if (this.welfare) {
-          this.welfareDetailsFormControls.forEach(
-            (form: DynamicCustomFormControlBase<ValueType>[]) => {
-              form.forEach(
-                (control: DynamicCustomFormControlBase<ValueType>) => {
-                  if (control) {
-                    control.value = (
-                      this.welfare as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )[control.key] as string | number | Date;
-                  }
-                }
-              );
-            }
-          );
-        }
-      }
-    });
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-  }
 
-  get isSubmitting(): Observable<boolean> {
-    return this._isSubmitting.asObservable();
-  }
+    this.subscriptions.add(
+      this.route.data.subscribe((data: Data) => {
+        // this.pageTitle = data['title'];
+        this.pageAction = data['action'];
+        this.viewUrl = `/welfare-groups/${this.route.snapshot.paramMap.get(
+          'id'
+        )}`;
 
-  set isSubmitting(isIt: boolean) {
-    this._isSubmitting.next(isIt);
-  }
-
-  get triggerValidityNotification(): Observable<boolean> {
-    return this._triggerValidityNotification.asObservable();
-  }
-
-  set triggerValidityNotification(doTrigger: boolean) {
-    this._triggerValidityNotification.next(doTrigger);
+        this.welfare = data['welfare'];
+        this.accountOptions = data['accounts'];
+        if (this.pageAction == 'update') {
+          if (this.welfare) {
+            this.welfareDetailsFormControls.forEach(
+              (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                form.forEach(
+                  (control: DynamicCustomFormControlBase<ValueType>) => {
+                    if (control) {
+                      control.value = (
+                        this.welfare as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )[control.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+          }
+        }
+      })
+    );
   }
 
   onValidityNotified(formData: string) {

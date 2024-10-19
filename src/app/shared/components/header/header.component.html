@@ -10,32 +10,39 @@
   @if (listUrl || editUrl || viewUrl || displayBack) {
   <div class="header-nav-btns">
     @if(editUrl){
-    <button
+    <a
       mat-icon-button
       class="basic-btn"
-      aria-label=""
+      aria-label="Go to edit page"
+      title="Go to edit page"
       [routerLink]="[editUrl]"
+      [href]="editUrl"
+      [state]="{ action: 'Edit' }"
     >
       <mat-icon fontIcon="edit_note" class="btn-icon"></mat-icon>
-    </button>
+    </a>
     } @if(viewUrl){
-    <button
+    <a
       mat-icon-button
       class="basic-btn"
-      aria-label=""
+      aria-label="Go to view page"
+      title="Go to view page"
       [routerLink]="[viewUrl]"
+      [href]="viewUrl"
+      [state]="{ action: 'View' }"
     >
       <mat-icon fontIcon="wysiwyg" class="btn-icon"></mat-icon>
-    </button>
+    </a>
     } @if (listUrl) {
-    <button
+    <a
       mat-icon-button
       class="basic-btn"
-      aria-label=""
+      aria-label="Go to list page"
+      title="Go to list page"
       [routerLink]="[listUrl]"
     >
       <mat-icon fontIcon="format_list_numbered" class="btn-icon"></mat-icon>
-    </button>
+    </a>
     } @if (displayBack) {
     <button
       mat-icon-button

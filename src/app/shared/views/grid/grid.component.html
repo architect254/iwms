@@ -145,7 +145,18 @@
           *matCellDef="let row"
           [style.min-width]="column?.width"
         >
-          {{ row[column!.key] ? row[column!.key] : "N/A" }}
+          @if (column.key == 'name') {
+          <a
+            [title]="'View ' + row[column.key]"
+            [href]="view(row.id)"
+            [routerLink]="view(row.id)"
+            [state]="{ action: 'View' }"
+            class="view-anchor"
+          >
+            {{ row[column!.key] ? row[column!.key] : "N/A" }}
+          </a>
+          }@else{
+          {{ row[column!.key] ? row[column!.key] : "N/A" }}}
         </td>
         }}
       </ng-container>
@@ -159,7 +170,6 @@
       <tr
         mat-row
         *matRowDef="let row; columns: displayedColumns"
-        (click)="viewData(row.id)"
         class="table-row"
       ></tr>
     </table>

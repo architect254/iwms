@@ -15,10 +15,10 @@ import {
   GridColumn,
   FilterOption,
   Action,
+  Filter,
 } from '../../../shared/views/grid/model';
 import { buildName } from '../../members/model';
 import { actions, columns, FilterRequest, filters } from './model';
-import { STATUS } from '../../accounts/list/list.component';
 import { SortDirection } from '@angular/material/sort';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
@@ -58,29 +58,26 @@ export class ListComponent extends ListPage {
 
   data: any[] = [];
 
-  declare filtersDTO: FilterRequest;
-  declare filterRequest: [string, string][];
-
   constructor(
     @SkipSelf() override authService: AuthService,
 
     private service: WelfaresService
   ) {
     super(authService);
-    this.route.data.subscribe((data: Data) => {
-      this.pageTitle = data['title'];
-    });
+    // this.route.data.subscribe((data: Data) => {
+    //   this.pageTitle = data['title'];
+    // });
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData(this.page, this.take, this.filterRequest);
+    this.fetchData(this.page, this.take);
   }
 
-  fetchData(page: number, take: number, filterRequest: [string, string][]) {
+  fetchData(page: number, take: number, filters?: Filter[]) {
     this.subscriptions.add(
       this.service
-        .getWelfares(page, take, filterRequest)
+        .getWelfares(page, take, filters)
         .subscribe((welfares) => {
           this.data = welfares.map((welfare) => {
             return {

@@ -1,16 +1,18 @@
 import { Routes } from '@angular/router';
 
-import { LayoutComponent } from './shared/views/layout/layout.component';
+import { NavigationComponent } from './shared/views/navigation/navigation.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { authGuard, noAuthGuard, roleGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './pages/home/home.component';
 import { Class } from './pages/accounts/model';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: LayoutComponent,
+    component: NavigationComponent,
     canMatch: [authGuard],
+    // canActivateChild:[auth2Guard],
     children: [
       {
         path: 'accounts',
@@ -85,6 +87,11 @@ export const routes: Routes = [
     pathMatch: 'full',
     component: HomeComponent,
     canActivate: [noAuthGuard],
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+    data: { title: 'Not Authorized To View Page' },
   },
   {
     path: 'not-found',

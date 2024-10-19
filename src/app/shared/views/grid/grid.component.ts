@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { Action, ColumnDirection, GridColumn, StatusConfig } from './model';
+import { Action, GridColumn, StatusConfig } from './model';
 
 @Component({
   selector: 'iwms-grid',
@@ -40,14 +40,14 @@ export class GridComponent {
     this.dataSource = new MatTableDataSource(data);
   }
 
-  @Input() disableAddition:boolean = false
+  @Input() disableAddition: boolean = false;
 
   @Input() columns!: GridColumn[];
   @Input() status?: StatusConfig;
   @Input() actions?: Action[];
 
   @Input() defaultSortColumn: string = '';
-  @Input() defaultSortColumnDirection: ColumnDirection = 'asc';
+  @Input() defaultSortColumnDirection: SortDirection = 'asc';
 
   dataSource!: MatTableDataSource<any[]>;
   resultsLength = 0;
@@ -57,12 +57,10 @@ export class GridComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private router: Router) {}
+  viewUrl: string = '';
 
   get displayedColumns() {
-    return this.columns.map(
-      (column) => column.key
-    );
+    return this.columns.map((column) => column.key);
   }
 
   // ngAfterViewInit() {
@@ -105,9 +103,8 @@ export class GridComponent {
   //     });
   // }
 
-  viewData(id: number) {
-    const name = this.name.split(' ').join('-').toLocaleLowerCase()
-    const url = `/${name}s/${id}`.toLocaleLowerCase();
-    this.router.navigateByUrl(url);
+  view(id: number) {
+    const name = this.name.split(' ').join('-').toLocaleLowerCase();
+    return `/${name}s/${id}`.toLocaleLowerCase();
   }
 }

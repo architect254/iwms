@@ -27,6 +27,11 @@ export interface FilterOption {
   colors?: { [key: string]: string };
 }
 
+export interface Filter {
+  key: string;
+  value: string;
+}
+
 export interface StatusConfig {
   labels: { [value: string]: string };
   colors: { [value: string]: string };
@@ -36,4 +41,3 @@ export interface Action {
   name: string;
   implementation: () => void;
 }
-export type ColumnDirection = 'asc' | 'desc';

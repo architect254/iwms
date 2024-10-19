@@ -17,7 +17,7 @@ export const noAuthGuard: CanActivateFn = async () => {
 
   const isAuthenticated = await firstValueFrom(authService.isAuthenticated);
 
-  return !isAuthenticated;
+  return !isAuthenticated;  
 };
 export const roleGuard: CanActivateFn = async (route) => {
   const router = inject(Router);

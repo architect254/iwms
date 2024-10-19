@@ -2,6 +2,7 @@ import { inject, Injectable, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Filter } from '../../shared/views/grid/model';
 
 export const API_SERVER_URL = new InjectionToken<string>(
   'Dynamic API Server URL'
@@ -19,9 +20,9 @@ export const apiServerUrlFactory = (): string => {
 })
 export class ApiService {
   readonly #SERVER_URL: string = inject(API_SERVER_URL);
-  readonly API_URL = `{this.#SERVER_URL}/api`;
+  readonly API_URL = `${this.#SERVER_URL}/api`;
 
-  protected endpoint = `{this.API_URL}/`;
+  protected endpoint = `${this.API_URL}/`;
 
   protected http = inject(HttpClient);
   protected httpOptions = {
@@ -33,4 +34,27 @@ export class ApiService {
   protected snackBar = inject(MatSnackBar);
 
   constructor() {}
+
+  buildFilterQueryString(
+    page: number,
+    take: number,
+    filters?: Filter[]
+  ): string {
+    let queryString = '';
+    filters?.forEach((filter, currentIndex) => {
+      const { key, value } = filter;
+      const query = `${key}=${value}`;
+      if (currentIndex == 0) {
+        queryString = `?${query}`;
+      }
+      if (currentIndex > 0 && currentIndex < filters.length) {
+        queryString = `${queryString}&${query}`;
+      }
+    });
+    queryString = `${
+      queryString ? queryString + '&' : ''
+    }page=${page}&take=${take}`;
+
+    return queryString;
+  }
 }

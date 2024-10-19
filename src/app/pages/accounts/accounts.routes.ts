@@ -5,11 +5,11 @@ import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { accountResolver } from './account.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
-import { ContainerLayoutComponent } from '../../shared/views/layout/container-layout.component';
+import { ContainerLayoutComponent } from '../../shared/views/navigation/container-layout.component';
 import {
   Action,
   createGuard,
-  updateGuard,
+  editGuard,
   viewGuard,
 } from '../../core/guards/state.guard';
 
@@ -21,12 +21,12 @@ export const routes: Routes = [
       {
         path: ':id',
         component: UpsertComponent,
-        canActivate: [updateGuard],
+        canActivate: [editGuard],
         resolve: {
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Update Account Details', action: Action.Update },
+        data: { title: 'Edit Account Details', action: Action.Edit },
       },
       {
         path: ':id',

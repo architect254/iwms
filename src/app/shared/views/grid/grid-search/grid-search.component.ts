@@ -19,7 +19,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { CdkObserveContent } from '@angular/cdk/observers';
-import { FilterOption } from '../model';
+import { Filter, FilterOption } from '../model';
 
 @Component({
   selector: 'iwms-grid-search',
@@ -44,7 +44,7 @@ export class GridSearchComponent implements OnInit {
   @Input() title: string = '';
   @Input() filters: any = [];
 
-  @Output() applyFilter: EventEmitter<FilterOption[]> = new EventEmitter();
+  @Output() applyFilter: EventEmitter<Filter[]> = new EventEmitter();
 
   filterControl: FormControl = new FormControl({
     updateOn: 'change',
@@ -152,6 +152,10 @@ export class GridSearchComponent implements OnInit {
     this.selectedFilterControl.setValue(null);
     this.selectedFilterControl.disable();
 
-    this.applyFilter.emit(this.selectedFilterOptions);
+    const filters = this.selectedFilterOptions.map((filter) => {
+      return { key: filter.key, value: filter.value } as Filter;
+    });
+
+    this.applyFilter.emit(filters);
   }
 }

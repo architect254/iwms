@@ -14,6 +14,7 @@ import {
   FilterOption,
   Action,
   StatusConfig,
+  Filter,
 } from '../../../shared/views/grid/model';
 import { MembersService } from '../members.service';
 import { actions, columns, status, filters, FilterRequest } from './model';
@@ -68,20 +69,20 @@ export class ListComponent extends ListPage {
     private service: MembersService
   ) {
     super(authService);
-    this.route.data.subscribe((data: Data) => {
-      this.pageTitle = data['title'];
-    });
+    // this.route.data.subscribe((data: Data) => {
+    //   this.pageTitle = data['title'];
+    // });
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData(this.page, this.take, this.filterRequest);
+    this.fetchData(this.page, this.take);
   }
 
-  fetchData(page: number, take: number, filterRequest: [string, string][]) {
+  fetchData(page: number, take: number, filters?: Filter[]) {
     this.subscriptions.add(
       this.service
-        .getMembers(page, take, filterRequest)
+        .getMembers(page, take, filters)
         .subscribe((members) => {
           this.data = members.map((member) => {
             return {

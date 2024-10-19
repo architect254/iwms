@@ -24,6 +24,7 @@ import {
   FilterOption,
   StatusConfig,
   Action,
+  Filter,
 } from '../../../shared/views/grid/model';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
@@ -78,52 +79,40 @@ export class ListComponent extends ListPage {
 
   data: any[] = [];
 
-  declare FilterRequestDto: FilterRequest;
-  declare filterRequest: [string, string][];
-
   constructor(
     @SkipSelf() override authService: AuthService,
 
     private service: AccountsService
   ) {
     super(authService);
-    this.route.data.subscribe((data: Data) => {
-      this.pageTitle = data['title'];
-    });
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData(this.page, this.take, this.filterRequest);
+    this.fetchData(this.page, this.take);
   }
 
-  override fetchData(
-    page: number,
-    take: number,
-    filterRequest: [string, string][]
-  ) {
+  override fetchData(page: number, take: number, filters?: Filter[]) {
     this.subscriptions.add(
-      this.service
-        .getAccounts(page, take, filterRequest)
-        .subscribe((accounts) => {
-          this.data = accounts.map((account) => {
-            return {
-              id: account.id,
-              name: account.name,
-              id_number: account.id_number,
-              phone_number: account.phone_number,
-              email: account.email,
-              profile_image: account.profile_image_url,
-              class: account.class,
-              state: account.state,
-              welfare: account.member?.welfare?.name,
-              role: account.member?.role,
-              status: account.member?.status,
-              create_date: account.create_date,
-              update_date: account.update_date,
-            };
-          });
-        })
+      this.service.getAccounts(page, take, filters).subscribe((accounts) => {
+        this.data = accounts.map((account) => {
+          return {
+            id: account.id,
+            name: account.name,
+            id_number: account.id_number,
+            phone_number: account.phone_number,
+            email: account.email,
+            profile_image: account.profile_image_url,
+            class: account.class,
+            state: account.state,
+            welfare: account.member?.welfare?.name,
+            role: account.member?.role,
+            status: account.member?.status,
+            create_date: account.create_date,
+            update_date: account.update_date,
+          };
+        });
+      })
     );
   }
 

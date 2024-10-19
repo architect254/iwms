@@ -4,6 +4,7 @@ import { Account } from './model';
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 import { Welfare } from '../welfares/model';
+import { Filter } from '../../shared/views/grid/model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,23 +24,9 @@ export class AccountsService extends ApiService {
   getAccounts(
     page: number = 1,
     take: number = 100,
-    filters?: [string, string][]
+    filters?: Filter[]
   ): Observable<Account[]> {
-    let queryString = '';
-    filters?.forEach((filter, currentIndex) => {
-      const [param, value] = filter;
-      const query = `${param}=${value}`;
-      if (currentIndex == 0) {
-        queryString = `?${query}`;
-      }
-      if (currentIndex > 0 && currentIndex < filters.length) {
-        queryString = `${queryString}&${query}`;
-      }
-    });
-    queryString = `${
-      queryString ? queryString + '&' : ''
-    }page=${page}&take=${take}`;
-
+    const queryString = this.buildFilterQueryString(page, take, filters);
     return this.http.get<Account[]>(this.endpoint, {
       params: new HttpParams({ fromString: queryString }),
     });

@@ -3,6 +3,8 @@ import {
   Component,
   Inject,
   inject,
+  OnDestroy,
+  OnInit,
   SkipSelf,
 } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -17,7 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
 import {
   ActivatedRoute,
@@ -27,17 +29,18 @@ import {
 } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LogoComponent } from '../../components/logo/logo.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PasswordResetDialogComponent } from '../password-reset-dialog/password-reset-dialog.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../../core/services/loading.service';
 import { Page } from '../../directives/page/page.directive';
+import { AuthComponent } from '../auth-dialog/auth-dialog.component';
 
 @Component({
-  selector: 'layout',
-  templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss',
+  selector: 'iwms-navigation',
+  templateUrl: './navigation.component.html',
+  styleUrl: './navigation.component.scss',
   standalone: true,
   imports: [
     MatToolbarModule,
@@ -58,7 +61,7 @@ import { Page } from '../../directives/page/page.directive';
     CommonModule,
   ],
 })
-export class LayoutComponent extends Page {
+export class NavigationComponent implements OnInit, OnDestroy {
   private breakpointObserver = inject(BreakpointObserver);
   isHandset: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -72,18 +75,24 @@ export class LayoutComponent extends Page {
 
   breadcrumbs: BreadCrumb[] = [];
 
+  dialogRef!: MatDialogRef<PasswordResetDialogComponent>;
+
+  subscription = new Subscription();
+
   constructor(
-    @SkipSelf() authService: AuthService,
-    private loadingService: LoadingService
+    private authService: AuthService,
+    private loadingService: LoadingService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
-    super(authService);
     this.configureBreadCrumbs();
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     this.account = this.authService.currentTokenUserValue;
-    this.subscriptions.add(
+    this.subscription.add(
       this.loadingService.isLoading.subscribe((isLoading) => {
         this.isApiLoading = isLoading;
         this.cdr.detectChanges();
@@ -184,9 +193,9 @@ export class LayoutComponent extends Page {
     window.location.reload();
   }
 
-  override setDefaultMetaAndTitle(): void {}
-  override setTwitterCardMeta(): void {}
-  override setFacebookOpenGraphMeta(): void {}
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 }
 interface BreadCrumb {
   label: string;

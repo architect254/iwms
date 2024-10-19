@@ -1,9 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Inject,
-  OnDestroy,
-  OnInit,
   SkipSelf,
   inject,
 } from '@angular/core';
@@ -13,28 +10,24 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { Page } from '../../directives/page/page.directive';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { BehaviorSubject, concatMap, Observable } from 'rxjs';
-import { MatNativeDateModule } from '@angular/material/core';
+import {
+  MatNativeDateModule,
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { passwordsMismatchValidator } from './password.validator';
@@ -56,7 +49,7 @@ import { passwordsMismatchValidator } from './password.validator';
     RouterModule,
     CommonModule,
   ],
-  providers: [MatDatepickerModule],
+  providers: [MatDatepickerModule, provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 
   templateUrl: './auth-dialog.component.html',
@@ -258,7 +251,4 @@ export class AuthComponent extends Page {
   override setDefaultMetaAndTitle(): void {}
   override setTwitterCardMeta(): void {}
   override setFacebookOpenGraphMeta(): void {}
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
 }
