@@ -8,7 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/model';
+import {
+  DynamicCustomFormControlBase,
+} from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -21,6 +23,7 @@ import { WelfaresService } from '../welfares.service';
 import { Account } from '../../accounts/model';
 import { AccountsService } from '../../accounts/accounts.service';
 import { EditableViewPage } from '../../../shared/directives/view-page/editable-view-page.directive';
+import { specialMemberIdNumber } from '../../members/model';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -47,12 +50,10 @@ export const CHOOSE_WELFARE_FORM_CONTROLS = new InjectionToken<
     {
       provide: WELFARE_DETAILS_FORM_CONTROLS,
       useFactory: welfareDetailsFormControls,
-      deps: [AccountsService],
     },
     {
       provide: CHOOSE_WELFARE_FORM_CONTROLS,
       useFactory: chooseWelfareFormControls,
-      deps: [WelfaresService],
     },
   ],
   templateUrl: './upsert.component.html',
@@ -102,6 +103,16 @@ export class UpsertComponent extends EditableViewPage {
                           string | number | Date
                         >
                       )[control.key] as string | number | Date;
+                      if (
+                        control.key == 'manager' ||
+                        control.key == 'accountant' ||
+                        control.key == 'secretary'
+                      ) {
+                        control.value = specialMemberIdNumber(
+                          control.key,
+                          this.welfare?.members!
+                        );
+                      }
                     }
                   }
                 );
@@ -147,7 +158,7 @@ export class UpsertComponent extends EditableViewPage {
 
           const snackbar = inject(MatSnackBar);
           const snackBarRef = snackbar.open(
-            `Welfare group successfully ${this.pageAction}d. Navigate back to Welfare Groups List?`,
+            `Welfare group successfully ${this.pageAction.toLocaleLowerCase()}d. Navigate back to Welfare Groups List?`,
             `OK`,
             {
               panelClass: `.upsert-success-alert`,

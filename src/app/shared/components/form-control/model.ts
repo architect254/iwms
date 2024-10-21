@@ -1,15 +1,25 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ValueType } from './control.component';
+import { ApiService } from '../../../core/services/api.service';
+import { AccountsService } from '../../../pages/accounts/accounts.service';
 
 export function toFormGroup(
   controls: DynamicCustomFormControlBase<ValueType>[]
 ) {
   const group: any = {};
   controls?.forEach((control) => {
+    console.log('control', control);
+
+    if (control.key == 'id') {
+      console.log('control', control);
+    }
     group[control.key] = control.required
-      ? new FormControl(control.value || '', Validators.required)
-      : new FormControl(control.value || '');
+      ? new FormControl(control.value || '', {
+          validators: [Validators.required],
+          updateOn: control.updateOn,
+        })
+      : new FormControl(control.value || '', { updateOn: control.updateOn });
   });
   return new FormGroup(group);
 }
@@ -25,6 +35,7 @@ export class DynamicCustomFormControlBase<T> {
   order: number;
   controlType: string;
   type: string;
+  updateOn: 'blur' | 'change';
   constructor(
     config: {
       value?: T;
@@ -37,6 +48,7 @@ export class DynamicCustomFormControlBase<T> {
       order?: number;
       controlType?: string;
       type?: string;
+      updateOn?: 'blur' | 'change';
     } = {}
   ) {
     this.value = config.value;
@@ -49,6 +61,7 @@ export class DynamicCustomFormControlBase<T> {
     this.order = config.order === undefined ? 1 : config.order;
     this.controlType = config.controlType || '';
     this.type = config.type || '';
+    this.updateOn = config.updateOn || 'blur';
   }
 }
 
@@ -58,7 +71,7 @@ export class CustomTextboxControl extends DynamicCustomFormControlBase<string> {
 
 export class CustomDropdownControl extends DynamicCustomFormControlBase<string> {
   override controlType = 'dropdown';
-  public options: { id: string | number; name: string }[];
+  public options?: { id: string | number; name: string }[];
   constructor(
     config: {
       value?: string;
@@ -81,8 +94,8 @@ export class CustomDropdownControl extends DynamicCustomFormControlBase<string> 
 
 export class CustomSearchControl extends DynamicCustomFormControlBase<string> {
   override controlType = 'search';
-  options: { id: string | number; name: string }[];
-  search: (name: string) => Observable<any[]>;
+  override updateOn: 'blur' | 'change' = 'change';
+  options?: { id: string | number; name: string }[];
   constructor(
     config: {
       value?: string;
@@ -96,12 +109,10 @@ export class CustomSearchControl extends DynamicCustomFormControlBase<string> {
       controlType?: string;
       type?: string;
       options?: { id: string | number; name: string }[];
-      search?(name: string): Observable<any[]>;
     } = {}
   ) {
     super(config);
     this.options = config.options || [];
-    this.search = config.search!;
   }
 }
 

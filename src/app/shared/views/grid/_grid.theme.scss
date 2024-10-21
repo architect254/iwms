@@ -7,11 +7,13 @@
     color: mat.get-theme-color($iwms-theme, primary, 30);
   }
 
-  .table-row {
+  .view-anchor {
     cursor: pointer;
+    text-decoration: none;
+    color: mat.get-theme-color($iwms-theme, primary, 30);
 
     &:hover {
-      background-color: mat.get-theme-color($iwms-theme, primary, 95);
+      text-decoration: underline;
     }
   }
 

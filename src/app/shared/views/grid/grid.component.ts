@@ -102,9 +102,4 @@ export class GridComponent {
   //       this.databkup = data;
   //     });
   // }
-
-  view(id: number) {
-    const name = this.name.split(' ').join('-').toLocaleLowerCase();
-    return `/${name}s/${id}`.toLocaleLowerCase();
-  }
 }

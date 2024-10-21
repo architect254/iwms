@@ -48,7 +48,7 @@
     color: mat.get-theme-color($iwms-theme, primary, 30);
   }
 
-  .core-account-header,
+  .core-account-header,.member-header,
   .welfare-header,
   .children-header,
   .spouse-header {
@@ -58,7 +58,7 @@
   iwms-upsert {
     --stepper-color: var(--mat-stepper-header-icon-background-color, var(--mat-app-on-surface-variant));
 
-    .core-account-header,
+    .core-account-header,.member-header,
     .welfare-header,
     .children-header,
     .spouse-header {
@@ -71,7 +71,7 @@
     }
   }
 
-  .child-section {
+  .child-section,.member-section {
     background-color: mat.get-theme-color($iwms-theme, primary, 95);
   }
 

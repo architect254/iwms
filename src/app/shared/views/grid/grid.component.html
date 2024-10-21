@@ -52,7 +52,7 @@
       matSortDisableClear
       [matSortDirection]="defaultSortColumnDirection"
     >
-      @for (column of columns; track column.position) {
+      @for (column of columns; track $index) {
       <ng-container [matColumnDef]="column!.key">
         @switch (column?.type) { @case ('status') {
         <th
@@ -71,14 +71,15 @@
         >
           <strong
             [style.color]="
-              status!.colors[row[column!.key]]
-                ? status!.colors[row[column!.key]]
+              status?.colors?.[row[column!.key]]
+                ? status?.colors?.[row[column!.key]]
                 : 'grey'
             "
             >{{
-              status!.labels[row[column!.key]]
-                ? status!.labels[row[column!.key]]
-                : ("N/A" | uppercase)
+              (status?.labels?.[row[column!.key]]
+                ? status?.labels?.[row[column!.key]]
+                : "N/A"
+              ) | uppercase
             }}</strong
           >
         </td>
@@ -148,9 +149,8 @@
           @if (column.key == 'name') {
           <a
             [title]="'View ' + row[column.key]"
-            [href]="view(row.id)"
-            [routerLink]="view(row.id)"
-            [state]="{ action: 'View' }"
+            [href]="row.id"
+            [routerLink]="row.id"
             class="view-anchor"
           >
             {{ row[column!.key] ? row[column!.key] : "N/A" }}

@@ -1,5 +1,5 @@
 <header class="container header" id="header">
-  <h1 class="page-title mat-display-small">{{ title }}</h1>
+  <h2 class="page-title">{{ title }}</h2>
 
   <!-- #region dynamic content-->
 
@@ -7,17 +7,16 @@
 
   <!-- #region naviation buttons-->
 
-  @if (listUrl || editUrl || viewUrl || displayBack) {
+  @if (listUrl || updateUrl || viewUrl || displayBack) {
   <div class="header-nav-btns">
-    @if(editUrl){
+    @if(updateUrl){
     <a
       mat-icon-button
       class="basic-btn"
       aria-label="Go to edit page"
       title="Go to edit page"
-      [routerLink]="[editUrl]"
-      [href]="editUrl"
-      [state]="{ action: 'Edit' }"
+      [routerLink]="[updateUrl]"
+      [href]="updateUrl"
     >
       <mat-icon fontIcon="edit_note" class="btn-icon"></mat-icon>
     </a>
@@ -29,7 +28,6 @@
       title="Go to view page"
       [routerLink]="[viewUrl]"
       [href]="viewUrl"
-      [state]="{ action: 'View' }"
     >
       <mat-icon fontIcon="wysiwyg" class="btn-icon"></mat-icon>
     </a>
@@ -47,7 +45,8 @@
     <button
       mat-icon-button
       class="basic-btn"
-      aria-label=""
+      aria-label="Go back"
+      title="Go back"
       (click)="location.back()"
     >
       <mat-icon fontIcon="arrow_back" class="btn-icon"></mat-icon>

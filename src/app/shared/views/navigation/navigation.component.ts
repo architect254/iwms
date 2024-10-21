@@ -102,7 +102,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   public isActive(route: string) {
     return this.router.isActive(route, {
-      paths: 'exact',
+      paths: 'subset',
       queryParams: 'exact',
       fragment: 'ignored',
       matrixParams: 'ignored',

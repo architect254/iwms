@@ -23,6 +23,7 @@ export class DynamicCustomDataBase<T> {
   type: string;
   options?: { label: string; value: string | number }[];
   colors?: { [key: string]: string };
+  visible?: boolean = true;
   constructor(
     options: {
       value?: T;
@@ -34,6 +35,7 @@ export class DynamicCustomDataBase<T> {
       type?: string;
       options?: { label: string; value: string | number }[];
       colors?: { [key: string]: string };
+      visible?: boolean;
     } = {}
   ) {
     this.value = options.value;
@@ -45,6 +47,7 @@ export class DynamicCustomDataBase<T> {
     this.type = options.type || '';
     this.options = options.options || undefined;
     this.colors = options.colors || {};
+    this.visible = options.visible || true;
   }
 }
 export class CustomTextData extends DynamicCustomDataBase<string> {

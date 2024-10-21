@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Meta, MetaDefinition, Title } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Data, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subscription, tap } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Directive({
   standalone: true,
@@ -28,39 +29,28 @@ export abstract class Page implements OnInit, OnDestroy {
   protected dialog: MatDialog = inject(MatDialog);
   protected dialogRef!: MatDialogRef<any>;
 
+  snackbar = inject(MatSnackBar);
+
   protected subscriptions: Subscription = new Subscription();
 
   pageTitle!: string;
 
   constructor(@SkipSelf() protected authService: AuthService) {
-    this.applyTitle();
+    this.getTitle();
     this.applyMetaTags();
   }
 
   ngOnInit(): void {}
 
-  applyTitle() {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map(() => {
-          let route = this.route;
-          while (route.firstChild) {
-            route = route.firstChild;
-          }
-          return route;
-        }),
-        filter((route) => route.outlet === 'primary'),
-        map((route) => {
-          const title = route.snapshot.data['title'];
-          if (title) {
-            this.pageTitle = title;
-            return title;
-          }
-          return 'My App Title';
-        })
-      )
-      .subscribe((title) => this.setTitle(title));
+  getTitle() {
+    this.subscriptions.add(
+      this.route.data.subscribe({
+        next: (data) => {
+          this.pageTitle = data['title'];
+          this.setTitle(this.pageTitle);
+        },
+      })
+    );
   }
 
   setTitle(_title: string) {

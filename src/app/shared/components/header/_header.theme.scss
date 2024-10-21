@@ -12,7 +12,7 @@
 
 @mixin typography($iwms-theme) {
   .app-name {
-    font: mat.get-theme-typography($iwms-theme, display-small, font);
+    font: mat.get-theme-typography($iwms-theme, title-medium, font);
     color: mat.get-theme-color($iwms-theme, secondary, 100);
   }
 }

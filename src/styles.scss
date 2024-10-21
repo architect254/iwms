@@ -20,8 +20,8 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
         tertiary: mat.$blue-palette,
       ),
       typography: (brand-family: 'Poppins',
-        bold-weight: 900),
-      density: (scale: 0,
+        bold-weight: 700),
+      density: (scale: -1,
       )));
 
 :root {
@@ -46,7 +46,6 @@ html,
 body {
   height: 100%;
   margin: 0;
-  font-family: "Poppins", sans-serif;
 
 
   .app-name {
@@ -80,6 +79,7 @@ body {
   }
 
   .core-account-header,
+  .member-header,
   .welfare-header,
   .children-header,
   .spouse-header,

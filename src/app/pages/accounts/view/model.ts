@@ -14,6 +14,16 @@ export function accountDataView(): Observable<
       key: 'name',
       label: 'Full Name',
       icon: 'badge',
+      order: 1,
+    }),
+    new CustomStatusData({
+      key: 'gender',
+      label: 'Gender',
+      colors: {
+        Male: 'blue',
+        Female: 'red',
+      },
+      icon: 'checklist',
       order: 2,
     }),
     new CustomTextData({
@@ -43,7 +53,7 @@ export function accountDataView(): Observable<
       order: 6,
     }),
     new CustomStatusData({
-      key: 'type',
+      key: 'class',
       label: 'Account Type',
       colors: {
         Admin: 'red',
@@ -53,8 +63,18 @@ export function accountDataView(): Observable<
       order: 7,
     }),
     new CustomStatusData({
+      key: 'state',
+      label: 'Account Status',
+      colors: {
+        Active: 'green',
+        InActive: 'black',
+      },
+      icon: 'checklist',
+      order: 8,
+    }),
+    new CustomStatusData({
       key: 'role',
-      label: 'Member Role',
+      label: 'Membership Type',
       colors: {
         Manager: 'orange',
         Accountant: 'blue',
@@ -62,14 +82,16 @@ export function accountDataView(): Observable<
         Member: 'cyan',
       },
       icon: 'checklist',
-      order: 8,
+      order: 9,
     }),
     new CustomStatusData({
       key: 'status',
-      label: 'Account Status',
+      label: 'Membership Status',
       colors: {
-        Active: 'green',
-        InActive: 'black',
+        Normal: 'green',
+        Bereaved: 'red',
+        Deceased: 'grey',
+        Deactivated: 'black',
       },
       icon: 'checklist',
       order: 9,
@@ -109,15 +131,19 @@ export function spouseDataView(): Observable<
 > {
   const data: DynamicCustomDataBase<string | number | Date>[] = [
     new CustomTextData({
-      key: 'first_name',
-      label: 'First name',
+      key: 'name',
+      label: 'Full name',
       icon: 'badge',
       order: 1,
     }),
-    new CustomTextData({
-      key: 'last_name',
-      label: 'Last Name',
-      icon: 'badge',
+    new CustomStatusData({
+      key: 'gender',
+      label: 'Gender',
+      colors: {
+        Male: 'blue',
+        Female: 'red',
+      },
+      icon: 'checklist',
       order: 2,
     }),
     new CustomTextData({
@@ -152,15 +178,19 @@ export function spouseDataView(): Observable<
 export function childDataView(): Observable<DynamicCustomDataBase<string>[]> {
   const data: DynamicCustomDataBase<string>[] = [
     new CustomTextData({
-      key: 'first_name',
-      label: 'First name',
+      key: 'name',
+      label: 'Full name',
       icon: 'badge',
       order: 1,
     }),
-    new CustomTextData({
-      key: 'last_name',
-      label: 'Last Name',
-      icon: 'badge',
+    new CustomStatusData({
+      key: 'gender',
+      label: 'Gender',
+      colors: {
+        Male: 'blue',
+        Female: 'red',
+      },
+      icon: 'checklist',
       order: 2,
     }),
     new CustomDateData({

@@ -1,3 +1,4 @@
+@if (controls) {
 <form class="form" [formGroup]="form">
   @for (control of controls; track control) {
   <div class="form-row">
@@ -5,3 +6,4 @@
   </div>
   }
 </form>
+}

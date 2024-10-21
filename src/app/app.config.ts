@@ -4,7 +4,11 @@ import {
   isDevMode,
   InjectionToken,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  provideRouter,
+  withDebugTracing,
+  withRouterConfig,
+} from '@angular/router';
 
 import { routes } from './app.routes';
 import {
@@ -38,7 +42,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withRouterConfig({ onSameUrlNavigation: 'reload' })
+    ),
     provideClientHydration(
       withEventReplay(),
       withHttpTransferCacheOptions({

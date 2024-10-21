@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   DynamicCustomFormControlBase,
   CustomTextboxControl,
@@ -6,7 +6,6 @@ import {
   CustomDropdownControl,
 } from '../../../shared/components/form-control/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
-import { WelfaresService } from '../../welfares/welfares.service';
 
 export function coreUserDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [
@@ -19,7 +18,17 @@ export function coreUserDetailsFormControls() {
       required: true,
       order: 1,
     }),
-
+    new CustomDropdownControl({
+      key: 'gender',
+      label: 'Gender',
+      options: [
+        { id: 'Male', name: 'Male' },
+        { id: 'Female', name: 'Female' },
+      ],
+      icon: 'person',
+      required: true,
+      order: 2,
+    }),
     new CustomTextboxControl({
       key: 'id_number',
       label: 'National ID No.',
@@ -63,7 +72,7 @@ export function coreUserDetailsFormControls() {
       order: 6,
     }),
     new CustomDropdownControl({
-      key: 'type',
+      key: 'class',
       label: 'Account Type',
       options: [
         { id: 'Admin', name: 'Admin' },
@@ -74,7 +83,7 @@ export function coreUserDetailsFormControls() {
       order: 7,
     }),
     new CustomDropdownControl({
-      key: 'status',
+      key: 'state',
       label: 'Account Status',
       options: [
         { id: 'Active', name: 'Active' },
@@ -86,7 +95,7 @@ export function coreUserDetailsFormControls() {
     }),
     new CustomDropdownControl({
       key: 'role',
-      label: 'Member Role',
+      label: 'Membership Type',
       options: [
         { id: 'Manager', name: 'Manager' },
         { id: 'Accountant', name: 'Accountant' },
@@ -99,8 +108,8 @@ export function coreUserDetailsFormControls() {
       order: 9,
     }),
     new CustomDropdownControl({
-      key: 'm_status',
-      label: 'Member Status',
+      key: 'status',
+      label: 'Membership Status',
       options: [
         { id: 'Normal', name: 'Normal' },
         { id: 'Bereaved', name: 'Bereaved' },
@@ -150,60 +159,42 @@ export function newWelfareDetailsFormControls() {
   return of(controls.sort((a, b) => a.order - b.order));
 }
 
-export function chooseWelfareFormControls(
-  service: WelfaresService
-): Observable<DynamicCustomFormControlBase<ValueType>[]> {
-  return service.getWelfares().pipe(
-    map((welfares) => {
-      return welfares.map((welfare) => {
-        return { id: welfare?.id!, name: welfare?.name! };
-      });
-    }),
-    switchMap((welfareOptions) => {
-      return of([
-        new CustomDropdownControl({
-          key: 'id',
-          label: 'Welfare Group',
-          options: welfareOptions,
-          icon: 'groups',
-          required: false,
-          order: 1,
-        }) as DynamicCustomFormControlBase<ValueType>,
-      ]);
-    }),
-    catchError((error) =>
-      of([
-        new CustomDropdownControl({
-          key: 'id',
-          label: 'Welfare Group',
-          options: undefined,
-          placeholder: 'There are no welfare groups currently. Create one',
-          icon: 'groups',
-          required: false,
-          order: 1,
-        }) as DynamicCustomFormControlBase<ValueType>,
-      ])
-    )
-  );
+export function chooseWelfareFormControls(): Observable<
+  DynamicCustomFormControlBase<ValueType>[]
+> {
+  return of([
+    new CustomDropdownControl({
+      key: 'id',
+      label: 'Welfare Group',
+      options: undefined,
+      icon: 'groups',
+      required: false,
+      order: 1,
+      placeholder:
+        'There are no Welfare Groups currently. Please create one...',
+    }) as DynamicCustomFormControlBase<ValueType>,
+  ]);
 }
 
 export function spouseDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [
     new CustomTextboxControl({
-      key: 'first_name',
-      label: 'First Name',
+      key: 'name',
+      label: 'Full Name',
       value: '',
-      placeholder: 'John',
+      placeholder: 'John Doe',
       icon: 'badge',
       required: true,
       order: 1,
     }),
-    new CustomTextboxControl({
-      key: 'last_name',
-      label: 'Last Name',
-      value: '',
-      placeholder: 'Doe',
-      icon: 'badge',
+    new CustomDropdownControl({
+      key: 'gender',
+      label: 'Gender',
+      options: [
+        { id: 'Male', name: 'Male' },
+        { id: 'Female', name: 'Female' },
+      ],
+      icon: 'person',
       required: true,
       order: 2,
     }),
@@ -256,20 +247,22 @@ export function spouseDetailsFormControls() {
 export function childDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [
     new CustomTextboxControl({
-      key: 'first_name',
-      label: 'First Name',
+      key: 'name',
+      label: 'Full Name',
       value: '',
-      placeholder: 'John',
+      placeholder: 'John Doe',
       icon: 'badge',
       required: true,
       order: 1,
     }),
-    new CustomTextboxControl({
-      key: 'last_name',
-      label: 'Last Name',
-      value: '',
-      placeholder: 'Doe',
-      icon: 'badge',
+    new CustomDropdownControl({
+      key: 'gender',
+      label: 'Gender',
+      options: [
+        { id: 'Male', name: 'Male' },
+        { id: 'Female', name: 'Female' },
+      ],
+      icon: 'person',
       required: true,
       order: 2,
     }),

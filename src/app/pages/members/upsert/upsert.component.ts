@@ -15,18 +15,35 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
-import { chooseWelfareFormControls, memberDetailsFormControls } from './model';
+import {
+  childDetailsFormControls,
+  memberDetailsFormControls,
+  spouseDetailsFormControls,
+} from './model';
 import { MembersService } from '../members.service';
 import { Member } from '../model';
-import { EditableViewPage } from '../../../shared/directives/view-page/editable-view-page.directive';
+import {
+  EditableViewPage,
+  IsProceedAllowed,
+} from '../../../shared/directives/view-page/editable-view-page.directive';
+import {
+  Account,
+  Spouse,
+  Child,
+  AccountApplication,
+} from '../../accounts/model';
 
 export const MEMBER_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
 >('member details form controls');
 
-export const CHOOSE_WELFARE_FORM_CONTROL = new InjectionToken<
-  Observable<DynamicCustomFormControlBase<ValueType>>
->('choose welfare form control');
+export const SPOUSE_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('spouse details form controls');
+
+export const CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('child details form controls');
 
 @Component({
   selector: 'iwms-upsert',
@@ -47,8 +64,12 @@ export const CHOOSE_WELFARE_FORM_CONTROL = new InjectionToken<
       useFactory: memberDetailsFormControls,
     },
     {
-      provide: CHOOSE_WELFARE_FORM_CONTROL,
-      useFactory: chooseWelfareFormControls,
+      provide: SPOUSE_DETAILS_FORM_CONTROLS,
+      useFactory: spouseDetailsFormControls,
+    },
+    {
+      provide: CHILD_DETAILS_FORM_CONTROLS,
+      useFactory: childDetailsFormControls,
     },
   ],
   templateUrl: './upsert.component.html',
@@ -57,9 +78,32 @@ export const CHOOSE_WELFARE_FORM_CONTROL = new InjectionToken<
 export class UpsertComponent extends EditableViewPage {
   override listUrl: string = '/members';
 
-  member?: Member;
+  member!: Member;
+  memberId?: string | number;
+
+  account?: Account;
+
+  spouse?: Spouse;
+  children?: Child[];
 
   memberDetailsFormControls = inject(MEMBER_DETAILS_FORM_CONTROLS);
+  spouseDetailsFormControls = inject(SPOUSE_DETAILS_FORM_CONTROLS);
+  childrenDetailsFormControls = [inject(CHILD_DETAILS_FORM_CONTROLS)];
+
+  readonly isSelected: IsSelected = [true, false, false];
+
+  override readonly isProceedAllowed: IsProceedAllowed = {
+    'Member Details': false,
+    'Spouse Details': false,
+    'Children Details': false,
+  };
+
+  readonly checks: IsProceedAllowed = {
+    'Not Married': false,
+    'No Children': false,
+  };
+
+  validChildren: boolean[] = [false];
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -67,13 +111,35 @@ export class UpsertComponent extends EditableViewPage {
     private service: MembersService
   ) {
     super(authService);
+  }
+
+  set selected(index: number) {
+    this.isSelected[index] = true;
+  }
+
+  get areChildrenValid() {
+    return this.validChildren.reduce(
+      (previusChildrenValid: boolean, currentOffspringValid: boolean) => {
+        return previusChildrenValid && currentOffspringValid;
+      }
+    );
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
 
     this.route.data.subscribe((data: Data) => {
-      // this.pageTitle = data['title'];
       this.pageAction = data['action'];
       this.viewUrl = `/members/${this.route.snapshot.paramMap.get('id')}`;
 
       this.member = data['member'];
+      this.memberId = this.member?.id;
+
+      this.account = this.member?.account;
+
+      this.spouse = this.account?.spouse;
+      this.children = this.account?.children;
+
       if (this.pageAction == 'update') {
         if (this.member) {
           this.memberDetailsFormControls.forEach(
@@ -81,47 +147,185 @@ export class UpsertComponent extends EditableViewPage {
               form.forEach(
                 (control: DynamicCustomFormControlBase<ValueType>) => {
                   if (control) {
-                    control.value = (
-                      this.member as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )[control.key] as string | number | Date;
+                    control.value =
+                      ((this.account as unknown as Record<string, ValueType>)?.[
+                        control.key
+                      ] as ValueType) ||
+                      ((this.member as unknown as Record<string, ValueType>)?.[
+                        control.key
+                      ] as ValueType);
+
                   }
                 }
               );
             }
           );
+          this.isProceedAllowed['Member Details'] = true;
+        }
+
+        if (this.spouse) {
+          this.spouseDetailsFormControls.forEach(
+            (form: DynamicCustomFormControlBase<ValueType>[]) => {
+              form.forEach(
+                (control: DynamicCustomFormControlBase<ValueType>) => {
+                  Object.entries<ValueType>(
+                    this.spouse as unknown as {
+                      [key: string]: ValueType;
+                    }
+                  ).forEach((entry, index, entries) => {
+                    const [key, value] = entry;
+                    if (control.key == key) {
+                      control.value = value;
+                    }
+                  });
+                }
+              );
+            }
+          );
+
+          this.check(false, 'Not Married');
+          this.isProceedAllowed['Spouse Details'] = true;
+        } else {
+          this.check(true, 'Not Married');
+        }
+
+        if (this.children?.length) {
+          this.children.forEach((child, childIndex) => {
+            if (childIndex > 0) {
+              this.childrenDetailsFormControls.push(childDetailsFormControls());
+
+              this.validChildren.push(true);
+            }
+          });
+
+          this.childrenDetailsFormControls.forEach(
+            (
+              formGroup: Observable<DynamicCustomFormControlBase<ValueType>[]>,
+              formGroupIndex
+            ) => {
+              formGroup.forEach(
+                (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                  if (form) {
+                    this.children?.forEach((child, childIndex, children) => {
+                      form.forEach(
+                        (control: DynamicCustomFormControlBase<ValueType>) => {
+                          Object.entries<ValueType>(
+                            child as unknown as Record<string, ValueType>
+                          ).forEach((entry, index, entries) => {
+                            const [key, value] = entry;
+                            if (control.key == key) {
+                              control.value = value;
+                            }
+                          });
+                        }
+                      );
+                    });
+                  }
+                }
+              );
+            }
+          );
+
+          this.check(false, 'No Children');
+        } else {
+          this.check(true, 'No Children');
         }
       }
     });
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  addChild() {
+    this.childrenDetailsFormControls.push(childDetailsFormControls());
+    this.validChildren.push(false);
   }
 
-   onValidityNotified(formData: string) {
-    const data = JSON.parse(formData);
+  check(checked: boolean, section: string) {
+    this.checks[section] = checked;
+    switch (section) {
+      case 'Not Married':
+        delete this.spouse;
 
-    this.member = <Member>{ ...data };
-    this.isProceedAllowed = true;
+        if (checked) {
+          this.isProceedAllowed['Spouse Details'] = true;
+        } else {
+          this.isProceedAllowed['Spouse Details'] = false;
+        }
+
+        break;
+      case 'No Children':
+        delete this.children;
+
+        if (checked) {
+          this.isProceedAllowed['Children Details'] = true;
+        } else {
+          this.isProceedAllowed['Children Details'] = false;
+        }
+
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  onValidityNotified(
+    formData: string,
+    section: string,
+    childDetailsIndex?: number,
+    validOffspring?: boolean
+  ) {
+    const data = JSON.parse(formData);
+    switch (section) {
+      case 'Member Details':
+        const { role, status } = data;
+
+        this.account = <AccountApplication>{ ...data };
+
+        this.member = <Member>{ role, status };
+        this.isProceedAllowed['Member Details'] = true;
+
+        break;
+
+      case 'Spouse Details':
+        this.spouse = <Spouse>{ ...data };
+        this.isProceedAllowed['Spouse Details'] = true;
+        break;
+      case 'Children Details':
+        if (childDetailsIndex == 0) {
+          this.children = [];
+        }
+
+        this.children![childDetailsIndex!] = <Child>{ ...data };
+        this.validChildren[childDetailsIndex!] = validOffspring!;
+
+        break;
+      default:
+        break;
+    }
   }
 
   save() {
     this.isSubmitting = true;
 
     const payload: any = {
-      memberDto: this.member,
+      accountDto: this.account,
     };
+
+    if (this.member) {
+      payload['memberDto'] = this.member;
+    }
+
+    if (this.spouse) {
+      payload['spouseDto'] = this.spouse;
+    }
+    if (this.children) {
+      payload['childrenDto'] = this.children;
+    }
 
     let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction = this.service.updateMember(
-        this.member?.id as number,
-        payload
-      );
+      serviceAction = this.service.updateMember(this.memberId!, payload);
     } else {
       serviceAction = this.service.createMember(payload);
     }
@@ -131,10 +335,9 @@ export class UpsertComponent extends EditableViewPage {
         next: ({ id }) => {
           this.isSubmitting = false;
 
-          this.router.navigate(['/', 'members', 'view', id]);
+          this.router.navigate(['/', 'members', id]);
 
-          const snackbar = inject(MatSnackBar);
-          const snackBarRef = snackbar.open(
+          const snackBarRef = this.snackbar.open(
             `Member successfully ${this.pageAction}d. Navigate back to Members List?`,
             `OK`,
             {
@@ -163,3 +366,4 @@ export class UpsertComponent extends EditableViewPage {
     super.ngOnDestroy();
   }
 }
+type IsSelected = [boolean, boolean, boolean];

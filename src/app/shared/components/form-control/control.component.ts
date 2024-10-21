@@ -30,9 +30,9 @@ export class DynamicFormControlComponent {
 
   get isNotValid() {
     return (
-      (this.form.controls[this.control.key].touched ||
-        this.form.controls[this.control.key].dirty) &&
-      !this.form.controls[this.control.key].valid
+      (this.form.controls[this.control.key]?.touched ||
+        this.form.controls[this.control.key]?.dirty) &&
+      !this.form.controls[this.control.key]?.valid
     );
   }
 }

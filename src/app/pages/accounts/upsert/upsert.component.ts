@@ -2,7 +2,7 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -11,7 +11,10 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { AuthService } from '../../../core/services/auth.service';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
-import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/model';
+import {
+  CustomDropdownControl,
+  DynamicCustomFormControlBase,
+} from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { Member, MemberRole } from '../../members/model';
 import { Welfare } from '../../welfares/model';
@@ -75,7 +78,6 @@ export const CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
     {
       provide: CHOOSE_WELFARE_FORM_CONTROLS,
       useFactory: chooseWelfareFormControls,
-      deps: [WelfaresService],
     },
     {
       provide: SPOUSE_DETAILS_FORM_CONTROLS,
@@ -93,6 +95,7 @@ export class UpsertComponent extends EditableViewPage {
   override listUrl: string = '/accounts';
 
   account?: Account;
+  accountId?: number;
   member?: Member;
   welfare?: Welfare | { id: number };
 
@@ -128,6 +131,7 @@ export class UpsertComponent extends EditableViewPage {
 
   validChildren: boolean[] = [false];
 
+
   constructor(
     @SkipSelf() override authService: AuthService,
     private service: AccountsService
@@ -139,137 +143,176 @@ export class UpsertComponent extends EditableViewPage {
     super.ngOnInit();
 
     this.subscriptions.add(
-      this.route.data.subscribe((data: Data) => {
-        // this.pageTitle = data['title'];
-        this.pageAction = data['action'];
-        this.viewUrl = `/accounts/${this.route.snapshot.paramMap.get('id')}`;
+      this.route.data.subscribe({
+        next: (data: Data) => {
+          this.viewUrl = `/accounts/${this.route.snapshot.paramMap.get('id')}`;
 
-        this.account = data['account'];
-        this.member = this.account?.member;
-        this.welfare = this.member?.welfare;
+          this.account = data['account'];
+          this.accountId = this.account?.id;
+          this.member = this.account?.membership;
+          this.welfare = this.member?.welfare;
 
-        this.spouse = this.account?.spouse;
-        this.children = this.account?.children;
+          this.spouse = this.account?.spouse;
+          this.children = this.account?.children;
 
-        this.welfares = data['welfares'];
-
-        if (this.pageAction == 'update') {
-          if (this.account) {
-            this.coreUserDetailsFormControls.forEach(
-              (form: DynamicCustomFormControlBase<ValueType>[]) => {
-                form.forEach(
-                  (control: DynamicCustomFormControlBase<ValueType>) => {
-                    if (control) {
-                      control.value =
-                        ((this.account as unknown as Record<string, ValueType>)[
-                          control.key
-                        ] as ValueType) ||
-                        ((this.member as unknown as Record<string, ValueType>)[
-                          control.key
-                        ] as string);
-                    }
+          this.welfares = data['welfares'];
+          this.chooseWelfareFormControls.forEach(
+            (form: DynamicCustomFormControlBase<ValueType>[]) => {
+              form.forEach(
+                (control: DynamicCustomFormControlBase<ValueType>) => {
+                  if (control && control.key == 'id') {
+                    (control as CustomDropdownControl).options = this.welfares
+                      .length
+                      ? this.welfares.map((welfare) => {
+                          return { id: welfare.id, name: welfare.name };
+                        })
+                      : undefined;
+                    (control as CustomDropdownControl).placeholder = this
+                      .welfares.length
+                      ? undefined
+                      : 'There are no Welfare Groups currenty. Please create one...';
                   }
-                );
-              }
-            );
+                }
+              );
+            }
+          );
 
-            this.tryDisplayingMemberControls(this.account.class);
-            if (this.member) {
-              if (this.welfare) {
-                this.chooseWelfareFormControls.forEach(
+          if (this.pageAction == 'update') {
+
+            if (this.account) {
+              this.coreUserDetailsFormControls.forEach(
+                (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                  form.forEach(
+                    (control: DynamicCustomFormControlBase<ValueType>) => {
+                      if (control) {
+                        if (
+                          this.account?.class == 'Admin' &&
+                          (control.key == 'role' || control.key == 'status')
+                        ) {
+                          control.visible = false;
+                        } else
+                          control.value =
+                            ((
+                              this.account as unknown as Record<
+                                string,
+                                ValueType
+                              >
+                            )?.[control.key] as ValueType) ||
+                            ((
+                              this.member as unknown as Record<
+                                string,
+                                ValueType
+                              >
+                            )?.[control.key] as ValueType);
+                      }
+                    }
+                  );
+                }
+              );
+
+              this.tryDisplayingMemberControls(this.account.class);
+              if (this.member) {
+                if (this.welfare) {
+                  this.chooseWelfareFormControls.forEach(
+                    (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                      form.forEach(
+                        (control: DynamicCustomFormControlBase<ValueType>) => {
+                          if (control && control.key == 'id') {
+                            control.value = this.welfare?.id;
+                          }
+                        }
+                      );
+                    }
+                  );
+
+                  this.isProceedAllowed['Welfare Details'] = true;
+                }
+                this.tryDisplayingMemberForm(this.member.role);
+                this.checkCanCreateNewWelfare(this.member.role);
+              }
+              this.isProceedAllowed['Core Account Details'] = true;
+
+              if (this.spouse) {
+                this.spouseDetailsFormControls.forEach(
                   (form: DynamicCustomFormControlBase<ValueType>[]) => {
                     form.forEach(
                       (control: DynamicCustomFormControlBase<ValueType>) => {
-                        if (control) {
-                          control.value = this.welfare?.id;
+                        Object.entries<ValueType>(
+                          this.spouse as unknown as {
+                            [key: string]: ValueType;
+                          }
+                        ).forEach((entry, index, entries) => {
+                          const [key, value] = entry;
+                          if (control.key == key) {
+                            control.value = value;
+                          }
+                        });
+                      }
+                    );
+                  }
+                );
+
+                this.check(false, 'Not Married');
+                this.isProceedAllowed['Spouse Details'] = true;
+              } else {
+                this.check(true, 'Not Married');
+              }
+
+              if (this.children?.length) {
+                this.children.forEach((child, childIndex) => {
+                  if (childIndex > 0) {
+                    this.childrenDetailsFormControls.push(
+                      childDetailsFormControls()
+                    );
+
+                    this.validChildren.push(true);
+                  }
+                });
+
+                this.childrenDetailsFormControls.forEach(
+                  (
+                    formGroup: Observable<
+                      DynamicCustomFormControlBase<ValueType>[]
+                    >,
+                    formGroupIndex
+                  ) => {
+                    formGroup.forEach(
+                      (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                        if (form) {
+                          this.children?.forEach(
+                            (child, childIndex, children) => {
+                              form.forEach(
+                                (
+                                  control: DynamicCustomFormControlBase<ValueType>
+                                ) => {
+                                  Object.entries<ValueType>(
+                                    child as unknown as Record<
+                                      string,
+                                      ValueType
+                                    >
+                                  ).forEach((entry, index, entries) => {
+                                    const [key, value] = entry;
+                                    if (control.key == key) {
+                                      control.value = value;
+                                    }
+                                  });
+                                }
+                              );
+                            }
+                          );
                         }
                       }
                     );
                   }
                 );
 
-                this.isProceedAllowed['Welfare Details'] = true;
+                this.check(false, 'No Children');
+              } else {
+                this.check(true, 'No Children');
               }
-              this.tryDisplayingMemberForm(this.member.role);
-              this.checkCanCreateNewWelfare(this.member.role);
-            }
-            this.isProceedAllowed['Core Account Details'] = true;
-
-            if (this.spouse) {
-              this.spouseDetailsFormControls.forEach(
-                (form: DynamicCustomFormControlBase<ValueType>[]) => {
-                  form.forEach(
-                    (control: DynamicCustomFormControlBase<ValueType>) => {
-                      Object.entries<ValueType>(
-                        this.spouse as unknown as { [key: string]: ValueType }
-                      ).forEach((entry, index, entries) => {
-                        const [key, value] = entry;
-                        if (control.key == key) {
-                          control.value = value;
-                        }
-                      });
-                    }
-                  );
-                }
-              );
-
-              this.check(false, 'Not Married');
-              this.isProceedAllowed['Spouse Details'] = true;
-            } else {
-              this.check(true, 'Not Married');
-            }
-
-            if (this.children) {
-              this.children.forEach((child, childIndex) => {
-                if (childIndex > 0) {
-                  this.childrenDetailsFormControls.push(
-                    childDetailsFormControls()
-                  );
-
-                  this.validChildren.push(true);
-                }
-              });
-
-              this.childrenDetailsFormControls.forEach(
-                (
-                  formGroup: Observable<
-                    DynamicCustomFormControlBase<ValueType>[]
-                  >,
-                  formGroupIndex
-                ) => {
-                  formGroup.forEach(
-                    (form: DynamicCustomFormControlBase<ValueType>[]) => {
-                      if (form) {
-                        this.children?.forEach(
-                          (child, childIndex, children) => {
-                            form.forEach(
-                              (
-                                control: DynamicCustomFormControlBase<ValueType>
-                              ) => {
-                                Object.entries<ValueType>(
-                                  child as unknown as Record<string, ValueType>
-                                ).forEach((entry, index, entries) => {
-                                  const [key, value] = entry;
-                                  if (control.key == key) {
-                                    control.value = value;
-                                  }
-                                });
-                              }
-                            );
-                          }
-                        );
-                      }
-                    }
-                  );
-                }
-              );
-
-              this.check(false, 'No Children');
-            } else {
-              this.check(true, 'No Children');
             }
           }
-        }
+        },
       })
     );
   }
@@ -337,7 +380,7 @@ export class UpsertComponent extends EditableViewPage {
       accountClassifications.includes(classification);
     this.coreUserDetailsFormControls.forEach((formGroup) => {
       formGroup.forEach((control) => {
-        if (control.key == 'role' || control.key == 'm_status') {
+        if (control.key == 'role' || control.key == 'status') {
           control.visible = this.displayMemberControls;
         }
       });
@@ -380,13 +423,13 @@ export class UpsertComponent extends EditableViewPage {
     const data = JSON.parse(formData);
     switch (section) {
       case 'Core Account Details':
-        const { role, m_status } = data;
+        const { role, status } = data;
 
         this.account = <AccountApplication>{ ...data };
         this.tryDisplayingMemberControls(this.account?.class!);
 
         if (this.displayMemberControls) {
-          this.member = <Member>{ role, status: m_status };
+          this.member = <Member>{ role, status };
           this.tryDisplayingMemberForm(this.member?.role!);
           this.checkCanCreateNewWelfare(this.member?.role!);
         } else {
@@ -415,6 +458,7 @@ export class UpsertComponent extends EditableViewPage {
 
         break;
       case 'Welfare Details':
+        console.log('welfare d', data);
         if (data.id) {
           this.welfare = <{ id: number }>{ ...data };
         } else {
@@ -466,10 +510,7 @@ export class UpsertComponent extends EditableViewPage {
     let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction = this.service.updateAccount(
-        this.account?.id as number,
-        payload
-      );
+      serviceAction = this.service.updateAccount(this.accountId!, payload);
     } else {
       serviceAction = this.service.createAccount(payload);
     }
@@ -479,10 +520,9 @@ export class UpsertComponent extends EditableViewPage {
         next: ({ id }) => {
           this.isSubmitting = false;
 
-          this.router.navigate(['/', 'accounts', 'view', id]);
+          this.router.navigate(['/', 'accounts', id]);
 
-          const snackbar = inject(MatSnackBar);
-          const snackBarRef = snackbar.open(
+          const snackBarRef = this.snackbar.open(
             `Account successfully ${this.pageAction}d. Navigate back to Accounts List?`,
             `OK`,
             {
@@ -507,4 +547,4 @@ export class UpsertComponent extends EditableViewPage {
   override setTwitterCardMeta(): void {}
   override setFacebookOpenGraphMeta(): void {}
 }
-type IsSelected = [boolean, boolean, boolean, boolean];
+ type IsSelected = [boolean, boolean, boolean, boolean];

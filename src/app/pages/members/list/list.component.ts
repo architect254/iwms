@@ -55,13 +55,7 @@ export class ListComponent extends ListPage {
   status = inject(STATUS);
   actions = inject(ACTIONS);
 
-  defaultSortColumn!: string;
-  defaultSortColumnDirection!: 'asc' | 'desc';
-
-  data: any[] = [];
-
-  declare filtersDTO: FilterRequest;
-  declare filterRequest: [string, string][];
+  welfareId!: string | number;
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -69,9 +63,11 @@ export class ListComponent extends ListPage {
     private service: MembersService
   ) {
     super(authService);
-    // this.route.data.subscribe((data: Data) => {
-    //   this.pageTitle = data['title'];
-    // });
+    this.subscriptions.add(
+      this.route.queryParamMap.subscribe((queryParams) => {
+        this.welfareId = queryParams.get('welfareId')!;
+      })
+    );
   }
 
   override ngOnInit(): void {
@@ -80,23 +76,30 @@ export class ListComponent extends ListPage {
   }
 
   fetchData(page: number, take: number, filters?: Filter[]) {
+    const action = this.welfareId
+      ? this.service.getMembersByWelfare(this.welfareId, page, take, filters)
+      : this.service.getMembers(page, take, filters);
     this.subscriptions.add(
-      this.service
-        .getMembers(page, take, filters)
-        .subscribe((members) => {
-          this.data = members.map((member) => {
+      action.subscribe((members) => {
+        this.data = members
+          .filter((member) => !!member.account)
+          .map((member) => {
             return {
-              id: member.id,
-              name: member.account.name,
+              id: member.account?.id,
+              name: member.account?.name,
+              gender: member.account?.gender,
+              id_number: member.account?.id_number,
               phone_number: member.account?.phone_number,
               email: member.account?.email,
+              class: member.account?.class,
               state: member.account?.state,
               role: member.role,
+              status: member.status,
               create_date: member.create_date,
               update_date: member.update_date,
             };
           });
-        })
+      })
     );
   }
 

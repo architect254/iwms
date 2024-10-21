@@ -17,7 +17,7 @@ import {
   Action,
   Filter,
 } from '../../../shared/views/grid/model';
-import { buildName } from '../../members/model';
+import { specialMemberName } from '../../members/model';
 import { actions, columns, FilterRequest, filters } from './model';
 import { SortDirection } from '@angular/material/sort';
 
@@ -53,11 +53,6 @@ export class ListComponent extends ListPage {
   filters = inject(FILTERS);
   actions = inject(ACTIONS);
 
-  defaultSortColumn!: string;
-  defaultSortColumnDirection!: SortDirection;
-
-  data: any[] = [];
-
   constructor(
     @SkipSelf() override authService: AuthService,
 
@@ -71,28 +66,25 @@ export class ListComponent extends ListPage {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData(this.page, this.take);
   }
 
   fetchData(page: number, take: number, filters?: Filter[]) {
     this.subscriptions.add(
-      this.service
-        .getWelfares(page, take, filters)
-        .subscribe((welfares) => {
-          this.data = welfares.map((welfare) => {
-            return {
-              id: welfare.id,
-              name: welfare.name,
-              phone_number: welfare.phone_number,
-              email: welfare.email,
-              manager: buildName('manager', welfare.members),
-              accountant: buildName('accountant', welfare.members),
-              secretary: buildName('secretary', welfare.members),
-              create_date: welfare.create_date,
-              update_date: welfare.update_date,
-            };
-          });
-        })
+      this.service.getWelfares(page, take, filters).subscribe((welfares) => {
+        this.data = welfares.map((welfare) => {
+          return {
+            id: welfare.id,
+            name: welfare.name,
+            phone_number: welfare.phone_number,
+            email: welfare.email,
+            manager: specialMemberName('manager', welfare.members),
+            accountant: specialMemberName('accountant', welfare.members),
+            secretary: specialMemberName('secretary', welfare.members),
+            create_date: welfare.create_date,
+            update_date: welfare.update_date,
+          };
+        });
+      })
     );
   }
 

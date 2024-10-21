@@ -112,7 +112,7 @@
         <mat-checkbox
           [checked]="checks['Not Married']"
           (change)="check($event.checked, 'Not Married')"
-          >Account is not married</mat-checkbox
+          >Account owner is not married</mat-checkbox
         >
       </div>
       @if (!checks['Not Married']) {
@@ -149,7 +149,7 @@
         <mat-checkbox
           [checked]="checks['No Children']"
           (change)="check($event.checked, 'No Children')"
-          >Account has no offsprings</mat-checkbox
+          >Account owner has no offsprings</mat-checkbox
         >
       </div>
       @if (!checks['No Children']) { @for (validOffspring of validChildren;

@@ -36,6 +36,21 @@ export class MembersService extends ApiService {
     });
   }
 
+  getMembersByWelfare(
+    welfareId: string | number,
+    page: number = 1,
+    take: number = 100,
+    filters?: Filter[]
+  ): Observable<Member[]> {
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    return this.http.get<Member[]>(
+      `${this.endpoint}/by-welfare-id/${welfareId}`,
+      {
+        params: new HttpParams({ fromString: queryString }),
+      }
+    );
+  }
+
   getMemberById(id: number | string): Observable<Member> {
     const endpoint = `${this.endpoint}/${id}`;
     return this.http.get<Member>(endpoint);

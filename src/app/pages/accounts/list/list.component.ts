@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSortModule, SortDirection } from '@angular/material/sort';
+import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule, Data } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -74,11 +74,6 @@ export class ListComponent extends ListPage {
   status = inject(STATUS);
   actions = inject(ACTIONS);
 
-  defaultSortColumn!: string;
-  defaultSortColumnDirection!: SortDirection;
-
-  data: any[] = [];
-
   constructor(
     @SkipSelf() override authService: AuthService,
 
@@ -89,7 +84,6 @@ export class ListComponent extends ListPage {
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.fetchData(this.page, this.take);
   }
 
   override fetchData(page: number, take: number, filters?: Filter[]) {
@@ -99,15 +93,16 @@ export class ListComponent extends ListPage {
           return {
             id: account.id,
             name: account.name,
+            gender: account.gender,
             id_number: account.id_number,
             phone_number: account.phone_number,
             email: account.email,
             profile_image: account.profile_image_url,
             class: account.class,
             state: account.state,
-            welfare: account.member?.welfare?.name,
-            role: account.member?.role,
-            status: account.member?.status,
+            welfare: account.membership?.welfare?.name,
+            role: account.membership?.role,
+            status: account.membership?.status,
             create_date: account.create_date,
             update_date: account.update_date,
           };

@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class HeaderComponent {
   @Input() title: string = '';
 
-  @Input() editUrl: string = '';
+  @Input() updateUrl: string = '';
   @Input() viewUrl: string = '';
   @Input() listUrl: string = '';
 

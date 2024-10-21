@@ -33,8 +33,8 @@ export interface Filter {
 }
 
 export interface StatusConfig {
-  labels: { [value: string]: string };
-  colors: { [value: string]: string };
+  labels: { [value: string]: string | undefined };
+  colors: { [value: string]: string | undefined };
 }
 
 export interface Action {

@@ -6,12 +6,6 @@ import { ViewComponent } from './view/view.component';
 import { accountResolver } from './account.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
 import { ContainerLayoutComponent } from '../../shared/views/navigation/container-layout.component';
-import {
-  Action,
-  createGuard,
-  editGuard,
-  viewGuard,
-} from '../../core/guards/state.guard';
 
 export const routes: Routes = [
   {
@@ -19,36 +13,31 @@ export const routes: Routes = [
     component: ContainerLayoutComponent,
     children: [
       {
-        path: ':id',
+        path: 'add',
         component: UpsertComponent,
-        canActivate: [editGuard],
+        resolve: { welfares: welfaresResolver },
+        data: { title: 'Add Account Details' },
+      },
+      {
+        path: ':id/update',
+        component: UpsertComponent,
         resolve: {
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Edit Account Details', action: Action.Edit },
+        data: { title: 'Update Account Details', action: 'update' },
       },
       {
         path: ':id',
         component: ViewComponent,
-        canActivate: [viewGuard],
         resolve: {
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'View Account Details', action: Action.View },
+        data: { title: 'View Account Details' },
       },
       {
         path: '',
-        component: UpsertComponent,
-        canActivate: [createGuard],
-
-        resolve: { welfares: welfaresResolver },
-        data: { title: 'Add Account Details', action: Action.Create },
-      },
-      {
-        path: '',
-        pathMatch: 'full',
         component: ListComponent,
         data: { title: 'Accounts List' },
       },

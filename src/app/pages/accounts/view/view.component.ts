@@ -77,7 +77,6 @@ export class ViewComponent extends ViewPage {
 
   constructor(
     @SkipSelf() override authService: AuthService,
-
     private service: AccountsService
   ) {
     super(authService);
@@ -87,13 +86,12 @@ export class ViewComponent extends ViewPage {
 
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
-        // this.pageTitle = data['title'];
-        this.editUrl = `/accounts/${this.route.snapshot.paramMap.get(
+        this.updateUrl = `/accounts/${this.route.snapshot.paramMap.get(
           'id'
         )}/update`;
 
         this.account = data['account'];
-        this.member = this.account?.member;
+        this.member = this.account?.membership;
         this.welfare = this.member?.welfare;
         this.spouse = this.account?.spouse;
         this.children = this.account?.children;
@@ -103,19 +101,25 @@ export class ViewComponent extends ViewPage {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
                 if (view) {
-                  view.value =
-                    ((
-                      this.account as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )[view.key] as string | number | Date) ||
-                    ((
-                      this.member as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )[view.key] as string);
+                  if (
+                    this.account.class == 'Admin' &&
+                    (view.key == 'role' || view.key == 'status')
+                  ) {
+                    view.visible = false;
+                  } else
+                    view.value =
+                      ((
+                        this.account as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )?.[view.key] as string | number | Date) ||
+                      ((
+                        this.member as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )?.[view.key] as string);
                 }
               }
             );

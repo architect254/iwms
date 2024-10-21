@@ -24,7 +24,7 @@ export interface Member extends BaseEntity {
 
 export class Member implements Member {}
 
-export function buildName(role: string, members: Member[]): string {
+export function specialMemberName(role: string, members: Member[]): string {
   const RoleMap: Record<string, MemberRole> = {
     manager: MemberRole.Manager,
     accountant: MemberRole.Accountant,
@@ -36,4 +36,15 @@ export function buildName(role: string, members: Member[]): string {
   )?.account;
 
   return account?.name || 'N/A';
+}
+
+export function specialMemberIdNumber(role: string, members: Member[]): string {
+  const RoleMap: Record<string, MemberRole> = {
+    manager: MemberRole.Manager,
+    accountant: MemberRole.Accountant,
+    secretary: MemberRole.Secretary,
+  };
+
+  return members?.find((member) => member.role == RoleMap[role])?.account
+    ?.id_number!;
 }

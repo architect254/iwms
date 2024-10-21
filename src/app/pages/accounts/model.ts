@@ -51,10 +51,10 @@ export interface Account extends BaseEntity {
   class: Class;
   state: State;
   profile_image_url: string;
-  member?: Member;
+  membership?: Member;
   spouse?: Spouse;
   children?: Child[];
 }
 
 export class Account implements Account {}
-export type AccountApplication = Omit<Account, 'role'>;
+export type AccountApplication = Omit<Account, 'role' | 'status'>;
