@@ -4,6 +4,7 @@ import {
   GridColumn,
   StatusConfig,
 } from '../../../shared/views/grid/model';
+import { Account } from '../model';
 
 export const filters: FilterOption[] = [
   {
@@ -269,13 +270,9 @@ export const status: StatusConfig = {
   },
 };
 
-export const actions: Action[] = [
-  {
-    name: 'click',
-    implementation: () => {
-      undefined;
-    },
-  },
+export const actions: Action<Account>[] = [
+  new Action('', '', (entity: Account) => {}),
+  new Action('', '', (entity: Account) => {}),
 ];
 
 export interface FilterRequest {

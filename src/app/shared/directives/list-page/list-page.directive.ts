@@ -51,4 +51,8 @@ export abstract class ListPage extends Page {
   doApplyFilter(filters: Filter[]) {
     this.fetchData(this.page, this.take, filters);
   }
+
+  doRefresh(){
+    this.fetchData(this.page, this.take);
+  }
 }

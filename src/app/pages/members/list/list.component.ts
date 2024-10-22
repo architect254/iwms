@@ -18,6 +18,7 @@ import {
 } from '../../../shared/views/grid/model';
 import { MembersService } from '../members.service';
 import { actions, columns, status, filters, FilterRequest } from './model';
+import { Member } from '../model';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
 
@@ -27,7 +28,7 @@ export const FILTERS = new InjectionToken<FilterOption[]>(
 
 export const STATUS = new InjectionToken<StatusConfig>('grid status config');
 
-export const ACTIONS = new InjectionToken<Action[]>('grid actions');
+export const ACTIONS = new InjectionToken<Action<Member>[]>('grid actions');
 
 @Component({
   selector: 'iwms-list',

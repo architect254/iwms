@@ -21,14 +21,6 @@
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="(0)">
-          <mat-icon fontIcon="delete" class="btn-icon"></mat-icon>
-          Delete
-        </button>
-        <button mat-menu-item (click)="(0)">
-          <mat-icon fontIcon="change_circle" class="btn-icon"></mat-icon>
-          Change Status
-        </button>
-        <button mat-menu-item (click)="(0)">
           <mat-icon fontIcon="description" class="btn-icon"></mat-icon>
           Export Csv
         </button>
@@ -37,7 +29,7 @@
           Export PDF
         </button>
       </mat-menu>
-      <button mat-flat-button class="basic-btn" aria-label="">
+      <button mat-flat-button class="basic-btn" aria-label="" (click)="doRefresh()">
         <mat-icon fontIcon="refresh" class="btn-icon"></mat-icon
         ><span>Refresh</span>
       </button>

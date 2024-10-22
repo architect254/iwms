@@ -37,7 +37,17 @@ export interface StatusConfig {
   colors: { [value: string]: string | undefined };
 }
 
-export interface Action {
-  name: string;
-  implementation: () => void;
+export class Action<T> {
+  private display: boolean = true;
+
+  key: string;
+  label: string;
+
+  constructor(key: string, label: string, constraint: (entity: T) => void) {
+    this.key = key;
+    this.label = label;
+    this.constraint = constraint;
+  }
+
+  constraint: (entity: T) => void;
 }

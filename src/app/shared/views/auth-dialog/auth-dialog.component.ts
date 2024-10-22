@@ -217,7 +217,7 @@ export class AuthComponent extends Page {
           next: () => {
             this.isSigningIn = false;
             this.dialogRef?.close();
-            window.location.reload();
+            this.router.navigate(['/']);
           },
           error: (error) => {
             this.isSigningUp = false;

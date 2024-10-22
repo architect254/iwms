@@ -3,6 +3,7 @@ import {
   FilterOption,
   GridColumn,
 } from '../../../shared/views/grid/model';
+import { Welfare } from '../model';
 
 export const filters: FilterOption[] = [
   {
@@ -97,13 +98,8 @@ export const columns: GridColumn[] = [
   },
 ];
 
-export const actions: Action[] = [
-  {
-    name: 'click',
-    implementation: () => {
-      undefined;
-    },
-  },
+export const actions: Action<Welfare>[] = [
+  new Action('', '', (entity: Welfare) => {}),
 ];
 
 export interface FilterRequest {

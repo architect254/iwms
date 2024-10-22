@@ -5,6 +5,9 @@
   button[mat-flat-button].basic-btn {
     background-color: transparent;
     color: mat.get-theme-color($iwms-theme, primary, 30);
+    &:disabled{
+      color: grey;
+    }
   }
 
   .view-anchor {

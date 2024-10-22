@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
 
@@ -17,7 +17,7 @@ export const noAuthGuard: CanActivateFn = async () => {
 
   const isAuthenticated = await firstValueFrom(authService.isAuthenticated);
 
-  return !isAuthenticated;  
+  return !isAuthenticated;
 };
 export const roleGuard: CanActivateFn = async (route) => {
   const router = inject(Router);
@@ -26,11 +26,11 @@ export const roleGuard: CanActivateFn = async (route) => {
 
   const account = await firstValueFrom(authService.currentTokenUserValue);
 
-  const { classification, redirectUrl } = route.data['role'];
+  const { classification, redirectUrl } = route.data['role'];console.log("account token", account)
 
   if (account?.class == classification) {
     return true;
   } else {
-    return router.createUrlTree(['/', redirectUrl]);
+    return new RedirectCommand(router.createUrlTree(['/', redirectUrl]));
   }
 };

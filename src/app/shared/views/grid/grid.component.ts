@@ -1,4 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -10,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Action, GridColumn, StatusConfig } from './model';
 
@@ -34,7 +40,7 @@ import { Action, GridColumn, StatusConfig } from './model';
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.scss',
 })
-export class GridComponent {
+export class GridComponent<T> {
   @Input() name: string = '';
   @Input() set data(data: any[]) {
     this.dataSource = new MatTableDataSource(data);
@@ -44,10 +50,12 @@ export class GridComponent {
 
   @Input() columns!: GridColumn[];
   @Input() status?: StatusConfig;
-  @Input() actions?: Action[];
+  @Input() actions?: Action<T>[];
 
   @Input() defaultSortColumn: string = '';
   @Input() defaultSortColumnDirection: SortDirection = 'asc';
+
+  @Output() refresh = new EventEmitter<never>();
 
   dataSource!: MatTableDataSource<any[]>;
   resultsLength = 0;
@@ -102,4 +110,8 @@ export class GridComponent {
   //       this.databkup = data;
   //     });
   // }
+
+  doRefresh() {
+    this.refresh.emit();
+  }
 }

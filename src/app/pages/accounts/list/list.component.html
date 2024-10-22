@@ -1,5 +1,8 @@
 <iwms-header [title]="pageTitle">
-  <iwms-grid-search [filters]="filters" (applyFilter)="doApplyFilter($event)"></iwms-grid-search
+  <iwms-grid-search
+    [filters]="filters"
+    (applyFilter)="doApplyFilter($event)"
+  ></iwms-grid-search
 ></iwms-header>
 <iwms-grid
   name="Account"
@@ -7,4 +10,5 @@
   [columns]="columns"
   [status]="status"
   [actions]="actions"
+  (refresh)="doRefresh()"
 ></iwms-grid>

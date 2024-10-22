@@ -26,6 +26,7 @@ import {
   Action,
   Filter,
 } from '../../../shared/views/grid/model';
+import { Account } from '../model';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
 
@@ -35,7 +36,7 @@ export const FILTERS = new InjectionToken<FilterOption[]>(
 
 export const STATUS = new InjectionToken<StatusConfig>('grid status config');
 
-export const ACTIONS = new InjectionToken<Action[]>('grid actions');
+export const ACTIONS = new InjectionToken<Action<Account>[]>('grid actions');
 
 @Component({
   selector: 'iwms-list',

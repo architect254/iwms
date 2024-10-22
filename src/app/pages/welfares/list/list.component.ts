@@ -20,6 +20,7 @@ import {
 import { specialMemberName } from '../../members/model';
 import { actions, columns, FilterRequest, filters } from './model';
 import { SortDirection } from '@angular/material/sort';
+import { Welfare } from '../model';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
 
@@ -27,7 +28,7 @@ export const FILTERS = new InjectionToken<FilterOption[]>(
   'grid filter columns'
 );
 
-export const ACTIONS = new InjectionToken<Action[]>('grid actions');
+export const ACTIONS = new InjectionToken<Action<Welfare>[]>('grid actions');
 
 @Component({
   selector: 'iwms-list',

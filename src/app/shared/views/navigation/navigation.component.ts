@@ -34,8 +34,6 @@ import { PasswordResetDialogComponent } from '../password-reset-dialog/password-
 import { AuthService } from '../../../core/services/auth.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../../core/services/loading.service';
-import { Page } from '../../directives/page/page.directive';
-import { AuthComponent } from '../auth-dialog/auth-dialog.component';
 
 @Component({
   selector: 'iwms-navigation',
@@ -190,7 +188,9 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   public logout() {
     this.authService.logout();
-    window.location.reload();
+    this.router.navigate(['/']).then(() => {
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy(): void {
