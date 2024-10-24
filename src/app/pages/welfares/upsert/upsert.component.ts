@@ -8,22 +8,19 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from '../../../shared/components/form-control/form.component';
 
-import {
-  DynamicCustomFormControlBase,
-} from '../../../shared/components/form-control/model';
+import { DynamicCustomFormControlBase } from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Welfare } from '../../welfares/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { chooseWelfareFormControls, welfareDetailsFormControls } from './model';
 import { WelfaresService } from '../welfares.service';
-import { Account } from '../../accounts/model';
 import { AccountsService } from '../../accounts/accounts.service';
 import { EditableViewPage } from '../../../shared/directives/view-page/editable-view-page.directive';
-import { specialMemberIdNumber } from '../../members/model';
+import { ClientUserAccount, Welfare } from '../../../core/models/entities';
+import { getIDNumber } from '../../../core/models/utils';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -66,7 +63,7 @@ export class UpsertComponent extends EditableViewPage {
 
   welfareDetailsFormControls = inject(WELFARE_DETAILS_FORM_CONTROLS);
 
-  accountOptions!: Account[];
+  accountOptions!: ClientUserAccount[];
   filteredAccountOptions!: Observable<string[]>;
 
   constructor(
@@ -104,11 +101,11 @@ export class UpsertComponent extends EditableViewPage {
                         >
                       )[control.key] as string | number | Date;
                       if (
-                        control.key == 'manager' ||
-                        control.key == 'accountant' ||
+                        control.key == 'chair_person' ||
+                        control.key == 'treasurer' ||
                         control.key == 'secretary'
                       ) {
-                        control.value = specialMemberIdNumber(
+                        control.value = getIDNumber(
                           control.key,
                           this.welfare?.members!
                         );

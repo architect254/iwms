@@ -38,8 +38,8 @@ export function welfareDetailsFormControls() {
       order: 3,
     }),
     new CustomSearchControl({
-      key: 'manager',
-      label: 'Manager',
+      key: 'chairperson',
+      label: 'Chair-Person',
       value: '',
       placeholder: 'John Doe',
       icon: 'manage_accounts',
@@ -48,8 +48,8 @@ export function welfareDetailsFormControls() {
     }),
 
     new CustomSearchControl({
-      key: 'accountant',
-      label: 'Accountant',
+      key: 'treasurer',
+      label: 'Treasurer',
       value: '',
       placeholder: 'John Doe',
       icon: 'account_box',

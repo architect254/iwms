@@ -4,8 +4,8 @@ import { NavigationComponent } from './shared/views/navigation/navigation.compon
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { authGuard, noAuthGuard, roleGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './pages/home/home.component';
-import { Class } from './pages/accounts/model';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
+import { AccountType } from './core/models/enums';
 
 export const routes: Routes = [
   {
@@ -15,10 +15,10 @@ export const routes: Routes = [
     // canActivateChild:[auth2Guard],
     children: [
       {
-        path: 'accounts',
+        path: 'user-accounts',
         data: {
           title: 'Welfare User Accounts',
-          role: { classification: Class.Admin, redirectUrl: 'members' },
+          role: { type: AccountType.Admin, redirectUrl: 'members' },
         },
         canMatch: [roleGuard],
         loadChildren: () =>
@@ -30,7 +30,7 @@ export const routes: Routes = [
         path: 'welfare-groups',
         data: {
           title: 'Welfare Groups',
-          role: { classification: Class.Admin, redirectUrl: 'members' },
+          role: { type: AccountType.Admin, redirectUrl: 'members' },
         },
         canMatch: [roleGuard],
         loadChildren: () =>
@@ -38,15 +38,7 @@ export const routes: Routes = [
             (welfares) => welfares.routes
           ),
       },
-      {
-        path: 'members',
-        data: { title: 'Welfare Members' },
-        loadChildren: () =>
-          import('./pages/members/members.routes').then(
-            (members) => members.routes
-          ),
-      },
-      { path: '', redirectTo: '/accounts', pathMatch: 'full' },
+      { path: '', redirectTo: '/user-accounts', pathMatch: 'full' },
 
       // {
       //   path: 'contributions',

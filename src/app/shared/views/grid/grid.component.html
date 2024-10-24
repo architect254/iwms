@@ -1,6 +1,6 @@
 <div class="grid-container mat-elevation-z8">
   <div class="grid-header">
-    <span class="dataset-name mat-title-medium">{{ name + "s" }}</span>
+    <span class="dataset-name mat-title-medium">{{ name }}</span>
     <small class="data-count"
       >Viewing <strong>{{ dataSource.data.length }} </strong>Results</small
     >
@@ -12,8 +12,7 @@
         routerLink="add"
         [disabled]="disableAddition"
       >
-        <mat-icon fontIcon="add" class="btn-icon"></mat-icon
-        ><span>Add {{ name }}</span>
+        <mat-icon fontIcon="add" class="btn-icon"></mat-icon><span>Add</span>
       </button>
       <button mat-flat-button class="action-btn" [matMenuTriggerFor]="menu">
         <span>Actions </span>
@@ -29,7 +28,12 @@
           Export PDF
         </button>
       </mat-menu>
-      <button mat-flat-button class="basic-btn" aria-label="" (click)="doRefresh()">
+      <button
+        mat-flat-button
+        class="basic-btn"
+        aria-label=""
+        (click)="doRefresh()"
+      >
         <mat-icon fontIcon="refresh" class="btn-icon"></mat-icon
         ><span>Refresh</span>
       </button>
@@ -52,15 +56,11 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
+          [style.min-width]="column!.width"
         >
           {{ column!.label }}
         </th>
-        <td
-          mat-cell
-          *matCellDef="let row"
-          class="cell status-cell"
-          [style.min-width]="column!.width"
-        >
+        <td mat-cell *matCellDef="let row" class="cell status-cell">
           <strong
             [style.color]="
               status?.colors?.[row[column!.key]]
@@ -112,15 +112,11 @@
           class="column-header date-column-header"
           mat-header-cell
           *matHeaderCellDef
+          [style.min-width]="column?.width"
         >
           {{ column!.label }}
         </th>
-        <td
-          mat-cell
-          *matCellDef="let row"
-          class="cell date-cell"
-          [style.min-width]="column?.width"
-        >
+        <td mat-cell *matCellDef="let row" class="cell date-cell">
           {{ row[column!.key] | date }}
         </td>
         }@default {
@@ -129,15 +125,11 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
+          [style.min-width]="column?.width"
         >
           {{ column!.label }}
         </th>
-        <td
-          class="cell mat-body-medium"
-          mat-cell
-          *matCellDef="let row"
-          [style.min-width]="column?.width"
-        >
+        <td class="cell mat-body-medium" mat-cell *matCellDef="let row">
           @if (column.key == 'name') {
           <a
             [title]="'View ' + row[column.key]"

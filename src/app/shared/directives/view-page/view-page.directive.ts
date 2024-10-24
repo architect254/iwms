@@ -6,6 +6,6 @@ import { Page } from '../page/page.directive';
   standalone: true,
 })
 export abstract class ViewPage extends Page {
-  updateUrl!: string;
-  listUrl!: string;
+  updateUrl: string = './update';
+  listUrl: string = '../';
 }

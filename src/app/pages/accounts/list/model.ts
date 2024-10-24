@@ -1,12 +1,167 @@
 import {
+  AdminUserAccount,
+  ClientUserAccount,
+} from '../../../core/models/entities';
+import { ToggleOption } from '../../../shared/components/button-toggle/button-toggle.component';
+import {
   Action,
   FilterOption,
   GridColumn,
   StatusConfig,
 } from '../../../shared/views/grid/model';
-import { Account } from '../model';
 
-export const filters: FilterOption[] = [
+export const toggleOptions: ToggleOption[] = [
+  { name: 'All', value: 'all' },
+  { name: 'Admin', value: 'admins' },
+  { name: 'Client', value: 'clients' },
+];
+
+export const userAccountFilters: FilterOption[] = [
+  {
+    key: 'name',
+    label: 'Full Name',
+    position: 1,
+    type: 'string',
+    icon: 'badge',
+    combinator: 'Includes',
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    position: 2,
+    type: 'list',
+    icon: 'badge',
+    combinator: 'Is',
+    options: [
+      { key: 'Male', value: 'Male' },
+      { key: 'Female', value: 'Female' },
+    ],
+  },
+  {
+    key: 'id_number',
+    label: 'ID No.',
+    position: 3,
+    type: 'number',
+    icon: 'fingerprint',
+    combinator: 'Is',
+  },
+  {
+    key: 'birth_date',
+    label: 'Date of Birth',
+    position: 4,
+    type: 'date',
+    icon: 'cake',
+    combinator: 'Is',
+  },
+  {
+    key: 'phone_number',
+    label: 'Phone No.',
+    position: 5,
+    type: 'number',
+    icon: 'call_log',
+    combinator: 'Is',
+  },
+  {
+    key: 'type',
+    label: 'Account Type',
+    position: 6,
+    type: 'list',
+    icon: 'checklist',
+    combinator: 'Is',
+    options: [
+      { key: 'Admin', value: 'Admin' },
+      { key: 'Client', value: 'Client' },
+    ],
+    colors: {
+      Admin: 'red',
+      Client: 'green',
+    },
+  },
+  {
+    key: 'state',
+    label: 'Account Status',
+    position: 7,
+    type: 'list',
+    icon: 'checklist',
+    combinator: 'Is',
+    options: [
+      { key: 'Active', value: 'Active' },
+      { key: 'InActive', value: 'InActive' },
+    ],
+    colors: {
+      Active: 'orange',
+      InActive: 'gray',
+    },
+  },
+];
+
+export const userAccountColumns: GridColumn[] = [
+  {
+    key: 'select',
+    label: 'Select',
+    position: 0,
+    type: 'select',
+    width: '250px',
+  },
+  {
+    key: 'name',
+    label: 'Full Name',
+    position: 1,
+    type: 'string',
+    width: '250px',
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    position: 2,
+    type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'id_number',
+    label: 'ID No.',
+    position: 3,
+    type: 'number',
+    width: '250px',
+  },
+  {
+    key: 'phone_number',
+    label: 'Phone No.',
+    position: 4,
+    type: 'number',
+    width: '250px',
+  },
+  {
+    key: 'type',
+    label: 'Account Type',
+    position: 5,
+    type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'state',
+    label: 'Account Status',
+    position: 6,
+    type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'create_date',
+    label: 'First Created',
+    position: 7,
+    type: 'date',
+    width: '250px',
+  },
+  {
+    key: 'update_date',
+    label: 'Last Updated',
+    position: 8,
+    type: 'date',
+    width: '250px',
+  },
+];
+
+export const adminUserAccountfilters: FilterOption[] = [
   {
     key: 'name',
     label: 'Full Name',
@@ -60,25 +215,147 @@ export const filters: FilterOption[] = [
     combinator: 'Includes',
   },
   {
-    key: 'class',
-    label: 'Account Type',
+    key: 'state',
+    label: 'Account Status',
     position: 6,
     type: 'list',
     icon: 'checklist',
     combinator: 'Is',
     options: [
-      { key: 'Admin', value: 'Admin' },
-      { key: 'Client', value: 'Client' },
+      { key: 'Active', value: 'Active' },
+      { key: 'InActive', value: 'InActive' },
     ],
     colors: {
-      Admin: 'red',
-      Client: 'green',
+      Active: 'orange',
+      InActive: 'gray',
     },
+  },
+];
+
+export const adminUserAccountColumns: GridColumn[] = [
+  {
+    key: 'select',
+    label: 'Select',
+    position: 0,
+    type: 'select',
+    width: '250px',
+  },
+  {
+    key: 'name',
+    label: 'Full Name',
+    position: 1,
+    type: 'string',
+    width: '250px',
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    position: 2,
+    type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'id_number',
+    label: 'ID No.',
+    position: 2,
+    type: 'number',
+    width: '250px',
+  },
+  {
+    key: 'phone_number',
+    label: 'Phone No.',
+    position: 3,
+    type: 'number',
+    width: '250px',
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    position: 4,
+    type: 'string',
+    width: '250px',
+  },
+
+  {
+    key: 'state',
+    label: 'Account Status',
+    position: 5,
+    type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'create_date',
+    label: 'First Created',
+    position: 6,
+    type: 'date',
+    width: '250px',
+  },
+  {
+    key: 'update_date',
+    label: 'Last Updated',
+    position: 7,
+    type: 'date',
+    width: '250px',
+  },
+];
+
+export const clientUserAccountfilters: FilterOption[] = [
+  {
+    key: 'name',
+    label: 'Full Name',
+    position: 0,
+    type: 'string',
+    icon: 'badge',
+    combinator: 'Includes',
+  },
+  {
+    key: 'gender',
+    label: 'Gender',
+    position: 1,
+    type: 'list',
+    icon: 'badge',
+    combinator: 'Is',
+    options: [
+      { key: 'Male', value: 'Male' },
+      { key: 'Female', value: 'Female' },
+    ],
+  },
+  {
+    key: 'id_number',
+    label: 'ID No.',
+    position: 2,
+    type: 'number',
+    icon: 'fingerprint',
+    combinator: 'Is',
+  },
+  {
+    key: 'birth_date',
+    label: 'Date of Birth',
+    position: 3,
+    type: 'date',
+    icon: 'cake',
+    combinator: 'Is',
+  },
+  {
+    key: 'phone_number',
+    label: 'Phone No.',
+    position: 4,
+    type: 'number',
+    icon: 'call_log',
+    combinator: 'Is',
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    position: 5,
+    type: 'string',
+    icon: 'email',
+    combinator: 'Includes',
   },
   {
     key: 'state',
     label: 'Account Status',
-    position: 7,
+    position: 6,
     type: 'list',
     icon: 'checklist',
     combinator: 'Is',
@@ -93,20 +370,20 @@ export const filters: FilterOption[] = [
   },
   {
     key: 'role',
-    label: 'Membership Type',
-    position: 8,
+    label: 'Role',
+    position: 7,
     type: 'list',
     icon: 'checklist',
     combinator: 'Is',
     options: [
-      { key: 'Manager', value: 'Manager' },
-      { key: 'Accountant', value: 'Accountant' },
+      { key: 'ChairPerson', value: 'Chair-Person' },
+      { key: 'Treasurer', value: 'Treasurer' },
       { key: 'Secretary', value: 'Secretary' },
       { key: 'Member', value: 'Member' },
     ],
     colors: {
-      Manager: 'yellow',
-      Accountant: 'blue',
+      ChairPerson: 'yellow',
+      Treasurer: 'blue',
       Secretary: 'purple',
       Member: 'green',
     },
@@ -114,34 +391,34 @@ export const filters: FilterOption[] = [
   {
     key: 'status',
     label: 'Membership Status',
-    position: 9,
+    position: 8,
     type: 'list',
     icon: 'checklist',
     combinator: 'Is',
     options: [
-      { key: 'Normal', value: 'Normal' },
+      { key: 'Active', value: 'Normal' },
       { key: 'Bereaved', value: 'Bereaved' },
       { key: 'Deceased', value: 'Deceased' },
-      { key: 'Deactivated', value: 'Deactivated' },
+      { key: 'DeActivated', value: 'DeActivated' },
     ],
     colors: {
-      Normal: 'green',
+      Active: 'green',
       Bereaved: 'orange',
       Deceased: 'red',
-      Deactivated: 'grey',
+      DeActivated: 'grey',
     },
   },
   {
     key: 'group',
     label: 'Welfare Group',
-    position: 10,
+    position: 9,
     type: 'string',
     icon: 'group',
     combinator: 'Is',
   },
 ];
 
-export const columns: GridColumn[] = [
+export const clientUserAccountColumns: GridColumn[] = [
   {
     key: 'select',
     label: 'Select',
@@ -185,51 +462,44 @@ export const columns: GridColumn[] = [
     width: '250px',
   },
   {
-    key: 'class',
-    label: 'Account Type',
+    key: 'state',
+    label: 'Account Status',
     position: 5,
     type: 'status',
     width: '250px',
   },
   {
-    key: 'state',
-    label: 'Account Status',
-    position: 6,
-    type: 'status',
-    width: '250px',
-  },
-  {
     key: 'role',
-    label: 'Membership Type',
-    position: 7,
+    label: 'Role',
+    position: 6,
     type: 'status',
     width: '250px',
   },
   {
     key: 'status',
     label: 'Membership Status',
-    position: 8,
+    position: 7,
     type: 'status',
     width: '250px',
   },
   {
     key: 'welfare',
     label: 'Welfare Group',
-    position: 9,
+    position: 8,
     type: 'string',
     width: '250px',
   },
   {
     key: 'create_date',
     label: 'First Created',
-    position: 10,
+    position: 9,
     type: 'date',
     width: '250px',
   },
   {
     key: 'update_date',
     label: 'Last Updated',
-    position: 11,
+    position: 10,
     type: 'date',
     width: '250px',
   },
@@ -270,9 +540,9 @@ export const status: StatusConfig = {
   },
 };
 
-export const actions: Action<Account>[] = [
-  new Action('', '', (entity: Account) => {}),
-  new Action('', '', (entity: Account) => {}),
+export const actions: Action<AdminUserAccount | ClientUserAccount>[] = [
+  new Action('', '', (entity: AdminUserAccount | ClientUserAccount) => {}),
+  new Action('', '', (entity: AdminUserAccount | ClientUserAccount) => {}),
 ];
 
 export interface FilterRequest {

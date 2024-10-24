@@ -19,6 +19,8 @@ export abstract class ListPage extends Page {
   protected page: number = 1;
   protected take: number = 100;
 
+  protected type: string = 'all';
+
   data: any[] = [];
 
   constructor(@SkipSelf() authService: AuthService) {
@@ -28,7 +30,7 @@ export abstract class ListPage extends Page {
   override ngOnInit(): void {
     super.ngOnInit();
 
-    this.fetchData(this.page, this.take);
+    this.fetchData(this.page, this.take, this.type);
 
     const toolbarHeight = this.document.getElementById('toolbar')?.offsetHeight;
     const headerHeight = this.document.getElementById('header')?.offsetHeight;
@@ -45,14 +47,15 @@ export abstract class ListPage extends Page {
   protected abstract fetchData(
     page: number,
     take: number,
+    type: string,
     filters?: Filter[]
   ): void;
 
   doApplyFilter(filters: Filter[]) {
-    this.fetchData(this.page, this.take, filters);
+    this.fetchData(this.page, this.take, this.type, filters);
   }
 
-  doRefresh(){
-    this.fetchData(this.page, this.take);
+  doRefresh() {
+    this.fetchData(this.page, this.take, this.type);
   }
 }

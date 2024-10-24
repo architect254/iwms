@@ -116,7 +116,7 @@ export class AuthComponent extends Page {
         switch (action) {
           case 'Sign In':
             this.authForm = this.fb.group({
-              email: [``, Validators.required],
+              id_number: [``, Validators.required],
               password: [``, Validators.required],
             });
             // this.dialogRef.updateSize(`700px`, `700px`);

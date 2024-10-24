@@ -7,13 +7,13 @@ import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { memberDataView, welfareDataView } from './model';
-import { Welfare } from '../../welfares/model';
 import { WelfaresService } from '../welfares.service';
-import { Member, specialMemberName } from '../../members/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { ViewPage } from '../../../shared/directives/view-page/view-page.directive';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { ClientUserAccount, Welfare } from '../../../core/models/entities';
+import { getName } from '../../../core/models/utils';
 
 export const WELFARE_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -46,7 +46,7 @@ export class ViewComponent extends ViewPage {
   override listUrl: string = '/welfare-groups';
 
   welfare?: Welfare;
-  members?: Member[];
+  members?: ClientUserAccount[];
 
   welfareDataView = inject(WELFARE_DATA_VIEW);
   memberDataView = [inject(MEMBER_DATA_VIEW)];
@@ -89,7 +89,7 @@ export class ViewComponent extends ViewPage {
                       view.key == 'accountant' ||
                       view.key == 'secretary'
                     ) {
-                      view.value = specialMemberName(
+                      view.value = getName(
                         view.key,
                         this.welfare?.members!
                       );
@@ -117,17 +117,12 @@ export class ViewComponent extends ViewPage {
                     if (dataView) {
                       dataView.forEach(
                         (view: DynamicCustomDataBase<ValueType>) => {
-                          view.value =
-                            ((
-                              this.members as unknown as Record<
-                                string,
-                                ValueType
-                              >[]
-                            )?.[dataViewGoupIndex])[view.key] ||
-                            (
-                              this.members?.[dataViewGoupIndex]
-                                .account as unknown as Record<string, ValueType>
-                            )[view.key];
+                          view.value = ((
+                            this.members as unknown as Record<
+                              string,
+                              ValueType
+                            >[]
+                          )?.[dataViewGoupIndex])[view.key];
                         }
                       );
                     }

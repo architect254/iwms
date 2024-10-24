@@ -6,7 +6,7 @@ import { Observable, tap } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { AuthService } from '../../../core/services/auth.service';
 import { ValueType } from '../../../shared/components/form-control/control.component';
@@ -16,10 +16,7 @@ import {
   DynamicCustomFormControlBase,
 } from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { Member, MemberRole } from '../../members/model';
-import { Welfare } from '../../welfares/model';
 import { AccountsService } from '../accounts.service';
-import { Account, Spouse, Child, Class, AccountApplication } from '../model';
 import {
   childDetailsFormControls,
   coreUserDetailsFormControls,
@@ -27,11 +24,18 @@ import {
   spouseDetailsFormControls,
   chooseWelfareFormControls,
 } from './model';
-import { WelfaresService } from '../../welfares/welfares.service';
 import {
   EditableViewPage,
   IsProceedAllowed,
 } from '../../../shared/directives/view-page/editable-view-page.directive';
+import {
+  AdminUserAccount,
+  Child,
+  ClientUserAccount,
+  Spouse,
+  Welfare,
+} from '../../../core/models/entities';
+import { AccountType, Role } from '../../../core/models/enums';
 
 export const CORE_USER_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -92,11 +96,8 @@ export const CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
   styleUrl: './upsert.component.scss',
 })
 export class UpsertComponent extends EditableViewPage {
-  override listUrl: string = '/accounts';
-
-  account?: Account;
+  account?: AdminUserAccount | ClientUserAccount;
   accountId?: number;
-  member?: Member;
   welfare?: Welfare | { id: number };
 
   spouse?: Spouse;
@@ -131,7 +132,6 @@ export class UpsertComponent extends EditableViewPage {
 
   validChildren: boolean[] = [false];
 
-
   constructor(
     @SkipSelf() override authService: AuthService,
     private service: AccountsService
@@ -145,17 +145,15 @@ export class UpsertComponent extends EditableViewPage {
     this.subscriptions.add(
       this.route.data.subscribe({
         next: (data: Data) => {
-          this.viewUrl = `/accounts/${this.route.snapshot.paramMap.get('id')}`;
-
           this.account = data['account'];
           this.accountId = this.account?.id;
-          this.member = this.account?.membership;
-          this.welfare = this.member?.welfare;
+          this.welfare = (this.account as ClientUserAccount)?.welfare;
 
-          this.spouse = this.account?.spouse;
-          this.children = this.account?.children;
+          this.spouse = (this.account as ClientUserAccount)?.spouse;
+          this.children = (this.account as ClientUserAccount)?.children;
 
           this.welfares = data['welfares'];
+
           this.chooseWelfareFormControls.forEach(
             (form: DynamicCustomFormControlBase<ValueType>[]) => {
               form.forEach(
@@ -178,7 +176,6 @@ export class UpsertComponent extends EditableViewPage {
           );
 
           if (this.pageAction == 'update') {
-
             if (this.account) {
               this.coreUserDetailsFormControls.forEach(
                 (form: DynamicCustomFormControlBase<ValueType>[]) => {
@@ -186,50 +183,43 @@ export class UpsertComponent extends EditableViewPage {
                     (control: DynamicCustomFormControlBase<ValueType>) => {
                       if (control) {
                         if (
-                          this.account?.class == 'Admin' &&
+                          this.account?.type == AccountType.Admin &&
                           (control.key == 'role' || control.key == 'status')
                         ) {
                           control.visible = false;
                         } else
-                          control.value =
-                            ((
-                              this.account as unknown as Record<
-                                string,
-                                ValueType
-                              >
-                            )?.[control.key] as ValueType) ||
-                            ((
-                              this.member as unknown as Record<
-                                string,
-                                ValueType
-                              >
-                            )?.[control.key] as ValueType);
+                          control.value = (
+                            this.account as unknown as Record<string, ValueType>
+                          )?.[control.key] as ValueType;
                       }
                     }
                   );
                 }
               );
 
-              this.tryDisplayingMemberControls(this.account.class);
-              if (this.member) {
-                if (this.welfare) {
-                  this.chooseWelfareFormControls.forEach(
-                    (form: DynamicCustomFormControlBase<ValueType>[]) => {
-                      form.forEach(
-                        (control: DynamicCustomFormControlBase<ValueType>) => {
-                          if (control && control.key == 'id') {
-                            control.value = this.welfare?.id;
-                          }
+              this.tryDisplayingMemberControls(this.account.type);
+              if (this.welfare) {
+                this.chooseWelfareFormControls.forEach(
+                  (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                    form.forEach(
+                      (control: DynamicCustomFormControlBase<ValueType>) => {
+                        if (control && control.key == 'id') {
+                          control.value = this.welfare?.id;
                         }
-                      );
-                    }
-                  );
+                      }
+                    );
+                  }
+                );
 
-                  this.isProceedAllowed['Welfare Details'] = true;
-                }
-                this.tryDisplayingMemberForm(this.member.role);
-                this.checkCanCreateNewWelfare(this.member.role);
+                this.isProceedAllowed['Welfare Details'] = true;
               }
+              this.tryDisplayingMemberForm(
+                (this.account as ClientUserAccount).role
+              );
+              this.checkCanCreateNewWelfare(
+                (this.account as ClientUserAccount).role
+              );
+
               this.isProceedAllowed['Core Account Details'] = true;
 
               if (this.spouse) {
@@ -373,11 +363,10 @@ export class UpsertComponent extends EditableViewPage {
     }
   }
 
-  tryDisplayingMemberControls(classification: Class) {
-    const accountClassifications = [Class.Client];
+  tryDisplayingMemberControls(type: AccountType) {
+    const accountTypes = [AccountType.Client];
 
-    this.displayMemberControls =
-      accountClassifications.includes(classification);
+    this.displayMemberControls = accountTypes.includes(type);
     this.coreUserDetailsFormControls.forEach((formGroup) => {
       formGroup.forEach((control) => {
         if (control.key == 'role' || control.key == 'status') {
@@ -387,19 +376,19 @@ export class UpsertComponent extends EditableViewPage {
     });
   }
 
-  tryDisplayingMemberForm(role: MemberRole) {
+  tryDisplayingMemberForm(role: Role) {
     const memberRoles = [
-      MemberRole.Manager,
-      MemberRole.Accountant,
-      MemberRole.Secretary,
-      MemberRole.Member,
+      Role.ChairPerson,
+      Role.Treasurer,
+      Role.Secretary,
+      Role.Member,
     ];
 
     this.displayMemberForm = memberRoles.includes(role);
   }
 
-  checkCanCreateNewWelfare(role: MemberRole) {
-    const canCreateWelfareRoles = [MemberRole.Manager];
+  checkCanCreateNewWelfare(role: Role) {
+    const canCreateWelfareRoles = [Role.ChairPerson];
 
     this.canCreateNewWelfare = canCreateWelfareRoles.includes(role);
 
@@ -423,17 +412,17 @@ export class UpsertComponent extends EditableViewPage {
     const data = JSON.parse(formData);
     switch (section) {
       case 'Core Account Details':
-        const { role, status } = data;
-
-        this.account = <AccountApplication>{ ...data };
-        this.tryDisplayingMemberControls(this.account?.class!);
+        this.account = { ...data };
+        this.tryDisplayingMemberControls(this.account?.type!);
 
         if (this.displayMemberControls) {
-          this.member = <Member>{ role, status };
-          this.tryDisplayingMemberForm(this.member?.role!);
-          this.checkCanCreateNewWelfare(this.member?.role!);
+          this.tryDisplayingMemberForm(
+            (this.account as ClientUserAccount)?.role!
+          );
+          this.checkCanCreateNewWelfare(
+            (this.account as ClientUserAccount)?.role!
+          );
         } else {
-          delete this.member;
           delete this.welfare;
           delete this.spouse;
           delete this.children;
@@ -492,10 +481,6 @@ export class UpsertComponent extends EditableViewPage {
       accountDto: this.account,
     };
 
-    if (this.member) {
-      payload['memberDto'] = this.member;
-    }
-
     if (this.welfare) {
       payload['welfareDto'] = this.welfare;
     }
@@ -547,4 +532,4 @@ export class UpsertComponent extends EditableViewPage {
   override setTwitterCardMeta(): void {}
   override setFacebookOpenGraphMeta(): void {}
 }
- type IsSelected = [boolean, boolean, boolean, boolean];
+type IsSelected = [boolean, boolean, boolean, boolean];

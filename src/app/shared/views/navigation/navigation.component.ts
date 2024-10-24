@@ -189,7 +189,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   public logout() {
     this.authService.logout();
     this.router.navigate(['/']).then(() => {
-      this.cdr.detectChanges();
+      window.location.reload();
     });
   }
 

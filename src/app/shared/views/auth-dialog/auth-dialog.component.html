@@ -12,28 +12,36 @@
   <form class="mt-4" (ngSubmit)="submitForm()" [formGroup]="authForm">
     @switch (action | async) { @case ('Sign In') {
     <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Email</mat-label>
+      <mat-label>ID No.</mat-label>
       <input
-        type="email"
-        name="email"
-        formControlName="email"
+        type="text"
+        name="id_number"
+        formControlName="id_number"
         matInput
-        placeholder="Ex. john@server.com"
+        placeholder="987654321"
       />
-      <mat-icon matPrefix class="material-icons-two-toned">email</mat-icon>
+      <mat-icon matPrefix class="material-icons-two-toned"
+        >fingerprint</mat-icon
+      >
 
-      <mat-error *ngIf="email?.errors">
+      <mat-error *ngIf="id_number?.errors">
         <span
           class="is-danger"
           *ngIf="
-            email?.invalid && email?.touched && email?.hasError('required')
+            id_number?.invalid &&
+            id_number?.touched &&
+            id_number?.hasError('required')
           "
-          >Email is <strong>required*</strong></span
+          >ID No. is <strong>required*</strong></span
         >
         <span
           class="is-danger"
-          *ngIf="email?.invalid && email?.touched && email?.hasError('email')"
-          >Email is invalid</span
+          *ngIf="
+            id_number?.invalid &&
+            id_number?.touched &&
+            id_number?.hasError('id_number')
+          "
+          >ID No. is invalid</span
         >
       </mat-error>
     </mat-form-field>
@@ -95,14 +103,14 @@
           class="is-danger"
           *ngIf="name?.invalid && name?.touched && name?.hasError('required')"
         >
-          Ful Name is <strong>required*</strong>
+          Full Name is <strong>required*</strong>
         </span>
       </mat-error>
     </mat-form-field>
 
     <section class="double-column">
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>National ID No.</mat-label>
+        <mat-label>ID No.</mat-label>
         <input
           type="text"
           name="id_number"
@@ -122,7 +130,7 @@
               id_number?.hasError('required')
             "
           >
-            National ID No. is <strong>required*</strong>
+            ID No. is <strong>required*</strong>
           </span>
         </mat-error>
       </mat-form-field>

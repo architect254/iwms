@@ -72,7 +72,7 @@ export function coreUserDetailsFormControls() {
       order: 6,
     }),
     new CustomDropdownControl({
-      key: 'class',
+      key: 'type',
       label: 'Account Type',
       options: [
         { id: 'Admin', name: 'Admin' },
@@ -95,10 +95,10 @@ export function coreUserDetailsFormControls() {
     }),
     new CustomDropdownControl({
       key: 'role',
-      label: 'Membership Type',
+      label: 'Role',
       options: [
-        { id: 'Manager', name: 'Manager' },
-        { id: 'Accountant', name: 'Accountant' },
+        { id: 'Chair-Person', name: 'Chair-Person' },
+        { id: 'Treasurer', name: 'Treasurer' },
         { id: 'Secretary', name: 'Secretary' },
         { id: 'Member', name: 'Member' },
       ],

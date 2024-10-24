@@ -1,11 +1,12 @@
 .filter {
+    max-width: 700px;
     display: flex;
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
 
-    .search-option {
-        max-width: 280px;
+    .search,.search-option {
+        max-width: 250px;
     }
 }
 

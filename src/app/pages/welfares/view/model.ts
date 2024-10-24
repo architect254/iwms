@@ -29,14 +29,14 @@ export function welfareDataView(): Observable<
       order: 3,
     }),
     new CustomTextData({
-      key: 'manager',
-      label: 'Manager',
+      key: 'chairperson',
+      label: 'Chair-Person',
       icon: 'badge',
       order: 4,
     }),
     new CustomTextData({
-      key: 'accountant',
-      label: 'Accountant',
+      key: 'treasurer',
+      label: 'Treasurer',
       icon: 'badge',
       order: 5,
     }),

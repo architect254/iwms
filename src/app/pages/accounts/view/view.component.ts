@@ -6,7 +6,6 @@ import { DynamicCustomDataBase } from '../../../shared/components/data-view/view
 import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AccountsService } from '../accounts.service';
-import { Child, Spouse, Account } from '../model';
 import { AuthService } from '../../../core/services/auth.service';
 import {
   childDataView,
@@ -14,10 +13,16 @@ import {
   accountDataView,
   welfareDataView,
 } from './model';
-import { Member } from '../../members/model';
-import { Welfare } from '../../welfares/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { ViewPage } from '../../../shared/directives/view-page/view-page.directive';
+import {
+  Welfare,
+  Spouse,
+  Child,
+  AdminUserAccount,
+  ClientUserAccount,
+} from '../../../core/models/entities';
+import { AccountType } from '../../../core/models/enums';
 
 export const ACCOUNT_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -61,10 +66,7 @@ export const CHILD_DATA_VIEW = new InjectionToken<
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends ViewPage {
-  override listUrl: string = '/accounts';
-
-  account!: Account;
-  member?: Member;
+  account!: AdminUserAccount | ClientUserAccount;
   welfare?: Welfare;
 
   spouse?: Spouse;
@@ -86,15 +88,10 @@ export class ViewComponent extends ViewPage {
 
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
-        this.updateUrl = `/accounts/${this.route.snapshot.paramMap.get(
-          'id'
-        )}/update`;
-
         this.account = data['account'];
-        this.member = this.account?.membership;
-        this.welfare = this.member?.welfare;
-        this.spouse = this.account?.spouse;
-        this.children = this.account?.children;
+        this.welfare = (this.account as ClientUserAccount)?.welfare;
+        this.spouse = (this.account as ClientUserAccount)?.spouse;
+        this.children = (this.account as ClientUserAccount)?.children;
 
         this.accountDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
@@ -102,24 +99,17 @@ export class ViewComponent extends ViewPage {
               (view: DynamicCustomDataBase<string | number | Date>) => {
                 if (view) {
                   if (
-                    this.account.class == 'Admin' &&
+                    this.account.type == AccountType.Admin &&
                     (view.key == 'role' || view.key == 'status')
                   ) {
                     view.visible = false;
                   } else
-                    view.value =
-                      ((
-                        this.account as unknown as Record<
-                          string,
-                          string | number | Date
-                        >
-                      )?.[view.key] as string | number | Date) ||
-                      ((
-                        this.member as unknown as Record<
-                          string,
-                          string | number | Date
-                        >
-                      )?.[view.key] as string);
+                    view.value = (
+                      this.account as unknown as Record<
+                        string,
+                        string | number | Date
+                      >
+                    )?.[view.key] as string | number | Date;
                 }
               }
             );

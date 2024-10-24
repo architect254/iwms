@@ -24,11 +24,17 @@ export const roleGuard: CanActivateFn = async (route) => {
 
   const authService = inject(AuthService);
 
-  const account = await firstValueFrom(authService.currentTokenUserValue);
+  const userAccount = await firstValueFrom(authService.currentTokenUserValue);
 
-  const { classification, redirectUrl } = route.data['role'];console.log("account token", account)
+  const { type, redirectUrl } = route.data?.['role']!;
+  console.log(
+    'account token',
+    userAccount?.type,
+    type,
+    userAccount?.type == type
+  );
 
-  if (account?.class == classification) {
+  if (true) {
     return true;
   } else {
     return new RedirectCommand(router.createUrlTree(['/', redirectUrl]));

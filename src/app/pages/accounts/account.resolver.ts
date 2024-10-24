@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { Account } from './model';
 import { AccountsService } from './accounts.service';
+import { UserAccount } from '../../core/models/entities';
 
 
-export const accountResolver: ResolveFn<Account> = (route) => {
+export const accountResolver: ResolveFn<UserAccount> = (route) => {
   const id = route.paramMap.get('id');
   const accountsService = inject(AccountsService);
   return accountsService.getAccountById(id!);

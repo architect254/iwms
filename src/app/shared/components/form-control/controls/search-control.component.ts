@@ -38,7 +38,7 @@ export class CustomSearchControlComponent implements OnInit, OnDestroy {
           startWith(this.control.value ? this.control.value : ''),
           map((id_number) => id_number.toLowerCase()),
           switchMap((id_number) => {
-            return this._accountsService.getAccounts(1, 10, [
+            return this._accountsService.getAccounts(1, 10, 'all', [
               { key: 'id_number', value: id_number },
             ]);
           })
@@ -50,6 +50,13 @@ export class CustomSearchControlComponent implements OnInit, OnDestroy {
             }))
         )
     );
+  }
+
+  displayFn(id: number) {
+    const correspondingOption = Array.isArray(this.control.options)
+      ? this.control.options.find((option) => option.id === id)
+      : null;
+    return correspondingOption ? correspondingOption.name : '';
   }
 
   selectSearchOption(option: { id: string | number; name: string }) {}

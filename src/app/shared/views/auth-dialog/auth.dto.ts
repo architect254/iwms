@@ -1,6 +1,5 @@
 export interface SignUpDto {
-  first_name: string;
-  last_name: string;
+  name: string;
   id_number: string;
   birth_date: Date;
   phone_number: string;
@@ -8,6 +7,6 @@ export interface SignUpDto {
   password: string;
 }
 export interface SignInDto {
-  email: string;
+  id_number: string;
   password: string;
 }

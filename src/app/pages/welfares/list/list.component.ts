@@ -17,10 +17,9 @@ import {
   Action,
   Filter,
 } from '../../../shared/views/grid/model';
-import { specialMemberName } from '../../members/model';
 import { actions, columns, FilterRequest, filters } from './model';
-import { SortDirection } from '@angular/material/sort';
-import { Welfare } from '../model';
+import { Welfare } from '../../../core/models/entities';
+import { getName } from '../../../core/models/utils';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
 
@@ -69,7 +68,7 @@ export class ListComponent extends ListPage {
     super.ngOnInit();
   }
 
-  fetchData(page: number, take: number, filters?: Filter[]) {
+  fetchData(page: number, take: number, type: string, filters?: Filter[]) {
     this.subscriptions.add(
       this.service.getWelfares(page, take, filters).subscribe((welfares) => {
         this.data = welfares.map((welfare) => {
@@ -78,9 +77,9 @@ export class ListComponent extends ListPage {
             name: welfare.name,
             phone_number: welfare.phone_number,
             email: welfare.email,
-            manager: specialMemberName('manager', welfare.members),
-            accountant: specialMemberName('accountant', welfare.members),
-            secretary: specialMemberName('secretary', welfare.members),
+            chairperson: getName('chairperson', welfare.members),
+            treasurer: getName('treasurer', welfare.members),
+            secretary: getName('secretary', welfare.members),
             create_date: welfare.create_date,
             update_date: welfare.update_date,
           };

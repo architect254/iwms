@@ -7,7 +7,8 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
   standalone: true,
 })
 export abstract class EditableViewPage extends ViewPage {
-  viewUrl!: string;
+  viewUrl: string = '../';
+  override listUrl: string = '../../';
   pageAction!: PageAction;
 
   private _triggerValidityNotification = new BehaviorSubject(false);

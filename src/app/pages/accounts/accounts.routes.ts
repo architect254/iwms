@@ -16,7 +16,7 @@ export const routes: Routes = [
         path: 'add',
         component: UpsertComponent,
         resolve: { welfares: welfaresResolver },
-        data: { title: 'Add Account Details' },
+        data: { title: 'Add User Account' },
       },
       {
         path: ':id/update',
@@ -25,7 +25,7 @@ export const routes: Routes = [
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Update Account Details', action: 'update' },
+        data: { title: 'Update User Account', action: 'update' },
       },
       {
         path: ':id',
@@ -34,7 +34,7 @@ export const routes: Routes = [
           account: accountResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'View Account Details' },
+        data: { title: 'View User Account' },
       },
       {
         path: '',

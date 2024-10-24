@@ -53,7 +53,7 @@ export function accountDataView(): Observable<
       order: 6,
     }),
     new CustomStatusData({
-      key: 'class',
+      key: 'type',
       label: 'Account Type',
       colors: {
         Admin: 'red',
@@ -76,8 +76,8 @@ export function accountDataView(): Observable<
       key: 'role',
       label: 'Membership Type',
       colors: {
-        Manager: 'orange',
-        Accountant: 'blue',
+        ChairPerson: 'orange',
+        Treasurer: 'blue',
         Secretary: 'purple',
         Member: 'cyan',
       },

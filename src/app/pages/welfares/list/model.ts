@@ -1,9 +1,9 @@
+import { Welfare } from '../../../core/models/entities';
 import {
   Action,
   FilterOption,
   GridColumn,
 } from '../../../shared/views/grid/model';
-import { Welfare } from '../model';
 
 export const filters: FilterOption[] = [
   {
@@ -62,15 +62,15 @@ export const columns: GridColumn[] = [
     width: '250px',
   },
   {
-    key: 'manager',
-    label: 'Manager',
+    key: 'chairperson',
+    label: 'Chair-Person',
     position: 4,
     type: 'string',
     width: '250px',
   },
   {
-    key: 'accountant',
-    label: 'Accountant',
+    key: 'treasurer',
+    label: 'Treasurer',
     position: 5,
     type: 'string',
     width: '250px',

@@ -44,7 +44,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
-      withDebugTracing(),
+      // withDebugTracing(),
       withRouterConfig({ onSameUrlNavigation: 'reload' })
     ),
     provideClientHydration(

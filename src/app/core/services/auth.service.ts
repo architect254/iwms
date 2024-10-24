@@ -1,17 +1,6 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
-import {
-  BehaviorSubject,
-  finalize,
-  first,
-  last,
-  map,
-  Observable,
-  of,
-  tap,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, first, map, Observable, tap } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -20,7 +9,8 @@ import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
 import { ApiService } from './api.service';
 import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
-import { Account } from '../../pages/accounts/model';
+import { UserAccount } from '../models/entities';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
@@ -40,12 +30,12 @@ export class AuthService extends ApiService {
     super();
   }
 
-  get currentTokenUserValue(): Observable<Account | null> {
+  get currentTokenUserValue(): Observable<UserAccount | null> {
     return this.currentToken.pipe(
       map((token) => {
         if (token) {
           const payload: JwtPayload = jwtDecode(token);
-          return payload.account as Account;
+          return payload.account as UserAccount;
         } else return null;
       })
     );
@@ -103,5 +93,5 @@ export class AuthService extends ApiService {
   }
 }
 export interface JwtPayload {
-  account: Account;
+  account: UserAccount;
 }
