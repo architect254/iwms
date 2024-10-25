@@ -30,7 +30,7 @@ export function welfareDataView(): Observable<
     }),
     new CustomTextData({
       key: 'chairperson',
-      label: 'Chair-Person',
+      label: 'Chair Person',
       icon: 'badge',
       order: 4,
     }),

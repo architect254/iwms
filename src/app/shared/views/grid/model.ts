@@ -24,7 +24,6 @@ export interface FilterOption {
   combinator: string;
   value?: string;
   options?: { key: string; value: string }[];
-  colors?: { [key: string]: string };
 }
 
 export interface Filter {
@@ -32,10 +31,8 @@ export interface Filter {
   value: string;
 }
 
-export interface StatusConfig {
-  labels: { [value: string]: string | undefined };
-  colors: { [value: string]: string | undefined };
-}
+export type StatusLabels = { [status: string]: string };
+export type StatusColors = { [status: string]: string };
 
 export class Action<T> {
   private display: boolean = true;

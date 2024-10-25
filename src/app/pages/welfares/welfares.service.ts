@@ -3,7 +3,7 @@ import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Filter } from '../../shared/views/grid/model';
-import { Welfare } from '../../core/models/entities';
+import { Welfare } from './entities/welfare.entity';
 
 @Injectable({
   providedIn: 'root',

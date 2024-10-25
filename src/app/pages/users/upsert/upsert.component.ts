@@ -16,7 +16,6 @@ import {
   DynamicCustomFormControlBase,
 } from '../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { AccountsService } from '../accounts.service';
 import {
   childDetailsFormControls,
   coreUserDetailsFormControls,
@@ -28,14 +27,16 @@ import {
   EditableViewPage,
   IsProceedAllowed,
 } from '../../../shared/directives/view-page/editable-view-page.directive';
-import {
-  AdminUserAccount,
-  Child,
-  ClientUserAccount,
-  Spouse,
-  Welfare,
-} from '../../../core/models/entities';
-import { AccountType, Role } from '../../../core/models/enums';
+import { Admin } from '../entities/admin.entity';
+import { Member, Role } from '../entities/member.entity';
+import { BereavedMember } from '../entities/bereaved-member.entity';
+import { DeceasedMember } from '../entities/deceased-member.entity';
+import { DeactivatedMember } from '../entities/deactivated-member.entity';
+import { Welfare } from '../../welfares/entities/welfare.entity';
+import { Spouse } from '../entities/spouse.entity';
+import { Child } from '../entities/child.entity';
+import { UsersService } from '../users.service';
+import { Membership } from '../entities/user.entity';
 
 export const CORE_USER_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -96,8 +97,8 @@ export const CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
   styleUrl: './upsert.component.scss',
 })
 export class UpsertComponent extends EditableViewPage {
-  account?: AdminUserAccount | ClientUserAccount;
-  accountId?: number;
+  user?: Admin | Member | BereavedMember | DeceasedMember | DeactivatedMember;
+  userId?: string;
   welfare?: Welfare | { id: number };
 
   spouse?: Spouse;
@@ -134,7 +135,7 @@ export class UpsertComponent extends EditableViewPage {
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    private service: AccountsService
+    private service: UsersService
   ) {
     super(authService);
   }
@@ -145,12 +146,12 @@ export class UpsertComponent extends EditableViewPage {
     this.subscriptions.add(
       this.route.data.subscribe({
         next: (data: Data) => {
-          this.account = data['account'];
-          this.accountId = this.account?.id;
-          this.welfare = (this.account as ClientUserAccount)?.welfare;
+          this.user = data['user'];
+          this.userId = this.user?.id;
+          this.welfare = (this.user as Member)?.welfare;
 
-          this.spouse = (this.account as ClientUserAccount)?.spouse;
-          this.children = (this.account as ClientUserAccount)?.children;
+          this.spouse = (this.user as Member)?.spouse;
+          this.children = (this.user as Member)?.children;
 
           this.welfares = data['welfares'];
 
@@ -161,8 +162,8 @@ export class UpsertComponent extends EditableViewPage {
                   if (control && control.key == 'id') {
                     (control as CustomDropdownControl).options = this.welfares
                       .length
-                      ? this.welfares.map((welfare) => {
-                          return { id: welfare.id, name: welfare.name };
+                      ? this.welfares?.map((welfare) => {
+                          return { id: welfare.id!, name: welfare.name };
                         })
                       : undefined;
                     (control as CustomDropdownControl).placeholder = this
@@ -176,20 +177,20 @@ export class UpsertComponent extends EditableViewPage {
           );
 
           if (this.pageAction == 'update') {
-            if (this.account) {
+            if (this.user) {
               this.coreUserDetailsFormControls.forEach(
                 (form: DynamicCustomFormControlBase<ValueType>[]) => {
                   form.forEach(
                     (control: DynamicCustomFormControlBase<ValueType>) => {
                       if (control) {
                         if (
-                          this.account?.type == AccountType.Admin &&
+                          this.user?.membership == Membership.Admin &&
                           (control.key == 'role' || control.key == 'status')
                         ) {
                           control.visible = false;
                         } else
                           control.value = (
-                            this.account as unknown as Record<string, ValueType>
+                            this.user as unknown as Record<string, ValueType>
                           )?.[control.key] as ValueType;
                       }
                     }
@@ -197,7 +198,7 @@ export class UpsertComponent extends EditableViewPage {
                 }
               );
 
-              this.tryDisplayingMemberControls(this.account.type);
+              this.tryDisplayingMemberControls(this.user.membership);
               if (this.welfare) {
                 this.chooseWelfareFormControls.forEach(
                   (form: DynamicCustomFormControlBase<ValueType>[]) => {
@@ -213,12 +214,8 @@ export class UpsertComponent extends EditableViewPage {
 
                 this.isProceedAllowed['Welfare Details'] = true;
               }
-              this.tryDisplayingMemberForm(
-                (this.account as ClientUserAccount).role
-              );
-              this.checkCanCreateNewWelfare(
-                (this.account as ClientUserAccount).role
-              );
+              this.tryDisplayingMemberForm((this.user as Member).role);
+              this.checkCanCreateNewWelfare((this.user as Member).role);
 
               this.isProceedAllowed['Core Account Details'] = true;
 
@@ -363,10 +360,10 @@ export class UpsertComponent extends EditableViewPage {
     }
   }
 
-  tryDisplayingMemberControls(type: AccountType) {
-    const accountTypes = [AccountType.Client];
+  tryDisplayingMemberControls(membership: Membership) {
+    const memberships = [Membership.Admin];
 
-    this.displayMemberControls = accountTypes.includes(type);
+    this.displayMemberControls = !memberships.includes(membership);
     this.coreUserDetailsFormControls.forEach((formGroup) => {
       formGroup.forEach((control) => {
         if (control.key == 'role' || control.key == 'status') {
@@ -412,16 +409,12 @@ export class UpsertComponent extends EditableViewPage {
     const data = JSON.parse(formData);
     switch (section) {
       case 'Core Account Details':
-        this.account = { ...data };
-        this.tryDisplayingMemberControls(this.account?.type!);
+        this.user = { ...data };
+        this.tryDisplayingMemberControls(this.user?.membership!);
 
         if (this.displayMemberControls) {
-          this.tryDisplayingMemberForm(
-            (this.account as ClientUserAccount)?.role!
-          );
-          this.checkCanCreateNewWelfare(
-            (this.account as ClientUserAccount)?.role!
-          );
+          this.tryDisplayingMemberForm((this.user as Member)?.role!);
+          this.checkCanCreateNewWelfare((this.user as Member)?.role!);
         } else {
           delete this.welfare;
           delete this.spouse;
@@ -478,7 +471,7 @@ export class UpsertComponent extends EditableViewPage {
     this.isSubmitting = true;
 
     const payload: any = {
-      accountDto: this.account,
+      ...this.user,
     };
 
     if (this.welfare) {
@@ -495,9 +488,9 @@ export class UpsertComponent extends EditableViewPage {
     let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction = this.service.updateAccount(this.accountId!, payload);
+      serviceAction = this.service.update(this.userId!, payload);
     } else {
-      serviceAction = this.service.createAccount(payload);
+      serviceAction = this.service.create(payload);
     }
 
     this.subscriptions.add(
@@ -505,13 +498,13 @@ export class UpsertComponent extends EditableViewPage {
         next: ({ id }) => {
           this.isSubmitting = false;
 
-          this.router.navigate(['/', 'accounts', id]);
+          this.router.navigate(['/', 'user-accounts', id]);
 
           const snackBarRef = this.snackbar.open(
-            `Account successfully ${this.pageAction}d. Navigate back to Accounts List?`,
+            `User account successfully ${this.pageAction}d. Navigate back to Accounts List?`,
             `OK`,
             {
-              panelClass: `.upsert-success-alert`,
+              panelClass: `alert success`,
               duration: 200,
             }
           );

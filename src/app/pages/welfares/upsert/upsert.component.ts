@@ -17,10 +17,11 @@ import { ValueType } from '../../../shared/components/form-control/control.compo
 import { AuthService } from '../../../core/services/auth.service';
 import { chooseWelfareFormControls, welfareDetailsFormControls } from './model';
 import { WelfaresService } from '../welfares.service';
-import { AccountsService } from '../../accounts/accounts.service';
 import { EditableViewPage } from '../../../shared/directives/view-page/editable-view-page.directive';
-import { ClientUserAccount, Welfare } from '../../../core/models/entities';
 import { getIDNumber } from '../../../core/models/utils';
+import { UsersService } from '../../users/users.service';
+import { Welfare } from '../entities/welfare.entity';
+import { Member } from '../../users/entities/member.entity';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -63,13 +64,13 @@ export class UpsertComponent extends EditableViewPage {
 
   welfareDetailsFormControls = inject(WELFARE_DETAILS_FORM_CONTROLS);
 
-  accountOptions!: ClientUserAccount[];
+  accountOptions!: Member[];
   filteredAccountOptions!: Observable<string[]>;
 
   constructor(
     @SkipSelf() override authService: AuthService,
     private service: WelfaresService,
-    private accountService: AccountsService
+    private accountService: UsersService
   ) {
     super(authService);
   }
@@ -101,7 +102,7 @@ export class UpsertComponent extends EditableViewPage {
                         >
                       )[control.key] as string | number | Date;
                       if (
-                        control.key == 'chair_person' ||
+                        control.key == 'chairperson' ||
                         control.key == 'treasurer' ||
                         control.key == 'secretary'
                       ) {
@@ -138,10 +139,7 @@ export class UpsertComponent extends EditableViewPage {
     let serviceAction;
 
     if (this.pageAction == 'update') {
-      serviceAction = this.service.updateWelfare(
-        this.welfare?.id as number,
-        payload
-      );
+      serviceAction = this.service.updateWelfare(this.welfare?.id!, payload);
     } else {
       serviceAction = this.service.createWelfare(payload);
     }

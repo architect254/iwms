@@ -9,7 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
 import { ApiService } from './api.service';
 import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
-import { UserAccount } from '../models/entities';
+import { UserAccount } from '../../pages/users/entities/user.entity';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {

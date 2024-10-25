@@ -3,9 +3,9 @@ import { Routes } from '@angular/router';
 import { UpsertComponent } from './upsert/upsert.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
-import { accountResolver } from './account.resolver';
 import { welfaresResolver } from '../welfares/welfares.resolver';
 import { ContainerLayoutComponent } from '../../shared/views/navigation/container-layout.component';
+import { userResolver } from './user.resolver';
 
 export const routes: Routes = [
   {
@@ -16,25 +16,25 @@ export const routes: Routes = [
         path: 'add',
         component: UpsertComponent,
         resolve: { welfares: welfaresResolver },
-        data: { title: 'Add User Account' },
+        data: { title: 'Add User' },
       },
       {
         path: ':id/update',
         component: UpsertComponent,
         resolve: {
-          account: accountResolver,
+          user: userResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Update User Account', action: 'update' },
+        data: { title: 'Update User', action: 'update' },
       },
       {
         path: ':id',
         component: ViewComponent,
         resolve: {
-          account: accountResolver,
+          user: userResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'View User Account' },
+        data: { title: 'View User' },
       },
       {
         path: '',

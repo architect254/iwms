@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { CustomSearchControl } from '../model';
 import { map, startWith, Subscription, switchMap, tap } from 'rxjs';
-import { AccountsService } from '../../../../pages/accounts/accounts.service';
+import { UsersService } from '../../../../pages/users/users.service';
 
 @Component({
   standalone: true,
@@ -27,7 +27,7 @@ export class CustomSearchControlComponent implements OnInit, OnDestroy {
   @Input() control!: CustomSearchControl;
   @Input() form!: FormGroup;
 
-  private _accountsService = inject(AccountsService);
+  private _accountsService = inject(UsersService);
 
   subscriptions = new Subscription();
 
@@ -38,7 +38,7 @@ export class CustomSearchControlComponent implements OnInit, OnDestroy {
           startWith(this.control.value ? this.control.value : ''),
           map((id_number) => id_number.toLowerCase()),
           switchMap((id_number) => {
-            return this._accountsService.getAccounts(1, 10, 'all', [
+            return this._accountsService.getMany('all', 1, 10, [
               { key: 'id_number', value: id_number },
             ]);
           })

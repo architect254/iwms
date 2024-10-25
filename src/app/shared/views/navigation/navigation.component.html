@@ -9,7 +9,7 @@
   >
     <mat-toolbar class="mobile-navigation"><logo></logo></mat-toolbar>
     <mat-nav-list class="secondary-navigation">
-      <mat-list-item routerLink="/accounts" [activated]="isActive('accounts')">
+      <mat-list-item routerLink="/user-accounts" [activated]="isActive('user-accounts')">
         <a matListItemTitle routerLinkActive="nav-active">User Accounts</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>group</mat-icon>
@@ -24,8 +24,8 @@
           <mat-icon>accessibility_new</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item routerLink="/members" [activated]="isActive('members')">
-        <a matListItemTitle routerLinkActive="nav-active">Members</a>
+      <mat-list-item routerLink="/welfare-members" [activated]="isActive('welfare-members')">
+        <a matListItemTitle routerLinkActive="nav-active">Welfare Members</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>contacts</mat-icon>
         </button>

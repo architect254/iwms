@@ -1,8 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { ValueType } from './control.component';
-import { ApiService } from '../../../core/services/api.service';
-import { AccountsService } from '../../../pages/accounts/accounts.service';
 
 export function toFormGroup(
   controls: DynamicCustomFormControlBase<ValueType>[]
@@ -71,7 +68,7 @@ export class CustomTextboxControl extends DynamicCustomFormControlBase<string> {
 
 export class CustomDropdownControl extends DynamicCustomFormControlBase<string> {
   override controlType = 'dropdown';
-  public options?: { id: string | number; name: string }[];
+  public options?: { id: string; name: string }[];
   constructor(
     config: {
       value?: string;
@@ -84,7 +81,7 @@ export class CustomDropdownControl extends DynamicCustomFormControlBase<string> 
       order?: number;
       controlType?: string;
       type?: string;
-      options?: { id: string | number; name: string }[];
+      options?: { id: string; name: string }[];
     } = {}
   ) {
     super(config);

@@ -12,6 +12,7 @@
     <mat-autocomplete
       autoActiveFirstOption
       #auto="matAutocomplete"
+      hideSingleSelectionIndicator="true"
       [displayWith]="displayFn"
     >
       @for (option of control.options; track option) {

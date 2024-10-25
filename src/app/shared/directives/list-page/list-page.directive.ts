@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { DOCUMENT } from '@angular/common';
 import { Filter } from '../../views/grid/model';
 import { SortDirection } from '@angular/material/sort';
+import { ToggleOption } from '../../components/button-toggle/button-toggle.component';
 
 @Directive({
   standalone: true,
@@ -19,7 +20,8 @@ export abstract class ListPage extends Page {
   protected page: number = 1;
   protected take: number = 100;
 
-  protected type: string = 'all';
+  protected toggledOption!: ToggleOption;
+  protected toggledOptionValue: string = 'all';
 
   data: any[] = [];
 
@@ -30,7 +32,7 @@ export abstract class ListPage extends Page {
   override ngOnInit(): void {
     super.ngOnInit();
 
-    this.fetchData(this.page, this.take, this.type);
+    this.fetchData(this.toggledOptionValue, this.page, this.take);
 
     const toolbarHeight = this.document.getElementById('toolbar')?.offsetHeight;
     const headerHeight = this.document.getElementById('header')?.offsetHeight;
@@ -45,17 +47,17 @@ export abstract class ListPage extends Page {
   }
 
   protected abstract fetchData(
-    page: number,
-    take: number,
-    type: string,
+    type?: string,
+    page?: number,
+    take?: number,
     filters?: Filter[]
   ): void;
 
   doApplyFilter(filters: Filter[]) {
-    this.fetchData(this.page, this.take, this.type, filters);
+    this.fetchData(this.toggledOptionValue, this.page, this.take, filters);
   }
 
   doRefresh() {
-    this.fetchData(this.page, this.take, this.type);
+    this.fetchData(this.toggledOptionValue, this.page, this.take);
   }
 }

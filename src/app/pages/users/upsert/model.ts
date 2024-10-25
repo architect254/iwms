@@ -97,7 +97,7 @@ export function coreUserDetailsFormControls() {
       key: 'role',
       label: 'Role',
       options: [
-        { id: 'Chair-Person', name: 'Chair-Person' },
+        { id: 'ChairPerson', name: 'ChairPerson' },
         { id: 'Treasurer', name: 'Treasurer' },
         { id: 'Secretary', name: 'Secretary' },
         { id: 'Member', name: 'Member' },

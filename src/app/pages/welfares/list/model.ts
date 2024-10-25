@@ -1,4 +1,4 @@
-import { Welfare } from '../../../core/models/entities';
+import { Welfare } from '../../users/entities/user.entity';
 import {
   Action,
   FilterOption,
@@ -63,7 +63,7 @@ export const columns: GridColumn[] = [
   },
   {
     key: 'chairperson',
-    label: 'Chair-Person',
+    label: 'Chair Person',
     position: 4,
     type: 'string',
     width: '250px',

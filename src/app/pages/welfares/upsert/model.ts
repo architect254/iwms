@@ -39,7 +39,7 @@ export function welfareDetailsFormControls() {
     }),
     new CustomSearchControl({
       key: 'chairperson',
-      label: 'Chair-Person',
+      label: 'Chair Person',
       value: '',
       placeholder: 'John Doe',
       icon: 'manage_accounts',

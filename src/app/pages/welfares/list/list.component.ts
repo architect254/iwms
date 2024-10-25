@@ -18,7 +18,7 @@ import {
   Filter,
 } from '../../../shared/views/grid/model';
 import { actions, columns, FilterRequest, filters } from './model';
-import { Welfare } from '../../../core/models/entities';
+import { Welfare } from '../../users/entities/user.entity';
 import { getName } from '../../../core/models/utils';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');

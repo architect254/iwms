@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { Membership } from '../../../pages/users/entities/user.entity';
+import { Role } from '../../../pages/users/entities/member.entity';
 
 @Component({
   selector: 'iwms-button-toggle',
@@ -15,16 +17,17 @@ export class ButtonToggleComponent {
 
   @Input() options!: ToggleOption[];
 
-  @Input() toggledOption!: ToggleOption;
+  @Input() value!: string;
 
   @Output() toggle = new EventEmitter();
 
   onToggle(option: ToggleOption) {
-    this.toggledOption = option;
-    this.toggle.emit(this.toggledOption);
+    this.value = option.value;
+    this.toggle.emit(this.value);
   }
 }
 export interface ToggleOption {
   name: string;
   value: string;
+  position: number;
 }

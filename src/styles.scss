@@ -38,6 +38,10 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
   .reduced-size {
     @include mat.all-component-densities(-8);
   }
+
+  .alert {
+    color: green;
+  }
 }
 
 @import 'bootstrap/scss/bootstrap';

@@ -6,10 +6,8 @@
   (change)="onToggle($event.value)"
 >
   @for (option of options; track $index) {
-  <mat-button-toggle
-    [value]="option"
-    [checked]="option.value == toggledOption.value"
-    >{{ option.name }}</mat-button-toggle
-  >
+  <mat-button-toggle [value]="option" [checked]="option.value == value">{{
+    option.name
+  }}</mat-button-toggle>
   }
 </mat-button-toggle-group>

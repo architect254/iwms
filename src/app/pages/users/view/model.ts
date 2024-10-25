@@ -74,7 +74,7 @@ export function accountDataView(): Observable<
     }),
     new CustomStatusData({
       key: 'role',
-      label: 'Membership Type',
+      label: 'Membership Role',
       colors: {
         ChairPerson: 'orange',
         Treasurer: 'blue',

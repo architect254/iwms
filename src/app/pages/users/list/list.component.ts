@@ -1,10 +1,7 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
-  ApplicationRef,
   Component,
-  ComponentRef,
-  EnvironmentInjector,
   inject,
   InjectionToken,
   Injector,
@@ -26,69 +23,39 @@ import { AuthService } from '../../../core/services/auth.service';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { ListPage } from '../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
-import { AccountsService } from '../accounts.service';
+import { UsersService } from '../users.service';
 import {
-  actions,
-  adminUserAccountColumns,
-  adminUserAccountfilters,
-  clientUserAccountColumns,
-  clientUserAccountfilters,
-  status,
-  toggleOptions,
-  userAccountColumns,
-  userAccountFilters,
+  getFilterOptions,
+  getGridColumns,
+  getToggleOptions,
+  statusColors,
+  statusLabels,
 } from './model';
 import { GridComponent } from '../../../shared/views/grid/grid.component';
 import {
   GridColumn,
   FilterOption,
-  StatusConfig,
-  Action,
   Filter,
+  StatusLabels,
+  Action,
 } from '../../../shared/views/grid/model';
-import {
-  AdminUserAccount,
-  ClientUserAccount,
-} from '../../../core/models/entities';
 import {
   ButtonToggleComponent,
   ToggleOption,
 } from '../../../shared/components/button-toggle/button-toggle.component';
+import { Member } from '../entities/member.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
-  'button toggle options'
+  'Header toggle options'
 );
 
-export const USER_ACCOUNT_FILTERS = new InjectionToken<FilterOption[]>(
-  'grid filter columns'
-);
+export const FILTERS = new InjectionToken<FilterOption[]>('Grid filters');
 
-export const USER_ACCOUNT_COLUMNS = new InjectionToken<GridColumn[]>(
-  'grid columns'
-);
+export const COLUMNS = new InjectionToken<GridColumn[]>('Grid columns');
 
-export const ADMIN_USER_ACCOUNT_FILTERS = new InjectionToken<FilterOption[]>(
-  'grid filter columns'
-);
+export const LABELS = new InjectionToken<StatusLabels>('Grid status labels');
 
-export const ADMIN_USER_ACCOUNT_COLUMNS = new InjectionToken<GridColumn[]>(
-  'grid columns'
-);
-
-export const CLIENT_USER_ACCOUNT_FILTERS = new InjectionToken<FilterOption[]>(
-  'grid filter columns'
-);
-
-export const CLIENT_USER_ACCOUNT_COLUMNS = new InjectionToken<GridColumn[]>(
-  'grid columns'
-);
-
-export const STATUS = new InjectionToken<StatusConfig>('grid status config');
-
-export const ACTIONS = new InjectionToken<
-  Action<AdminUserAccount | ClientUserAccount>[]
->('grid actions');
-
+export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
 
 @Component({
   selector: 'iwms-list',
@@ -114,21 +81,11 @@ export const ACTIONS = new InjectionToken<
     RouterModule,
   ],
   providers: [
-    { provide: TOGGLE_OPTIONS, useValue: toggleOptions },
-    { provide: USER_ACCOUNT_FILTERS, useValue: userAccountFilters },
-    { provide: USER_ACCOUNT_COLUMNS, useValue: userAccountColumns },
-    { provide: ADMIN_USER_ACCOUNT_FILTERS, useValue: adminUserAccountfilters },
-    { provide: ADMIN_USER_ACCOUNT_COLUMNS, useValue: adminUserAccountColumns },
-    {
-      provide: CLIENT_USER_ACCOUNT_FILTERS,
-      useValue: clientUserAccountfilters,
-    },
-    {
-      provide: CLIENT_USER_ACCOUNT_COLUMNS,
-      useValue: clientUserAccountColumns,
-    },
-    { provide: STATUS, useValue: status },
-    { provide: ACTIONS, useValue: actions },
+    { provide: TOGGLE_OPTIONS, useFactory: getToggleOptions },
+    { provide: FILTERS, useFactory: getFilterOptions },
+    { provide: COLUMNS, useFactory: getGridColumns },
+    { provide: LABELS, useValue: statusLabels },
+    { provide: COLORS, useValue: statusColors },
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss',
@@ -136,22 +93,23 @@ export const ACTIONS = new InjectionToken<
 export class ListComponent extends ListPage {
   toggleOptions = inject(TOGGLE_OPTIONS);
 
-  filters = inject(USER_ACCOUNT_FILTERS);
-  columns = inject(USER_ACCOUNT_COLUMNS);
-  status = inject(STATUS);
-  actions = inject(ACTIONS);
+  filters = inject(FILTERS);
+  columns = inject(COLUMNS);
+  labels = inject(LABELS);
+  colors = inject(COLORS);
 
-  toggledOption: ToggleOption = toggleOptions[0];
-
-  protected override type: string = toggleOptions[0].value;
+  actions = [new Action('', '', () => {})];
 
   constructor(
     @SkipSelf() override authService: AuthService,
 
-    private service: AccountsService,
+    private service: UsersService,
     private injector: Injector
   ) {
     super(authService);
+
+    this.toggledOption = this.toggleOptions[0];
+    this.toggledOptionValue = this.toggledOption.value;
   }
 
   override ngOnInit(): void {
@@ -159,23 +117,12 @@ export class ListComponent extends ListPage {
   }
 
   onToggle(option: ToggleOption) {
-    this.toggledOption = option;
-    this.type = option.value;
+    this.toggledOptionValue = option.value;
     runInInjectionContext(this.injector, () => {
-      switch (this.toggledOption.value) {
-        case 'admins':
-          this.filters = inject(ADMIN_USER_ACCOUNT_FILTERS);
-          this.columns = inject(ADMIN_USER_ACCOUNT_COLUMNS);
-          break;
-
-        case 'clients':
-          this.filters = inject(CLIENT_USER_ACCOUNT_FILTERS);
-          this.columns = inject(CLIENT_USER_ACCOUNT_COLUMNS);
-          break;
-
+      switch (this.toggledOptionValue) {
         case 'all':
-          this.filters = inject(USER_ACCOUNT_FILTERS);
-          this.columns = inject(USER_ACCOUNT_COLUMNS);
+          this.filters = inject(FILTERS);
+          this.columns = inject(COLUMNS);
           break;
 
         default:
@@ -187,34 +134,30 @@ export class ListComponent extends ListPage {
   }
 
   override fetchData(
+    type: string,
     page: number,
     take: number,
-    type: string,
     filters?: Filter[]
   ) {
     this.subscriptions.add(
-      this.service
-        .getAccounts(page, take, type, filters)
-        .subscribe((accounts) => {
-          this.data = accounts.map((account) => {
-            return {
-              id: account.id,
-              name: account.name,
-              gender: account.gender,
-              id_number: account.id_number,
-              phone_number: account.phone_number,
-              email: (account as AdminUserAccount).email,
-              profile_image: account?.profile_image,
-              type: account.type,
-              state: account.state,
-              welfare: (account as ClientUserAccount)?.welfare?.name,
-              role: (account as ClientUserAccount).role,
-              status: (account as ClientUserAccount)?.status,
-              create_date: account.create_date,
-              update_date: account.update_date,
-            };
-          });
-        })
+      this.service.getMany(type, page, take, filters).subscribe((accounts) => {
+        this.data = accounts.map((account) => {
+          return {
+            id: account.id,
+            name: account.name,
+            gender: account.gender,
+            id_number: account.id_number,
+            phone_number: account.phone_number,
+            email: account.email,
+            profile_image: account?.profile_image,
+            membership: account.membership,
+            welfare: (account as Member)?.welfare?.name,
+            role: (account as Member).role,
+            create_date: account.create_date,
+            update_date: account.update_date,
+          };
+        });
+      })
     );
   }
 

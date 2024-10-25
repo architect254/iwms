@@ -18,7 +18,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { Action, GridColumn, StatusConfig } from './model';
+import {
+  Action,
+  GridColumn,
+  StatusColors,
+  StatusLabels,
+} from './model';
 
 @Component({
   selector: 'iwms-grid',
@@ -49,7 +54,8 @@ export class GridComponent<T> {
   @Input() disableAddition: boolean = false;
 
   @Input() columns!: GridColumn[];
-  @Input() status?: StatusConfig;
+  @Input() labels?: StatusLabels;
+  @Input() colors?: StatusColors;
   @Input() actions?: Action<T>[];
 
   @Input() defaultSortColumn: string = '';

@@ -5,7 +5,6 @@ import { DynamicViewComponent } from '../../../shared/components/data-view/view.
 import { DynamicCustomDataBase } from '../../../shared/components/data-view/view.service';
 import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AccountsService } from '../accounts.service';
 import { AuthService } from '../../../core/services/auth.service';
 import {
   childDataView,
@@ -15,14 +14,16 @@ import {
 } from './model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
 import { ViewPage } from '../../../shared/directives/view-page/view-page.directive';
-import {
-  Welfare,
-  Spouse,
-  Child,
-  AdminUserAccount,
-  ClientUserAccount,
-} from '../../../core/models/entities';
-import { AccountType } from '../../../core/models/enums';
+import { Admin } from '../entities/admin.entity';
+import { Member } from '../entities/member.entity';
+import { BereavedMember } from '../entities/bereaved-member.entity';
+import { DeceasedMember } from '../entities/deceased-member.entity';
+import { DeactivatedMember } from '../entities/deactivated-member.entity';
+import { Welfare } from '../../welfares/entities/welfare.entity';
+import { Spouse } from '../entities/spouse.entity';
+import { Child } from '../entities/child.entity';
+import { UsersService } from '../users.service';
+import { Membership } from '../entities/user.entity';
 
 export const ACCOUNT_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -66,7 +67,12 @@ export const CHILD_DATA_VIEW = new InjectionToken<
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends ViewPage {
-  account!: AdminUserAccount | ClientUserAccount;
+  account!:
+    | Admin
+    | Member
+    | BereavedMember
+    | DeceasedMember
+    | DeactivatedMember;
   welfare?: Welfare;
 
   spouse?: Spouse;
@@ -79,7 +85,7 @@ export class ViewComponent extends ViewPage {
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    private service: AccountsService
+    private service: UsersService
   ) {
     super(authService);
   }
@@ -89,9 +95,9 @@ export class ViewComponent extends ViewPage {
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
         this.account = data['account'];
-        this.welfare = (this.account as ClientUserAccount)?.welfare;
-        this.spouse = (this.account as ClientUserAccount)?.spouse;
-        this.children = (this.account as ClientUserAccount)?.children;
+        this.welfare = (this.account as Member)?.welfare;
+        this.spouse = (this.account as Member)?.spouse;
+        this.children = (this.account as Member)?.children;
 
         this.accountDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
@@ -99,8 +105,8 @@ export class ViewComponent extends ViewPage {
               (view: DynamicCustomDataBase<string | number | Date>) => {
                 if (view) {
                   if (
-                    this.account.type == AccountType.Admin &&
-                    (view.key == 'role' || view.key == 'status')
+                    this.account.membership == Membership.Admin &&
+                    view.key == 'role'
                   ) {
                     view.visible = false;
                   } else
@@ -110,6 +116,9 @@ export class ViewComponent extends ViewPage {
                         string | number | Date
                       >
                     )?.[view.key] as string | number | Date;
+                  if (!view.value) {
+                    view.visible = false;
+                  }
                 }
               }
             );

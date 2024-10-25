@@ -2,7 +2,7 @@
   <iwms-button-toggle
     toggle
     [options]="toggleOptions"
-    [toggledOption]="toggledOption"
+    [value]="toggledOptionValue"
     (toggle)="onToggle($event)"
   ></iwms-button-toggle>
   <iwms-grid-search
@@ -15,7 +15,8 @@
   [name]="toggledOption.name + ' Accounts'"
   [data]="data"
   [columns]="columns"
-  [status]="status"
+  [labels]="labels"
+  [colors]="colors"
   [actions]="actions"
   (refresh)="doRefresh()"
 ></iwms-grid>

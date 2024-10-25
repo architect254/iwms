@@ -1,10 +1,6 @@
-import { ClientUserAccount } from './entities';
-import { Role } from './enums';
+import { Member, Role } from '../../pages/users/entities/member.entity';
 
-export function getName(
-  role: string,
-  clientAccounts: ClientUserAccount[]
-): string {
+export function getName(role: string, clientAccounts: Member[]): string {
   const RoleMap: Record<string, Role> = {
     chairperson: Role.ChairPerson,
     treasurer: Role.Treasurer,
@@ -17,10 +13,7 @@ export function getName(
   );
 }
 
-export function getIDNumber(
-  role: string,
-  clientAccounts: ClientUserAccount[]
-): number {
+export function getIDNumber(role: string, clientAccounts: Member[]): number {
   const RoleMap: Record<string, Role> = {
     chairperson: Role.ChairPerson,
     treasurer: Role.Treasurer,

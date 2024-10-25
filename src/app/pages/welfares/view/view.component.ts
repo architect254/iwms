@@ -12,8 +12,9 @@ import { ValueType } from '../../../shared/components/form-control/control.compo
 import { ViewPage } from '../../../shared/directives/view-page/view-page.directive';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ClientUserAccount, Welfare } from '../../../core/models/entities';
 import { getName } from '../../../core/models/utils';
+import { Welfare } from '../entities/welfare.entity';
+import { Member } from '../../users/entities/member.entity';
 
 export const WELFARE_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -46,7 +47,7 @@ export class ViewComponent extends ViewPage {
   override listUrl: string = '/welfare-groups';
 
   welfare?: Welfare;
-  members?: ClientUserAccount[];
+  members?: Member[];
 
   welfareDataView = inject(WELFARE_DATA_VIEW);
   memberDataView = [inject(MEMBER_DATA_VIEW)];
@@ -89,10 +90,7 @@ export class ViewComponent extends ViewPage {
                       view.key == 'accountant' ||
                       view.key == 'secretary'
                     ) {
-                      view.value = getName(
-                        view.key,
-                        this.welfare?.members!
-                      );
+                      view.value = getName(view.key, this.welfare?.members!);
                     }
                   }
                 }
