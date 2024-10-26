@@ -7,13 +7,13 @@ import {
   StatusLabels,
 } from '../../../shared/views/grid/model';
 
-const userToggleOptions: ToggleOption[] = [
-  { name: 'All', value: 'all', position: 0 },
+const allUsersToggleOptions: ToggleOption[] = [
+  { name: 'All Users', value: 'users', position: 0 },
 ];
 const memberToggleOptions: ToggleOption[] = [
-  ...userToggleOptions,
+  ...allUsersToggleOptions,
   {
-    name: 'All Welfare Members',
+    name: 'All Members',
     value: 'members',
     position: 2,
   },
@@ -39,20 +39,12 @@ const memberToggleOptions: ToggleOption[] = [
   },
 ];
 
-const adminToggleOptions: ToggleOption[] = [
+export const adminToggleOptions: ToggleOption[] = [
   { name: 'Admin', value: 'admins', position: 1 },
   ...memberToggleOptions,
 ];
 
-export const getToggleOptions = (user: User) => {
-  if (user.membership == Membership.Admin) {
-    return adminToggleOptions;
-  } else {
-    return memberToggleOptions;
-  }
-};
-
-const userFilters: FilterOption[] = [
+export const allUsersFilters: FilterOption[] = [
   {
     key: 'name',
     label: 'Full Name',
@@ -122,10 +114,10 @@ const userFilters: FilterOption[] = [
   },
 ];
 
-const adminfilters: FilterOption[] = [...userFilters];
+export const adminfilters: FilterOption[] = [...allUsersFilters];
 
-const membersFilters: FilterOption[] = [
-  ...userFilters,
+export const allMembersFilters: FilterOption[] = [
+  ...allUsersFilters,
   {
     key: 'role',
     label: 'Role',
@@ -142,8 +134,8 @@ const membersFilters: FilterOption[] = [
   },
 ];
 
-const bereavedMembersFilters: FilterOption[] = [
-  ...membersFilters,
+export const bereavedMembersFilters: FilterOption[] = [
+  ...allMembersFilters,
   {
     key: 'bereavement_date',
     label: 'Date of Bereavment',
@@ -185,8 +177,8 @@ const bereavedMembersFilters: FilterOption[] = [
   },
 ];
 
-const deceasedMembersFilters: FilterOption[] = [
-  ...membersFilters,
+export const deceasedMembersFilters: FilterOption[] = [
+  ...allMembersFilters,
   {
     key: 'demise_date',
     label: 'Date of Demise',
@@ -197,8 +189,8 @@ const deceasedMembersFilters: FilterOption[] = [
   },
 ];
 
-const deactivatedMembersFilters: FilterOption[] = [
-  ...membersFilters,
+export const deactivatedMembersFilters: FilterOption[] = [
+  ...allMembersFilters,
   {
     key: 'deactvation_date',
     label: 'Date of Deactivation',
@@ -217,29 +209,7 @@ const deactivatedMembersFilters: FilterOption[] = [
   },
 ];
 
-export const getFilterOptions = (user: User) => {
-  switch (user.membership) {
-    case Membership.Admin:
-      return adminfilters;
-
-    case Membership.Active:
-      return membersFilters;
-
-    case Membership.Bereaved:
-      return bereavedMembersFilters;
-
-    case Membership.Deceased:
-      return deceasedMembersFilters;
-
-    case Membership.DeActivated:
-      return deactivatedMembersFilters;
-
-    default:
-      return userFilters;
-  }
-};
-
-const userColumns: GridColumn[] = [
+export const allUsersColumns: GridColumn[] = [
   {
     key: 'select',
     label: 'Select',
@@ -305,10 +275,10 @@ const userColumns: GridColumn[] = [
   },
 ];
 
-const adminColumns: GridColumn[] = [...userColumns];
+export const adminColumns: GridColumn[] = [...allUsersColumns];
 
-const membersColumns: GridColumn[] = [
-  ...userColumns,
+export const allMembersColumns: GridColumn[] = [
+  ...allUsersColumns,
   {
     key: 'role',
     label: 'Role',
@@ -318,8 +288,8 @@ const membersColumns: GridColumn[] = [
   },
 ];
 
-const bereavedMembersColumns: GridColumn[] = [
-  ...membersColumns,
+export const bereavedMembersColumns: GridColumn[] = [
+  ...allMembersColumns,
   {
     key: 'bereavement_date',
     label: 'Date of Bereavement',
@@ -343,8 +313,8 @@ const bereavedMembersColumns: GridColumn[] = [
   },
 ];
 
-const deceasedMembersColumns: GridColumn[] = [
-  ...membersColumns,
+export const deceasedMembersColumns: GridColumn[] = [
+  ...allMembersColumns,
   {
     key: 'demise_date',
     label: 'Date of Demise',
@@ -354,8 +324,8 @@ const deceasedMembersColumns: GridColumn[] = [
   },
 ];
 
-const deactivatedMembersColumns: GridColumn[] = [
-  ...membersColumns,
+export const deactivatedMembersColumns: GridColumn[] = [
+  ...allMembersColumns,
   {
     key: 'deactivation_date',
     label: 'Date of Deactivation',
@@ -372,27 +342,6 @@ const deactivatedMembersColumns: GridColumn[] = [
   },
 ];
 
-export const getGridColumns = (user: User) => {
-  switch (user.membership) {
-    case Membership.Admin:
-      return adminColumns;
-
-    case Membership.Active:
-      return membersColumns;
-
-    case Membership.Bereaved:
-      return bereavedMembersColumns;
-
-    case Membership.Deceased:
-      return deceasedMembersColumns;
-
-    case Membership.DeActivated:
-      return deactivatedMembersColumns;
-
-    default:
-      return userColumns;
-  }
-};
 export const statusLabels: StatusLabels = {
   Admin: 'Admin',
   ChairPerson: 'ChairPerson',

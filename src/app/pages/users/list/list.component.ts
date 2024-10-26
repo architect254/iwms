@@ -2,6 +2,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
   Component,
+  EnvironmentInjector,
   inject,
   InjectionToken,
   Injector,
@@ -25,9 +26,17 @@ import { ListPage } from '../../../shared/directives/list-page/list-page.directi
 import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
 import { UsersService } from '../users.service';
 import {
-  getFilterOptions,
-  getGridColumns,
-  getToggleOptions,
+  adminToggleOptions,
+  allMembersColumns,
+  allMembersFilters,
+  allUsersColumns,
+  allUsersFilters,
+  bereavedMembersColumns,
+  bereavedMembersFilters,
+  deactivatedMembersColumns,
+  deactivatedMembersFilters,
+  deceasedMembersColumns,
+  deceasedMembersFilters,
   statusColors,
   statusLabels,
 } from './model';
@@ -46,13 +55,40 @@ import {
 import { Member } from '../entities/member.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
-  'Header toggle options'
+  'User toggle options for header'
 );
 
-export const FILTERS = new InjectionToken<FilterOption[]>('Grid filters');
+export const ALL_USERS_FILTERS = new InjectionToken<FilterOption[]>(
+  'All users grid filters'
+);
+export const ALL_MEMBERS_FILTERS = new InjectionToken<FilterOption[]>(
+  'All members grid filters'
+);
+export const BEREAVED_MEMBERS_FILTERS = new InjectionToken<FilterOption[]>(
+  'Bereaved members grid filters'
+);
+export const DECEASED_MEMBERS_FILTERS = new InjectionToken<FilterOption[]>(
+  'Deceased members grid filters'
+);
+export const DEACTIVATED_MEMBERS_FILTERS = new InjectionToken<FilterOption[]>(
+  'Deceased members grid filters'
+);
 
-export const COLUMNS = new InjectionToken<GridColumn[]>('Grid columns');
-
+export const ALL_USERS_COLUMNS = new InjectionToken<GridColumn[]>(
+  'All users grid columns'
+);
+export const ALL_MEMBERS_COLUMNS = new InjectionToken<GridColumn[]>(
+  'Active members grid columns'
+);
+export const BEREAVED_MEMBERS_COLUMNS = new InjectionToken<GridColumn[]>(
+  'Bereaved members grid columns'
+);
+export const DECEASED_MEMBERS_COLUMNS = new InjectionToken<GridColumn[]>(
+  'Deceased members grid columns'
+);
+export const DEACTIVATED_MEMBERS_COLUMNS = new InjectionToken<GridColumn[]>(
+  'Deceased members grid columns'
+);
 export const LABELS = new InjectionToken<StatusLabels>('Grid status labels');
 
 export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
@@ -81,9 +117,23 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
     RouterModule,
   ],
   providers: [
-    { provide: TOGGLE_OPTIONS, useFactory: getToggleOptions },
-    { provide: FILTERS, useFactory: getFilterOptions },
-    { provide: COLUMNS, useFactory: getGridColumns },
+    { provide: TOGGLE_OPTIONS, useValue: adminToggleOptions },
+    { provide: ALL_USERS_FILTERS, useValue: allUsersFilters },
+    { provide: ALL_MEMBERS_FILTERS, useValue: allMembersFilters },
+    { provide: BEREAVED_MEMBERS_FILTERS, useValue: bereavedMembersFilters },
+    { provide: DECEASED_MEMBERS_FILTERS, useValue: deceasedMembersFilters },
+    {
+      provide: DEACTIVATED_MEMBERS_FILTERS,
+      useValue: deactivatedMembersFilters,
+    },
+    { provide: ALL_USERS_COLUMNS, useValue: allUsersColumns },
+    { provide: ALL_MEMBERS_COLUMNS, useValue: allMembersColumns },
+    { provide: BEREAVED_MEMBERS_COLUMNS, useValue: bereavedMembersColumns },
+    { provide: DECEASED_MEMBERS_COLUMNS, useValue: deceasedMembersColumns },
+    {
+      provide: DEACTIVATED_MEMBERS_COLUMNS,
+      useValue: deactivatedMembersColumns,
+    },
     { provide: LABELS, useValue: statusLabels },
     { provide: COLORS, useValue: statusColors },
   ],
@@ -93,8 +143,8 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
 export class ListComponent extends ListPage {
   toggleOptions = inject(TOGGLE_OPTIONS);
 
-  filters = inject(FILTERS);
-  columns = inject(COLUMNS);
+  filters = inject(ALL_USERS_FILTERS);
+  columns = inject(ALL_USERS_COLUMNS);
   labels = inject(LABELS);
   colors = inject(COLORS);
 
@@ -104,7 +154,7 @@ export class ListComponent extends ListPage {
     @SkipSelf() override authService: AuthService,
 
     private service: UsersService,
-    private injector: Injector
+    private injector: EnvironmentInjector
   ) {
     super(authService);
 
@@ -120,12 +170,34 @@ export class ListComponent extends ListPage {
     this.toggledOptionValue = option.value;
     runInInjectionContext(this.injector, () => {
       switch (this.toggledOptionValue) {
-        case 'all':
-          this.filters = inject(FILTERS);
-          this.columns = inject(COLUMNS);
+        case 'users':
+          this.filters = inject(ALL_USERS_FILTERS);
+          this.columns = inject(ALL_USERS_COLUMNS);
           break;
 
-        default:
+        case 'admins':
+          this.filters = inject(ALL_USERS_FILTERS);
+          this.columns = inject(ALL_USERS_COLUMNS);
+          break;
+        case 'members':
+          this.filters = inject(ALL_MEMBERS_FILTERS);
+          this.columns = inject(ALL_MEMBERS_COLUMNS);
+          break;
+        case 'active':
+          this.filters = inject(ALL_MEMBERS_FILTERS);
+          this.columns = inject(ALL_MEMBERS_COLUMNS);
+          break;
+        case 'bereaved':
+          this.filters = inject(BEREAVED_MEMBERS_FILTERS);
+          this.columns = inject(BEREAVED_MEMBERS_COLUMNS);
+          break;
+        case 'deceased':
+          this.filters = inject(DECEASED_MEMBERS_FILTERS);
+          this.columns = inject(DECEASED_MEMBERS_COLUMNS);
+          break;
+        case 'deactivated':
+          this.filters = inject(DEACTIVATED_MEMBERS_FILTERS);
+          this.columns = inject(DEACTIVATED_MEMBERS_COLUMNS);
           break;
       }
       this.cdr.detectChanges();

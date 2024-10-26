@@ -39,7 +39,7 @@ export const routes: Routes = [
       {
         path: '',
         component: ListComponent,
-        data: { title: 'Accounts List' },
+        data: { title: 'Users List' },
       },
     ],
   },
