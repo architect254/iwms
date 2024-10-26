@@ -1,5 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ValueType } from './control.component';
+import { ProviderToken } from '@angular/core';
+import { Observable } from 'rxjs';
 
 export function toFormGroup(
   controls: DynamicCustomFormControlBase<ValueType>[]
@@ -92,24 +93,22 @@ export class CustomDropdownControl extends DynamicCustomFormControlBase<string> 
 export class CustomSearchControl extends DynamicCustomFormControlBase<string> {
   override controlType = 'search';
   override updateOn: 'blur' | 'change' = 'change';
-  options?: { id: string | number; name: string }[];
-  constructor(
-    config: {
-      value?: string;
-      placeholder?: string;
-      key?: string;
-      label?: string;
-      icon?: string;
-      required?: boolean;
-      visible?: boolean;
-      order?: number;
-      controlType?: string;
-      type?: string;
-      options?: { id: string | number; name: string }[];
-    } = {}
-  ) {
+  service: ProviderToken<Searchable>;
+  constructor(config: {
+    value?: string;
+    placeholder?: string;
+    key?: string;
+    label?: string;
+    icon?: string;
+    required?: boolean;
+    visible?: boolean;
+    order?: number;
+    controlType?: string;
+    type?: string;
+    service: ProviderToken<Searchable>;
+  }) {
     super(config);
-    this.options = config.options || [];
+    this.service = config.service;
   }
 }
 
@@ -134,4 +133,19 @@ export class CustomDateControl extends DynamicCustomFormControlBase<string> {
     super(config);
     this.dateConfig = config.dateConfig!;
   }
+}
+
+export type ValueType = string | number | Date;
+
+export interface SearchDto {
+  term: string;
+  skip: number;
+  take: number;
+}
+export interface SearchOption {
+  id: string;
+  name: string;
+}
+export interface Searchable {
+  search(searchDto: SearchDto): Observable<SearchOption[]>;
 }

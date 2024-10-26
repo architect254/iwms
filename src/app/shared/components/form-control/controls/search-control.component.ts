@@ -6,9 +6,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 
-import { CustomSearchControl } from '../model';
-import { map, startWith, Subscription, switchMap, tap } from 'rxjs';
+import { CustomSearchControl, SearchDto, SearchOption } from '../model';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  Observable,
+  of,
+  startWith,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { UsersService } from '../../../../pages/users/users.service';
+import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
   standalone: true,
@@ -23,11 +36,16 @@ import { UsersService } from '../../../../pages/users/users.service';
     AsyncPipe,
   ],
 })
-export class CustomSearchControlComponent implements OnInit, OnDestroy {
+export class CustomSearchControlComponent<T> implements OnInit, OnDestroy {
   @Input() control!: CustomSearchControl;
   @Input() form!: FormGroup;
 
-  private _accountsService = inject(UsersService);
+  filteredOptions!: SearchOption[];
+  selectedOption!: SearchOption;
+
+  private _service = inject(this.control.service);
+
+  // this._auto.autocomplete.options[whatever].select();
 
   subscriptions = new Subscription();
 
@@ -35,34 +53,35 @@ export class CustomSearchControlComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.form.controls[this.control.key].valueChanges
         .pipe(
-          startWith(this.control.value ? this.control.value : ''),
-          map((id_number) => id_number.toLowerCase()),
-          switchMap((id_number) => {
-            return this._accountsService.getMany('all', 1, 10, [
-              { key: 'id_number', value: id_number },
-            ]);
+          distinctUntilChanged(),
+          debounceTime(10),
+          filter((searchText) => !!searchText),
+          switchMap((searchText) => {
+            let searchDto: SearchDto = { term: searchText, skip: 0, take: 10 };
+            return this._service.search(searchDto).pipe(
+              catchError((err) => {
+                if (err.error.status === 404) {
+                  return of([
+                    { id: '', name: `--- No results for: ${searchText} ---` },
+                  ]);
+                } else return [];
+              })
+            );
           })
         )
         .subscribe(
-          (accountOptions) =>
-            (this.control.options = accountOptions.map((account) => {
-              return { id: account.id_number, name: account.name };
-            }))
+          (options: SearchOption[]) => (this.filteredOptions = options)
         )
     );
   }
 
-  displayFn(id: number) {
-    const correspondingOption = Array.isArray(this.control.options)
-      ? this.control.options.find((option) => option.id === id)
-      : null;
-    return correspondingOption ? correspondingOption.name : '';
-  }
+  onNew() {}
 
-  selectSearchOption(option: { id: string | number; name: string }) {}
+  displayFn(id: string): string {
+    return this.filteredOptions.find((option) => option.id == id)?.name || '';
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 }
-export type ValueType = string | number | Date;

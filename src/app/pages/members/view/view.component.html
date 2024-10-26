@@ -1,0 +1,41 @@
+<iwms-header
+  [title]="pageTitle"
+  [updateUrl]="updateUrl"
+  [listUrl]="listUrl"
+></iwms-header>
+
+<!-- #core_user -->
+
+<h4 class="core-account-header mat-headline-large">Account Details</h4>
+<iwms-dynamic-view [dataset]="accountDataView | async"></iwms-dynamic-view>
+
+<!-- #welfare -->
+@if (welfare) {
+<h4 class="welfare-header mat-headline-large">Welfare Details</h4>
+<iwms-dynamic-view [dataset]="welfareDataView | async"></iwms-dynamic-view>
+}
+<!-- #spouse -->
+
+@if (spouse) {
+<h4 class="spouse-header mat-headline-large">Spouse Details</h4>
+
+<iwms-dynamic-view
+  class="spouse-section"
+  [dataset]="spouseDataView | async"
+></iwms-dynamic-view>
+}
+
+<!-- #children -->
+
+@if (children && children.length) {
+<h4 class="children-header mat-headline-large">Children Details</h4>
+
+@for (item of children; track $index; ) {
+<h5 class="children-header child mat-title-medium">
+  Child Details [{{ $index + 1 }}]
+</h5>
+<iwms-dynamic-view
+  class="child-section"
+  [dataset]="childDataView[$index] | async"
+></iwms-dynamic-view>
+}}

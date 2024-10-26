@@ -34,6 +34,8 @@ import { PasswordResetDialogComponent } from '../password-reset-dialog/password-
 import { AuthService } from '../../../core/services/auth.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../../core/services/loading.service';
+import { Admin } from '../../../pages/users/entities/admin.entity';
+import { Member } from '../../../pages/users/entities/member.entity';
 
 @Component({
   selector: 'iwms-navigation',
@@ -68,7 +70,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
       shareReplay()
     );
 
-  account!: Observable<any>;
+  user!: Observable<Admin | Member | null>;
   isApiLoading: boolean = false;
 
   breadcrumbs: BreadCrumb[] = [];
@@ -89,7 +91,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.account = this.authService.currentTokenUserValue;
+    this.user = this.authService.user;
     this.subscription.add(
       this.loadingService.isLoading.subscribe((isLoading) => {
         this.isApiLoading = isLoading;

@@ -6,6 +6,8 @@ import {
   CustomSearchControl,
 } from '../../../shared/components/form-control/model';
 import { ValueType } from '../../../shared/components/form-control/control.component';
+import { WelfaresService } from '../welfares.service';
+import { UsersService } from '../../users/users.service';
 
 export function welfareDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [
@@ -45,6 +47,7 @@ export function welfareDetailsFormControls() {
       icon: 'manage_accounts',
       required: true,
       order: 4,
+      service: UsersService,
     }),
 
     new CustomSearchControl({
@@ -55,6 +58,7 @@ export function welfareDetailsFormControls() {
       icon: 'account_box',
       required: true,
       order: 5,
+      service: UsersService,
     }),
     new CustomSearchControl({
       key: 'secretary',
@@ -64,6 +68,7 @@ export function welfareDetailsFormControls() {
       icon: 'person_check',
       required: true,
       order: 4,
+      service: UsersService,
     }),
   ];
   return of(controls.sort((a, b) => a.order - b.order));

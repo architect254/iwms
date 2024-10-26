@@ -1,6 +1,13 @@
 ﻿import { inject, Injectable } from '@angular/core';
 
-import { BehaviorSubject, first, map, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  first,
+  map,
+  Observable,
+  ReplaySubject,
+  tap,
+} from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -16,21 +23,20 @@ import { Member } from '../../pages/users/entities/member.entity';
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
 
-  private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(null);
-  public currentToken: Observable<any> = this.currentTokenSubject
-    .asObservable()
-    .pipe(first());
+  private _token = new ReplaySubject(1);
 
   private jwtHelper = new JwtHelperService();
 
   constructor(private _storage: LocalStorageService) {
     super();
-    const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
-    this.currentTokenSubject.next(token);
   }
 
-  get currentTokenUserValue(): Observable<Admin | Member | null> {
-    return this.currentToken.pipe(
+  get token(): Observable<any> {
+    return this._token.asObservable().pipe(first());
+  }
+
+  get user(): Observable<Admin | Member | null> {
+    return this.token.pipe(
       map((token) => {
         if (token) {
           const payload: JwtPayload = jwtDecode(token);
@@ -41,7 +47,7 @@ export class AuthService extends ApiService {
   }
 
   get isAuthenticated(): Observable<boolean> {
-    return this.currentToken.pipe(
+    return this.token.pipe(
       map((token) => {
         // return !this.jwtHelper
         //   .isTokenExpired(token, Date.now())
@@ -53,6 +59,14 @@ export class AuthService extends ApiService {
         }
       })
     );
+  }
+
+  inilialize() {
+    return new Promise<void>((resolve) => {
+      const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
+      this._token.next(token);
+      resolve();
+    });
   }
 
   signUp(credentials: SignUpDto) {
@@ -69,17 +83,10 @@ export class AuthService extends ApiService {
         tap({
           next: ({ token }) => {
             this._storage.set(STORAGE_KEYS.ACCESS_TOKEN, token);
-            this.checkUser();
+            this._token.next(token);
           },
         })
       );
-  }
-
-  checkUser() {
-    const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
-    if (token) {
-      this.currentTokenSubject.next(token);
-    }
   }
 
   resetPassword(payload: any) {
@@ -88,7 +95,7 @@ export class AuthService extends ApiService {
 
   logout() {
     this._storage.clear();
-    this.currentTokenSubject.next(null);
+    this._token.next(null);
   }
 }
 export interface JwtPayload {

@@ -1,21 +1,29 @@
 <div [formGroup]="form">
   <mat-form-field appearance="outline" class="form-field selector-control">
-    <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
+    <!-- <mat-label [attr.for]="control.key">{{ control.label }}</mat-label> -->
     <input
       type="text"
-      [placeholder]="control.placeholder ?? 'Pick one'"
       [attr.aria-label]="control.label"
+      [placeholder]="control.placeholder ?? 'Pick one'"
       matInput
+      [(ngModel)]="selectedOption"
       [formControlName]="control.key"
       [matAutocomplete]="auto"
     />
+    <button
+      matSuffix
+      mat-button
+      mat-icon-button
+      aria-label="clear"
+      (click)="onNew()"
+    >
+      <mat-icon matSuffix>add_box</mat-icon>
+    </button>
     <mat-autocomplete
-      autoActiveFirstOption
       #auto="matAutocomplete"
-      hideSingleSelectionIndicator="true"
       [displayWith]="displayFn"
     >
-      @for (option of control.options; track option) {
+      @for (option of filteredOptions; track option) {
       <mat-option [value]="option.id">{{ option?.name }}</mat-option>
       }
     </mat-autocomplete>

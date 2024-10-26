@@ -3,6 +3,7 @@ import {
   provideZoneChangeDetection,
   isDevMode,
   InjectionToken,
+  APP_INITIALIZER,
 } from '@angular/core';
 import {
   provideRouter,
@@ -37,7 +38,11 @@ import {
   API_SERVER_URL,
   apiServerUrlFactory,
 } from './core/services/api.service';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { LocalStorageService } from './core/services/local-storage.service';
+
+export function initializAuth(authService: AuthService) {
+  return () => authService.inilialize();
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -65,6 +70,12 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([loadingInterceptor, errorInterceptor])
     ),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializAuth,
+      deps: [AuthService, LocalStorageService],
+      multi: true,
+    },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: API_SERVER_URL, useFactory: apiServerUrlFactory, multi: true },
