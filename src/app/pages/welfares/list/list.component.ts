@@ -18,7 +18,7 @@ import {
   Filter,
 } from '../../../shared/views/grid/model';
 import { actions, columns, FilterRequest, filters } from './model';
-import { Welfare } from '../../users/entities/user.entity';
+import { Welfare } from '../../welfares/entities/welfare.entity';
 import { getName } from '../../../core/models/utils';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
@@ -68,7 +68,7 @@ export class ListComponent extends ListPage {
     super.ngOnInit();
   }
 
-  fetchData(page: number, take: number, type: string, filters?: Filter[]) {
+  fetchData(select: string, page: number, take: number, filters?: Filter[]) {
     this.subscriptions.add(
       this.service.getWelfares(page, take, filters).subscribe((welfares) => {
         this.data = welfares.map((welfare) => {

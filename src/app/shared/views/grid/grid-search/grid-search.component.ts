@@ -19,7 +19,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { CdkObserveContent } from '@angular/cdk/observers';
-import { Filter, FilterOption } from '../model';
+import { Filter, FilterOption, StatusColors, StatusLabels } from '../model';
 
 @Component({
   selector: 'iwms-grid-search',
@@ -41,8 +41,10 @@ import { Filter, FilterOption } from '../model';
   styleUrl: './grid-search.component.scss',
 })
 export class GridSearchComponent implements OnInit {
-  @Input() title: string = '';
-  @Input() filters: any = [];
+  @Input() title!: string;
+  @Input() filters!: FilterOption[];
+  @Input() labels!: StatusLabels;
+  @Input() colors!: StatusColors;
 
   @Output() applyFilter: EventEmitter<Filter[]> = new EventEmitter();
 

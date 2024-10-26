@@ -1,4 +1,4 @@
-import { Welfare } from '../../users/entities/user.entity';
+import { Welfare } from '../../welfares/entities/welfare.entity';
 import {
   Action,
   FilterOption,

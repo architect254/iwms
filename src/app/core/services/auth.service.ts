@@ -9,7 +9,8 @@ import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
 import { ApiService } from './api.service';
 import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
-import { UserAccount } from '../../pages/users/entities/user.entity';
+import { Admin } from '../../pages/users/entities/admin.entity';
+import { Member } from '../../pages/users/entities/member.entity';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
@@ -30,12 +31,12 @@ export class AuthService extends ApiService {
     super();
   }
 
-  get currentTokenUserValue(): Observable<UserAccount | null> {
+  get currentTokenUserValue(): Observable<Admin | Member | null> {
     return this.currentToken.pipe(
       map((token) => {
         if (token) {
           const payload: JwtPayload = jwtDecode(token);
-          return payload.account as UserAccount;
+          return payload.account as Admin | Member;
         } else return null;
       })
     );
@@ -93,5 +94,5 @@ export class AuthService extends ApiService {
   }
 }
 export interface JwtPayload {
-  account: UserAccount;
+  account: Admin | Member;
 }
