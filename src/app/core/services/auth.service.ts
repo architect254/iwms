@@ -16,19 +16,17 @@ import { Member } from '../../pages/users/entities/member.entity';
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
 
-  private _storageService = inject(LocalStorageService);
-
-  private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(
-    this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN)
-  );
+  private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(null);
   public currentToken: Observable<any> = this.currentTokenSubject
     .asObservable()
     .pipe(first());
 
   private jwtHelper = new JwtHelperService();
 
-  constructor() {
+  constructor(private _storage: LocalStorageService) {
     super();
+    const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
+    this.currentTokenSubject.next(token);
   }
 
   get currentTokenUserValue(): Observable<Admin | Member | null> {
@@ -70,7 +68,7 @@ export class AuthService extends ApiService {
         first(),
         tap({
           next: ({ token }) => {
-            this._storageService.set(STORAGE_KEYS.ACCESS_TOKEN, token);
+            this._storage.set(STORAGE_KEYS.ACCESS_TOKEN, token);
             this.checkUser();
           },
         })
@@ -78,7 +76,7 @@ export class AuthService extends ApiService {
   }
 
   checkUser() {
-    const token = this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN);
+    const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
       this.currentTokenSubject.next(token);
     }
@@ -89,7 +87,7 @@ export class AuthService extends ApiService {
   }
 
   logout() {
-    this._storageService.clear();
+    this._storage.clear();
     this.currentTokenSubject.next(null);
   }
 }
