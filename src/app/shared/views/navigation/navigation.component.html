@@ -87,7 +87,7 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
     <mat-toolbar id="toolbar">
-      <mat-toolbar-row class="container primary-toolbar">
+      <mat-toolbar-row class="container-fluid primary-toolbar">
         @if (isHandset | async) {
         <button
           type="button"
@@ -162,7 +162,7 @@
         </mat-nav-list>
       </mat-toolbar-row>
       <mat-toolbar-row class="secondary-toolbar">
-        <nav aria-label="breadcrumb" class="container">
+        <nav aria-label="breadcrumb" class="container-fluid breadcrumb-container">
           <ol class="breadcrumb mat-body-medium">
             @for (breadcrumb of breadcrumbs; track $index) {
             <li
@@ -181,7 +181,7 @@
         </nav>
       </mat-toolbar-row>
     </mat-toolbar>
-    <section class="container" id="main-routing-container">
+    <section class="container-fluid" id="main-routing-container">
       <router-outlet></router-outlet>
     </section>
   </mat-sidenav-content>

@@ -47,14 +47,17 @@
 
   #toolbar {
     .secondary-toolbar {
-      .breadcrumb {
-        margin: 0;
+      .breadcrumb-container {
+        padding: 0;
+        .breadcrumb {
+          margin: 0;
 
-        .breadcrumb-item {
-          &.active {
-            a {
-              color: var(--bs-breadcrumb-item-active-color);
-              text-decoration: none;
+          .breadcrumb-item {
+            &.active {
+              a {
+                color: var(--bs-breadcrumb-item-active-color);
+                text-decoration: none;
+              }
             }
           }
         }

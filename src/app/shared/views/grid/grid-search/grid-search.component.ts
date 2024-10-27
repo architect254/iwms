@@ -71,18 +71,18 @@ export class GridSearchComponent implements OnInit {
     const childAdded = mutations.find(
       (mutationRecord) => mutationRecord.type == 'childList'
     );
-    if (childAdded) {
-      this.document
-        .getElementById('header')
-        ?.setAttribute(
-          'style',
-          `margin-bottom:${
-            20 +
-            this.document.getElementById('selected-filter-options')
-              ?.offsetHeight!
-          }px`
-        );
-    }
+    // if (childAdded) {
+    //   this.document
+    //     .getElementById('header')
+    //     ?.setAttribute(
+    //       'style',
+    //       `margin-bottom:${
+    //         20 +
+    //         this.document.getElementById('selected-filter-options')
+    //           ?.offsetHeight!
+    //       }px`
+    //     );
+    // }
   }
 
   onSelectFilterOption(option: FilterOption) {

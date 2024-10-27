@@ -4,14 +4,16 @@
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
+    margin: 4px 0;
 
-    .search,.search-option {
+    .search,
+    .search-option {
         max-width: 250px;
     }
 }
 
 .selected-filter-options {
-    position: absolute;
+    position: relative;
     left: 0;
 
     display: flex;
@@ -20,5 +22,5 @@
     align-items: center;
 
     width: 100%;
-    margin: 16px auto;
+    margin: 4px 0;
 }

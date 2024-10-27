@@ -7,40 +7,31 @@ import {
   StatusLabels,
 } from '../../../shared/views/grid/model';
 
-const allUsersToggleOptions: ToggleOption[] = [
-  { name: 'All Users', value: 'users', position: 0 },
-];
 const memberToggleOptions: ToggleOption[] = [
-  ...allUsersToggleOptions,
   {
     name: 'All Members',
     value: 'members',
     position: 2,
   },
   {
-    name: 'Active',
-    value: 'active',
-    position: 3,
-  },
-  {
     name: 'Bereaved',
     value: 'bereaved',
-    position: 4,
+    position: 3,
   },
   {
     name: 'Deceased',
     value: 'deceased',
-    position: 5,
+    position: 4,
   },
   {
     name: 'De-Activated',
     value: 'deactivated',
-    position: 6,
+    position: 5,
   },
 ];
 
 export const adminToggleOptions: ToggleOption[] = [
-  { name: 'Admin', value: 'admins', position: 1 },
+  { name: 'Admins', value: 'admins', position: 1 },
   ...memberToggleOptions,
 ];
 

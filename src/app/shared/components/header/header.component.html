@@ -1,11 +1,10 @@
-<header class="container header" id="header">
+<header class="container-fluid header" id="header">
   <div class="header-toggle">
     <h2 class="page-title">{{ title }}</h2>
 
     <!-- #region dynamic content-->
     <ng-content select="[toggle]"></ng-content>
   </div>
-
   <ng-content select="[search]"></ng-content>
 
   <!-- #region naviation buttons-->
