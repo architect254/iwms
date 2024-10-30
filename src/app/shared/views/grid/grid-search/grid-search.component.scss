@@ -1,10 +1,9 @@
 .filter {
-    max-width: 700px;
     display: flex;
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
-    margin: 4px 0;
+    margin-top: 4px;
 
     .search,
     .search-option {
@@ -13,14 +12,12 @@
 }
 
 .selected-filter-options {
-    position: relative;
+    position: absolute;
     left: 0;
-
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
-
-    width: 100%;
     margin: 4px 0;
+    width: 100%;
 }

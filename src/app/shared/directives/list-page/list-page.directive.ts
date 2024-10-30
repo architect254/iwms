@@ -19,6 +19,7 @@ export abstract class ListPage extends Page {
 
   protected page: number = 1;
   protected take: number = 100;
+  protected filters: Filter[] = [];
 
   protected toggledOption!: ToggleOption;
   protected toggledOptionValue: string = 'all';
@@ -32,7 +33,7 @@ export abstract class ListPage extends Page {
   override ngOnInit(): void {
     super.ngOnInit();
 
-    this.fetchData(this.toggledOptionValue, this.page, this.take);
+    this.fetchData(this.page, this.take);
 
     const toolbarHeight = this.document.getElementById('toolbar')?.offsetHeight;
     const headerHeight = this.document.getElementById('header')?.offsetHeight;
@@ -47,17 +48,16 @@ export abstract class ListPage extends Page {
   }
 
   protected abstract fetchData(
-    type?: string,
     page?: number,
     take?: number,
     filters?: Filter[]
   ): void;
 
   doApplyFilter(filters: Filter[]) {
-    this.fetchData(this.toggledOptionValue, this.page, this.take, filters);
+    this.fetchData(this.page, this.take, [...this.filters, ...filters]);
   }
 
   doRefresh() {
-    this.fetchData(this.toggledOptionValue, this.page, this.take);
+    this.fetchData(this.page, this.take, this.filters);
   }
 }

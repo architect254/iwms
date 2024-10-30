@@ -62,6 +62,7 @@ export class GridComponent<T> {
   @Input() defaultSortColumnDirection: SortDirection = 'asc';
 
   @Output() refresh = new EventEmitter<never>();
+  @Output() add = new EventEmitter<never>();
 
   dataSource!: MatTableDataSource<any[]>;
   resultsLength = 0;
@@ -119,5 +120,9 @@ export class GridComponent<T> {
 
   doRefresh() {
     this.refresh.emit();
+  }
+
+  doAdd(){
+    this.add.emit()
   }
 }

@@ -8,8 +8,8 @@
       <button
         mat-flat-button
         class="basic-btn"
-        aria-label=""
-        routerLink="add"
+        aria-label="Add"
+        (click)="doAdd()"
         [disabled]="disableAddition"
       >
         <mat-icon fontIcon="add" class="btn-icon"></mat-icon><span>Add</span>

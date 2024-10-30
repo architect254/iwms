@@ -16,9 +16,9 @@ import { jwtDecode } from 'jwt-decode';
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
 import { ApiService } from './api.service';
 import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
-import { Admin } from '../../pages/users/entities/admin.entity';
-import { Member } from '../../pages/users/entities/member.entity';
-
+import { Admin } from '../entities/admin.entity';
+import { Member } from '../entities/member.entity';
+import { Membership } from '../entities/user.entity';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
@@ -59,6 +59,10 @@ export class AuthService extends ApiService {
         }
       })
     );
+  }
+
+  get isAdmin(): Observable<boolean> {
+    return this.user.pipe(map((user) => user?.membership == Membership.Admin));
   }
 
   inilialize() {

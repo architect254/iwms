@@ -1,11 +1,9 @@
 import {
   ChangeDetectorRef,
   Component,
-  Inject,
   inject,
   OnDestroy,
   OnInit,
-  SkipSelf,
 } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, CommonModule, DOCUMENT } from '@angular/common';
@@ -34,8 +32,8 @@ import { PasswordResetDialogComponent } from '../password-reset-dialog/password-
 import { AuthService } from '../../../core/services/auth.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../../core/services/loading.service';
-import { Admin } from '../../../pages/users/entities/admin.entity';
-import { Member } from '../../../pages/users/entities/member.entity';
+import { Admin } from '../../../core/entities/admin.entity';
+import { Member } from '../../../core/entities/member.entity';
 
 @Component({
   selector: 'iwms-navigation',

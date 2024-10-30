@@ -12,16 +12,10 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
-  map,
-  Observable,
   of,
-  startWith,
   Subscription,
   switchMap,
-  tap,
 } from 'rxjs';
-import { UsersService } from '../../../../pages/users/users.service';
-import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
   standalone: true,

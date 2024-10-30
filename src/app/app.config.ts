@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {
   provideRouter,
+  Router,
   withDebugTracing,
   withRouterConfig,
 } from '@angular/router';
@@ -39,9 +40,22 @@ import {
   apiServerUrlFactory,
 } from './core/services/api.service';
 import { LocalStorageService } from './core/services/local-storage.service';
+import { adminRoutes } from './pages/admin/admin.routes';
+import { clientRoutes } from './pages/client/client.routes';
 
 export function initializAuth(authService: AuthService) {
   return () => authService.inilialize();
+}
+
+export function initializeRoutes(authService: AuthService, router: Router) {
+  return () =>
+    new Promise((resolve) => {
+      if (authService.isAdmin) {
+        router.resetConfig([...adminRoutes, ...routes]);
+      } else {
+        router.resetConfig([...clientRoutes, ...routes]);
+      }
+    });
 }
 
 export const appConfig: ApplicationConfig = {
