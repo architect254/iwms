@@ -19,31 +19,17 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule, Data } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { ListPage } from '../../../shared/directives/list-page/list-page.directive';
-import { GridSearchComponent } from '../../../shared/views/grid/grid-search/grid-search.component';
-import { UsersService } from '../users.service';
-import {
-  getFilterOptions,
-  getGridColumns,
-  getToggleOptions,
-  statusColors,
-  statusLabels,
-} from './model';
-import { GridComponent } from '../../../shared/views/grid/grid.component';
-import {
-  GridColumn,
-  FilterOption,
-  Filter,
-  StatusLabels,
-  Action,
-} from '../../../shared/views/grid/model';
-import {
-  ButtonToggleComponent,
-  ToggleOption,
-} from '../../../shared/components/button-toggle/button-toggle.component';
-import { Member } from '../entities/member.entity';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { Member } from '../../../../core/entities/member.entity';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ToggleOption, ButtonToggleComponent } from '../../../../shared/components/button-toggle/button-toggle.component';
+import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { ListPage } from '../../../../shared/directives/list-page/list-page.directive';
+import { GridSearchComponent } from '../../../../shared/views/grid/grid-search/grid-search.component';
+import { GridComponent } from '../../../../shared/views/grid/grid.component';
+import { FilterOption, GridColumn, StatusLabels, Filter } from '../../../../shared/views/grid/model';
+import { MembersService } from '../members.service';
+import { getToggleOptions, getFilterOptions, getGridColumns, statusLabels, statusColors } from './model';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -93,17 +79,17 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
 export class ListComponent extends ListPage {
   toggleOptions = inject(TOGGLE_OPTIONS);
 
-  filters = inject(FILTERS);
+  filterOptions = inject(FILTERS);
   columns = inject(COLUMNS);
   labels = inject(LABELS);
   colors = inject(COLORS);
 
-  actions = [new Action('', '', () => {})];
+  actions = [];
 
   constructor(
     @SkipSelf() override authService: AuthService,
 
-    private service: UsersService,
+    private service: MembersService,
     private injector: Injector
   ) {
     super(authService);
@@ -121,7 +107,7 @@ export class ListComponent extends ListPage {
     runInInjectionContext(this.injector, () => {
       switch (this.toggledOptionValue) {
         case 'all':
-          this.filters = inject(FILTERS);
+          this.filterOptions = inject(FILTERS);
           this.columns = inject(COLUMNS);
           break;
 
@@ -134,13 +120,12 @@ export class ListComponent extends ListPage {
   }
 
   override fetchData(
-    type: string,
-    page: number,
-    take: number,
-    filters?: Filter[]
+    page: number =this.page,
+    take: number = this.take,
+    filters: Filter[] = this.filters
   ) {
     this.subscriptions.add(
-      this.service.getMany(type, page, take, filters).subscribe((accounts) => {
+      this.service.getMany(page, take, filters).subscribe((accounts) => {
         this.data = accounts.map((account) => {
           return {
             id: account.id,

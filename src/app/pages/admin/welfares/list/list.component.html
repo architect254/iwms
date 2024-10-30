@@ -5,6 +5,6 @@
   name="Welfare Group"
   [data]="data"
   [columns]="columns"
-  [disableAddition]="true"
+  (add)="doAdd()"
   (refresh)="doRefresh()"
 ></iwms-grid>

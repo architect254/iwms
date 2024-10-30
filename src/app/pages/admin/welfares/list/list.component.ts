@@ -13,7 +13,11 @@ import { HeaderComponent } from '../../../../shared/components/header/header.com
 import { ListPage } from '../../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../../shared/views/grid/grid-search/grid-search.component';
 import { GridComponent } from '../../../../shared/views/grid/grid.component';
-import { GridColumn, FilterOption, Filter } from '../../../../shared/views/grid/model';
+import {
+  GridColumn,
+  FilterOption,
+  Filter,
+} from '../../../../shared/views/grid/model';
 import { columns, filters, actions } from './model';
 
 export const COLUMNS = new InjectionToken<GridColumn[]>('grid columns');
@@ -81,6 +85,12 @@ export class ListComponent extends ListPage {
         });
       })
     );
+  }
+
+  doAdd() {
+    this.router.navigate(['add'], {
+      relativeTo: this.route,
+    });
   }
 
   override setTwitterCardMeta(): void {

@@ -1,11 +1,5 @@
-import { Observable, of } from 'rxjs';
-import {
-  DynamicCustomFormControlBase,
-  CustomTextboxControl,
-  CustomDateControl,
-  CustomDropdownControl,
-} from '../../../shared/components/form-control/model';
-import { ValueType } from '../../../shared/components/form-control/control.component';
+import { of, Observable } from "rxjs";
+import { DynamicCustomFormControlBase, ValueType, CustomTextboxControl, CustomDropdownControl, CustomDateControl } from "../../../../shared/components/form-control/model";
 
 export function coreUserDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [

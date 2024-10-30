@@ -5,8 +5,6 @@ import {
   EnvironmentInjector,
   inject,
   InjectionToken,
-  Injector,
-  runInInjectionContext,
   SkipSelf,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,26 +17,15 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { RouterModule, Data } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ListPage } from '../../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../../shared/views/grid/grid-search/grid-search.component';
-import { UsersService } from '../users.service';
+import { AdminsService } from '../admins.service';
 import {
   adminColumns,
   adminfilters,
-  adminToggleOptions,
-  allMembersColumns,
-  allMembersFilters,
-  allUsersColumns,
-  allUsersFilters,
-  bereavedMembersColumns,
-  bereavedMembersFilters,
-  deactivatedMembersColumns,
-  deactivatedMembersFilters,
-  deceasedMembersColumns,
-  deceasedMembersFilters,
   statusColors,
   statusLabels,
 } from './model';
@@ -120,23 +107,8 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
     RouterModule,
   ],
   providers: [
-    { provide: TOGGLE_OPTIONS, useValue: adminToggleOptions },
     { provide: ADMIN_FILTERS, useValue: adminfilters },
-    { provide: ALL_MEMBERS_FILTERS, useValue: allMembersFilters },
-    { provide: BEREAVED_MEMBERS_FILTERS, useValue: bereavedMembersFilters },
-    { provide: DECEASED_MEMBERS_FILTERS, useValue: deceasedMembersFilters },
-    {
-      provide: DEACTIVATED_MEMBERS_FILTERS,
-      useValue: deactivatedMembersFilters,
-    },
     { provide: ADMIN_COLUMNS, useValue: adminColumns },
-    { provide: ALL_MEMBERS_COLUMNS, useValue: allMembersColumns },
-    { provide: BEREAVED_MEMBERS_COLUMNS, useValue: bereavedMembersColumns },
-    { provide: DECEASED_MEMBERS_COLUMNS, useValue: deceasedMembersColumns },
-    {
-      provide: DEACTIVATED_MEMBERS_COLUMNS,
-      useValue: deactivatedMembersColumns,
-    },
     { provide: LABELS, useValue: statusLabels },
     { provide: COLORS, useValue: statusColors },
   ],
@@ -144,18 +116,8 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  toggleOptions = inject(TOGGLE_OPTIONS);
-
   adminFilters = inject(ADMIN_FILTERS);
   adminColumns = inject(ADMIN_COLUMNS);
-  membersFilters = inject(ALL_MEMBERS_FILTERS);
-  membersColumns = inject(ALL_MEMBERS_COLUMNS);
-  bereavedMembersFilters = inject(BEREAVED_MEMBERS_FILTERS);
-  bereavedMembersColumns = inject(BEREAVED_MEMBERS_COLUMNS);
-  deceasedMembersFilters = inject(DECEASED_MEMBERS_FILTERS);
-  deceasedMembersColumns = inject(DECEASED_MEMBERS_COLUMNS);
-  deactivatedMembersFilters = inject(DECEASED_MEMBERS_FILTERS);
-  deactivatedMembersColumns = inject(DECEASED_MEMBERS_COLUMNS);
 
   filterOptions = this.adminFilters;
   columns = this.adminColumns;
@@ -169,50 +131,15 @@ export class ListComponent extends ListPage {
   constructor(
     @SkipSelf() override authService: AuthService,
 
-    private service: UsersService
+    private service: AdminsService
   ) {
     super(authService);
 
-    this.toggledOption = this.toggleOptions[0];
-    this.toggledOptionValue = this.toggledOption.value;
-    this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
+    this.filters = [{ key: 'membership', value: Membership.Admin }];
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-  }
-
-  onToggle(option: ToggleOption) {
-    this.toggledOptionValue = option.value;
-    switch (this.toggledOptionValue) {
-      case Membership.Admin:
-        this.filterOptions = this.adminFilters;
-        this.filters = [{ key: 'membership', value: Membership.Admin }];
-        this.columns = this.adminColumns;
-        break;
-      case Membership.Active:
-        this.filterOptions = this.membersFilters;
-        this.filters = [{ key: 'membership', value: Membership.Active }];
-        this.columns = this.membersColumns;
-        break;
-      case Membership.Bereaved:
-        this.filterOptions = this.bereavedMembersFilters;
-        this.filters = [{ key: 'membership', value: Membership.Bereaved }];
-        this.columns = this.bereavedMembersColumns;
-        break;
-      case Membership.Deceased:
-        this.filterOptions = this.deceasedMembersFilters;
-        this.filters = [{ key: 'membership', value: Membership.Deceased }];
-        this.columns = this.deactivatedMembersColumns;
-        break;
-      case Membership.Deactivated:
-        this.filterOptions = this.deactivatedMembersFilters;
-        this.filters = [{ key: 'membership', value: Membership.Deactivated }];
-        this.columns = this.deactivatedMembersColumns;
-        break;
-    }
-    this.cdr.detectChanges();
-    this.doRefresh();
   }
 
   override fetchData(
@@ -243,8 +170,9 @@ export class ListComponent extends ListPage {
   }
 
   doAdd() {
-    this.router.navigate(['./add'], {
-      state: { membership: this.toggledOptionValue },
+    this.router.navigate(['add'], {
+      state: { membership: Membership.Admin },
+      relativeTo: this.route,
     });
   }
   override setTwitterCardMeta(): void {

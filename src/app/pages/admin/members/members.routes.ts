@@ -4,8 +4,8 @@ import { UpsertComponent } from './upsert/upsert.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { welfaresResolver } from '../welfares/welfares.resolver';
-import { ContainerLayoutComponent } from '../../shared/views/navigation/container-layout.component';
-import { userResolver } from './user.resolver';
+import { memberResolver } from './member.resolver';
+import { ContainerLayoutComponent } from '../../../shared/views/navigation/container-layout.component';
 
 export const routes: Routes = [
   {
@@ -22,7 +22,7 @@ export const routes: Routes = [
         path: ':id/update',
         component: UpsertComponent,
         resolve: {
-          user: userResolver,
+          member: memberResolver,
           welfares: welfaresResolver,
         },
         data: { title: 'Update User', action: 'update' },
@@ -31,7 +31,7 @@ export const routes: Routes = [
         path: ':id',
         component: ViewComponent,
         resolve: {
-          user: userResolver,
+          member: memberResolver,
           welfares: welfaresResolver,
         },
         data: { title: 'View User' },

@@ -43,26 +43,28 @@ import { LocalStorageService } from './core/services/local-storage.service';
 import { adminRoutes } from './pages/admin/admin.routes';
 import { clientRoutes } from './pages/client/client.routes';
 
-export function initializAuth(authService: AuthService) {
+export function initializeAuth(authService: AuthService) {
   return () => authService.inilialize();
 }
 
 export function initializeRoutes(authService: AuthService, router: Router) {
-  return () =>
-    new Promise((resolve) => {
+  return () => {
+    new Promise<void>((resolve) => {
       if (authService.isAdmin) {
         router.resetConfig([...adminRoutes, ...routes]);
       } else {
         router.resetConfig([...clientRoutes, ...routes]);
       }
+      resolve();
     });
+  };
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
-      routes,
+      adminRoutes,
       // withDebugTracing(),
       withRouterConfig({ onSameUrlNavigation: 'reload' })
     ),
@@ -86,10 +88,16 @@ export const appConfig: ApplicationConfig = {
     ),
     {
       provide: APP_INITIALIZER,
-      useFactory: initializAuth,
+      useFactory: initializeAuth,
       deps: [AuthService, LocalStorageService],
       multi: true,
     },
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: initializeRoutes,
+    //   deps: [AuthService, LocalStorageService, Router],
+    //   multi: true,
+    // },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: API_SERVER_URL, useFactory: apiServerUrlFactory, multi: true },

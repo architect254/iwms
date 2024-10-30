@@ -22,7 +22,7 @@ import { DynamicFormComponent } from '../../../../shared/components/form-control
 import { DynamicCustomFormControlBase, ValueType, CustomDropdownControl } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { EditableViewPage, IsProceedAllowed } from '../../../../shared/directives/view-page/editable-view-page.directive';
-import { UsersService } from '../users.service';
+import { MembersService } from '../members.service';
 import { coreUserDetailsFormControls, newWelfareDetailsFormControls, chooseWelfareFormControls, spouseDetailsFormControls, childDetailsFormControls } from './model';
 
 export const CORE_USER_DETAILS_FORM_CONTROLS = new InjectionToken<
@@ -122,7 +122,7 @@ export class UpsertComponent extends EditableViewPage {
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    private service: UsersService
+    private service: MembersService
   ) {
     super(authService);
   }

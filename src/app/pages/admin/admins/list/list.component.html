@@ -1,10 +1,4 @@
 <iwms-header [title]="pageTitle">
-  <iwms-button-toggle
-    toggle
-    [options]="toggleOptions"
-    [value]="toggledOptionValue"
-    (toggle)="onToggle($event)"
-  ></iwms-button-toggle>
   <iwms-grid-search
     search
     [filters]="filterOptions"
@@ -12,7 +6,7 @@
   ></iwms-grid-search
 ></iwms-header>
 <iwms-grid
-  [name]="toggledOption.name"
+  [name]="'Admin List'"
   [data]="data"
   [columns]="columns"
   [labels]="labels"

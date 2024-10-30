@@ -16,7 +16,7 @@ import { DynamicFormComponent } from '../../../../shared/components/form-control
 import { DynamicCustomFormControlBase, ValueType } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { EditableViewPage } from '../../../../shared/directives/view-page/editable-view-page.directive';
-import { UsersService } from '../../members/users.service';
+import { MembersService } from '../../members/members.service';
 import { WelfaresService } from '../welfares.service';
 import { welfareDetailsFormControls, chooseWelfareFormControls } from './model';
 
@@ -68,7 +68,7 @@ export class UpsertComponent extends EditableViewPage {
   constructor(
     @SkipSelf() override authService: AuthService,
     private service: WelfaresService,
-    private accountService: UsersService
+    private membersService: MembersService
   ) {
     super(authService);
   }

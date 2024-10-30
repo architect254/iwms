@@ -16,7 +16,7 @@ import { DynamicCustomDataBase } from '../../../../shared/components/data-view/v
 import { ValueType } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ViewPage } from '../../../../shared/directives/view-page/view-page.directive';
-import { UsersService } from '../users.service';
+import { AdminsService } from '../admins.service';
 import { accountDataView, welfareDataView, spouseDataView, childDataView } from './model';
 import { Welfare } from '../../../../core/entities/welfare.entity';
 
@@ -80,7 +80,7 @@ export class ViewComponent extends ViewPage {
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    private service: UsersService
+    private service: AdminsService
   ) {
     super(authService);
   }

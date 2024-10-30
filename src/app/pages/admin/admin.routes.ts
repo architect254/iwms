@@ -9,12 +9,12 @@ export const adminRoutes: Routes = [
     canActivate: [authGuard],
     children: [
       {
-        path: 'users',
+        path: 'admins',
         data: {
-          title: 'IWMS Users',
+          title: 'IWMS Admins',
         },
         loadChildren: () =>
-          import('./users/users.routes').then((users) => users.routes),
+          import('./admins/admins.routes').then((admins) => admins.routes),
       },
       {
         path: 'welfare-groups',
@@ -26,7 +26,15 @@ export const adminRoutes: Routes = [
             (welfares) => welfares.routes
           ),
       },
-      { path: '', redirectTo: '/users', pathMatch: 'full' },
+      {
+        path: 'members',
+        data: {
+          title: 'IWMS Members',
+        },
+        loadChildren: () =>
+          import('./members/members.routes').then((members) => members.routes),
+      },
+      { path: '', redirectTo: '/admins', pathMatch: 'full' },
     ],
   },
   { path: '**', redirectTo: 'not-found' },

@@ -1,7 +1,12 @@
-import { of, Observable } from "rxjs";
-import { DynamicCustomFormControlBase, ValueType, CustomTextboxControl, CustomSearchControl, CustomDropdownControl } from "../../../../shared/components/form-control/model";
-import { UsersService } from "../../users/users.service";
-
+import { of, Observable } from 'rxjs';
+import {
+  DynamicCustomFormControlBase,
+  ValueType,
+  CustomTextboxControl,
+  CustomSearchControl,
+  CustomDropdownControl,
+} from '../../../../shared/components/form-control/model';
+import { MembersService } from '../../members/members.service';
 
 export function welfareDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [
@@ -33,36 +38,15 @@ export function welfareDetailsFormControls() {
       required: true,
       order: 3,
     }),
-    new CustomSearchControl({
-      key: 'chairperson',
-      label: 'Chair Person',
-      value: '',
-      placeholder: 'John Doe',
-      icon: 'manage_accounts',
+    new CustomTextboxControl({
+      key: 'hostname',
+      label: 'Hostname',
+      value: window.location.hostname,
+      placeholder: 'site.com',
+      icon: 'web',
+      type: 'url',
       required: true,
-      order: 4,
-      service: UsersService,
-    }),
-
-    new CustomSearchControl({
-      key: 'treasurer',
-      label: 'Treasurer',
-      value: '',
-      placeholder: 'John Doe',
-      icon: 'account_box',
-      required: true,
-      order: 5,
-      service: UsersService,
-    }),
-    new CustomSearchControl({
-      key: 'secretary',
-      label: 'Secretary',
-      value: '',
-      placeholder: 'John Doe',
-      icon: 'person_check',
-      required: true,
-      order: 4,
-      service: UsersService,
+      order: 3,
     }),
   ];
   return of(controls.sort((a, b) => a.order - b.order));

@@ -1,11 +1,7 @@
-import { Membership, User } from '../entities/user.entity';
-import { ToggleOption } from '../../../shared/components/button-toggle/button-toggle.component';
-import {
-  FilterOption,
-  GridColumn,
-  StatusColors,
-  StatusLabels,
-} from '../../../shared/views/grid/model';
+import { User, Membership } from "../../../../core/entities/user.entity";
+import { ToggleOption } from "../../../../shared/components/button-toggle/button-toggle.component";
+import { FilterOption, GridColumn, StatusLabels, StatusColors } from "../../../../shared/views/grid/model";
+
 
 const userToggleOptions: ToggleOption[] = [
   { name: 'All', value: 'all', position: 0 },
@@ -231,7 +227,7 @@ export const getFilterOptions = (user: User) => {
     case Membership.Deceased:
       return deceasedMembersFilters;
 
-    case Membership.DeActivated:
+    case Membership.Deactivated:
       return deactivatedMembersFilters;
 
     default:
@@ -386,7 +382,7 @@ export const getGridColumns = (user: User) => {
     case Membership.Deceased:
       return deceasedMembersColumns;
 
-    case Membership.DeActivated:
+    case Membership.Deactivated:
       return deactivatedMembersColumns;
 
     default:

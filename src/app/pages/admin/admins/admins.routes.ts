@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { UpsertComponent } from './upsert/admin/upsert.component';
 import { ListComponent } from './list/list.component';
 import { ViewComponent } from './view/view.component';
 import { welfaresResolver } from '../welfares/welfares.resolver';
-import { userResolver } from './user.resolver';
+import { adminResolver } from './admin.resolver';
 import { ContainerLayoutComponent } from '../../../shared/views/navigation/container-layout.component';
+import { UpsertComponent } from './upsert/upsert.component';
+import { upsertAdminGuard } from '../../../core/guards/upsert-admin.guard';
 
 export const routes: Routes = [
   {
@@ -15,31 +16,31 @@ export const routes: Routes = [
       {
         path: 'add',
         component: UpsertComponent,
-        resolve: { welfares: welfaresResolver },
-        data: { title: 'Add User' },
+        canMatch: [upsertAdminGuard],
+        data: { title: 'Add Admin' },
       },
       {
         path: ':id/update',
         component: UpsertComponent,
         resolve: {
-          user: userResolver,
+          admin: adminResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Update User', action: 'update' },
+        data: { title: 'Update Admin', action: 'update' },
       },
       {
         path: ':id',
         component: ViewComponent,
         resolve: {
-          user: userResolver,
+          admin: adminResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'View User' },
+        data: { title: 'View Admin' },
       },
       {
         path: '',
         component: ListComponent,
-        data: { title: 'Users List' },
+        data: { title: 'Admin List' },
       },
     ],
   },

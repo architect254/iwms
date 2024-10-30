@@ -1,10 +1,5 @@
-import { Observable, of } from 'rxjs';
-import {
-  DynamicCustomDataBase,
-  CustomTextData,
-  CustomDateData,
-  CustomStatusData,
-} from '../../../shared/components/data-view/view.service';
+import { Observable, of } from "rxjs";
+import { DynamicCustomDataBase, CustomTextData, CustomStatusData, CustomDateData } from "../../../../shared/components/data-view/view.service";
 
 export function accountDataView(): Observable<
   DynamicCustomDataBase<string | number | Date>[]

@@ -4,7 +4,7 @@ import { ViewComponent } from './view/view.component';
 import { UpsertComponent } from './upsert/upsert.component';
 import { ContainerLayoutComponent } from '../../../shared/views/navigation/container-layout.component';
 import { welfareResolver } from './welfare.resolver';
-import { usersResolver } from '../users/users.resolver';
+import { membersResolver } from '../members/members.resolver';
 
 export const routes: Routes = [
   {
@@ -19,7 +19,7 @@ export const routes: Routes = [
       {
         path: ':id/update',
         component: UpsertComponent,
-        resolve: { welfare: welfareResolver, users: usersResolver },
+        resolve: { welfare: welfareResolver, members: membersResolver },
         data: { title: 'Update Welfare Group Details', action: 'update' },
       },
       {
