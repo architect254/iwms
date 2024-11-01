@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
-import { Member } from '../../../../core/entities/member.entity';
+import { Member, Role } from '../../../../core/entities/member.entity';
 import { Welfare } from '../../../../core/entities/welfare.entity';
 import { getIDNumber } from '../../../../core/models/utils';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -30,6 +30,7 @@ import {
 import { Child } from '../../../../core/entities/child.entity';
 import { Spouse } from '../../../../core/entities/spouse.entity';
 import { childDetailsFormControls } from '../../members/upsert/model';
+import { Membership } from '../../../../core/entities/user.entity';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -85,10 +86,11 @@ export class UpsertComponent extends EditableViewPage {
   override listUrl: string = '/welfares';
 
   welfare?: Welfare;
+  welfareId?: string;
 
-  chairperson!: Member;
-  treasurer!: Member;
-  secretary!: Member;
+  chairperson: Member = new Member();
+  treasurer: Member = new Member();
+  secretary: Member = new Member();
 
   welfareDetailsFormControls = inject(WELFARE_DETAILS_FORM_CONTROLS);
   specialMemberDetailsFormControls = inject(
@@ -114,45 +116,39 @@ export class UpsertComponent extends EditableViewPage {
 
   override readonly isProceedAllowed: Record<
     string,
-    boolean | Record<string, boolean>
+    Record<string, boolean | boolean[]>
   > = {
-    Welfare: false,
+    Welfare: { proceed: false },
     Chairperson: {
       proceed: false,
       Spouse: false,
-      Children: false,
+      Children: [false],
     },
     Treasurer: {
       proceed: false,
       Spouse: false,
-      Children: false,
+      Children: [false],
     },
     Secretary: {
       proceed: false,
       Spouse: false,
-      Children: false,
+      Children: [false],
     },
   };
 
   readonly checks: Record<string, Record<string, boolean>> = {
     Chairperson: {
-      Spouse: true,
-      Children: true,
+      Spouse: false,
+      Children: false,
     },
     Treasurer: {
-      Spouse: true,
-      Children: true,
+      Spouse: false,
+      Children: false,
     },
     Secretary: {
-      Spouse: true,
-      Children: true,
+      Spouse: false,
+      Children: false,
     },
-  };
-
-  validChildren: Record<string, boolean[]> = {
-    Chairperson: [false],
-    Treasurer: [false],
-    Secretary: [false],
   };
 
   constructor(
@@ -171,12 +167,12 @@ export class UpsertComponent extends EditableViewPage {
         this.pageAction = data['action'];
         this.viewUrl = `/welfares/${this.route.snapshot.paramMap.get('id')}`;
 
-        this.welfare = data['welfare'];
-        this.chairperson = this.welfare?.chairperson!;
-        this.treasurer = this.welfare?.treasurer!;
-        this.secretary = this.welfare?.secretary!;
-
         if (this.pageAction == 'update') {
+          this.welfare = data['welfare'];
+          this.welfareId = this.welfare?.id;
+          this.chairperson = this.welfare?.chairperson!;
+          this.treasurer = this.welfare?.treasurer!;
+          this.secretary = this.welfare?.secretary!;
           if (this.welfare) {
             this.welfareDetailsFormControls.forEach(
               (form: DynamicCustomFormControlBase<ValueType>[]) => {
@@ -195,6 +191,10 @@ export class UpsertComponent extends EditableViewPage {
               }
             );
           }
+        } else {
+          this.chairperson.children = [];
+          this.treasurer.children = [];
+          this.secretary.children = [];
         }
       })
     );
@@ -204,11 +204,44 @@ export class UpsertComponent extends EditableViewPage {
     this.isSelected[member][index] = true;
   }
 
+  isProceedAllowedForMember(member: string, spouse?: boolean) {
+    if (spouse) {
+      return (this.isProceedAllowed[member] as Record<string, boolean>)[
+        'Spouse'
+      ];
+    } else {
+      return (this.isProceedAllowed[member] as Record<string, boolean>)[
+        'proceed'
+      ];
+    }
+  }
+
+  getChildren(member: string) {
+    return this.isProceedAllowed[member]['Children'] as boolean[];
+  }
+
   areChildrenValid(member: string) {
-    return this.validChildren[member].reduce(
+    console.log('valid children', member, this.isProceedAllowed[member]);
+    console.log('getChildren', this.getChildren(member));
+    return this.getChildren(member).reduce(
       (previusChildrenValid: boolean, currentOffspringValid: boolean) => {
         return previusChildrenValid && currentOffspringValid;
       }
+    );
+  }
+
+  get enableSave() {
+    return (
+      this.isProceedAllowed['Welfare']['proceed'] &&
+      this.isProceedAllowedForMember('Chairperson') &&
+      this.isProceedAllowedForMember('Chairperson', true) &&
+      this.areChildrenValid('Chairperson') &&
+      this.isProceedAllowedForMember('Treasurer') &&
+      this.isProceedAllowedForMember('Treasurer', true) &&
+      this.areChildrenValid('Treasurer') &&
+      this.isProceedAllowedForMember('Secretary') &&
+      this.isProceedAllowedForMember('Secretary', true) &&
+      this.areChildrenValid('Secretary')
     );
   }
 
@@ -216,7 +249,7 @@ export class UpsertComponent extends EditableViewPage {
     this.specialMemberChildDetailsFormControls[member].push(
       specialMemberChildDetailsFormControls()
     );
-    this.validChildren[member].push(false);
+    (this.isProceedAllowed[member]['Children'] as boolean[]).push(false);
   }
 
   check(
@@ -226,8 +259,11 @@ export class UpsertComponent extends EditableViewPage {
     const { section, subsection } = checkSection;
 
     this.checks[section][subsection] = checked;
-    (this.isProceedAllowed[section] as Record<string, boolean>)[subsection] =
-      checked;
+    if (subsection == 'Spouse') {
+      this.isProceedAllowed[section][subsection] = checked;
+    } else {
+      (this.isProceedAllowed[section][subsection] as boolean[]) = [checked];
+    }
   }
 
   onValidityNotified(
@@ -240,61 +276,93 @@ export class UpsertComponent extends EditableViewPage {
     switch (section) {
       case 'Welfare Details':
         this.welfare = { ...this.welfare, ...data };
-        this.isProceedAllowed['Welfare Details'] = true;
+        (this.isProceedAllowed['Welfare'] as Record<string, boolean>)[
+          'proceed'
+        ] = true;
         break;
       case 'Chairperson Details':
         this.chairperson = <Member>{ ...this.chairperson, ...data };
-        this.isProceedAllowed['Chairperson Details'] = true;
+        (this.isProceedAllowed['Chairperson'] as Record<string, boolean>)[
+          'proceed'
+        ] = true;
         break;
       case 'Chairperson Spouse Details':
         this.chairperson.spouse = <Spouse>{
           ...this.chairperson.spouse,
           ...data,
         };
-        this.isProceedAllowed['Chairperson Spouse Details'] = true;
+        (this.isProceedAllowed['Chairperson'] as Record<string, boolean>)[
+          'Spouse'
+        ] = true;
         break;
       case 'Chairperson Children Details':
-        this.chairperson.children![childDetailsIndex!] = <Child>{
-          ...this.chairperson.children[childDetailsIndex!],
-          ...data,
-        };
-        this.validChildren['Chaiperson'][childDetailsIndex!] = validOffspring!;
+        this.chairperson.children![childDetailsIndex!]
+          ? (this.chairperson.children![childDetailsIndex!] = <Child>{
+              ...this.chairperson.children[childDetailsIndex!],
+              ...data,
+            })
+          : this.chairperson.children.push(<Child>{
+              ...data,
+            });
+        (this.isProceedAllowed['Chairperson']['Children'] as boolean[])[
+          childDetailsIndex!
+        ] = validOffspring!;
         break;
       case 'Treasurer Details':
         this.treasurer = <Member>{ ...this.treasurer, ...data };
-        this.isProceedAllowed['Treasurer Details'] = true;
+        (this.isProceedAllowed['Treasurer'] as Record<string, boolean>)[
+          'proceed'
+        ] = true;
         break;
       case 'Treasurer Spouse Details':
         this.treasurer.spouse = <Spouse>{
           ...this.treasurer.spouse,
           ...data,
         };
-        this.isProceedAllowed['Treasurer Spouse Details'] = true;
+        (this.isProceedAllowed['Treasurer'] as Record<string, boolean>)[
+          'Spouse'
+        ] = true;
         break;
       case 'Treasurer Children Details':
-        this.treasurer.children![childDetailsIndex!] = <Child>{
-          ...this.treasurer.children[childDetailsIndex!],
-          ...data,
-        };
-        this.validChildren['Treasurer'][childDetailsIndex!] = validOffspring!;
+        this.treasurer.children![childDetailsIndex!]
+          ? (this.treasurer.children![childDetailsIndex!] = <Child>{
+              ...this.treasurer.children[childDetailsIndex!],
+              ...data,
+            })
+          : this.treasurer.children.push(<Child>{
+              ...data,
+            });
+        (this.isProceedAllowed['Treasurer']['Children'] as boolean[])[
+          childDetailsIndex!
+        ] = validOffspring!;
         break;
       case 'Secretary Details':
         this.secretary = <Member>{ ...this.secretary, ...data };
-        this.isProceedAllowed['Secretary Details'] = true;
+        (this.isProceedAllowed['Secretary'] as Record<string, boolean>)[
+          'proceed'
+        ] = true;
         break;
       case 'Secretary Spouse Details':
         this.secretary.spouse = <Spouse>{
           ...this.secretary.spouse,
           ...data,
         };
-        this.isProceedAllowed['Secretary Spouse Details'] = true;
+        (this.isProceedAllowed['Secretary'] as Record<string, boolean>)[
+          'Spouse'
+        ] = true;
         break;
       case 'Secretary Children Details':
-        this.secretary.children![childDetailsIndex!] = <Child>{
-          ...this.secretary.children[childDetailsIndex!],
-          ...data,
-        };
-        this.validChildren['Secretary'][childDetailsIndex!] = validOffspring!;
+        this.secretary.children![childDetailsIndex!]
+          ? (this.secretary.children![childDetailsIndex!] = <Child>{
+              ...this.secretary.children[childDetailsIndex!],
+              ...data,
+            })
+          : this.secretary.children.push(<Child>{
+              ...data,
+            });
+        (this.isProceedAllowed['Secretary']['Children'] as boolean[])[
+          childDetailsIndex!
+        ] = validOffspring!;
         break;
     }
   }
@@ -310,57 +378,65 @@ export class UpsertComponent extends EditableViewPage {
       payload['chairpersonDto'] = this.chairperson;
       payload['chairpersonDto'].spouseDto = this.chairperson.spouse;
       payload['chairpersonDto'].childrenDto = this.chairperson.children;
+
+      delete payload['chairpersonDto'].spouse;
+      delete payload['chairpersonDto'].children;
     }
 
     if (this.treasurer) {
       payload['treasurerDto'] = this.treasurer;
       payload['treasurerDto'].spouseDto = this.treasurer.spouse;
       payload['treasurerDto'].childrenDto = this.treasurer.children;
+
+      delete payload['treasurerDto'].spouse;
+      delete payload['treasurerDto'].children;
     }
 
     if (this.secretary) {
       payload['secretaryDto'] = this.secretary;
       payload['secretaryDto'].spouseDto = this.secretary.spouse;
       payload['secretaryDto'].childrenDto = this.secretary.children;
+
+      delete payload['secretaryDto'].spouse;
+      delete payload['secretaryDto'].children;
     }
 
-    console.log('payload', payload)
+    console.log('payload', payload);
 
+    let serviceAction;
 
-    // let serviceAction;
+    if (this.pageAction == 'update') {
+      serviceAction = this.service.updateWelfare(this.welfareId!, payload);
+    } else {
+      serviceAction = this.service.createWelfare(payload);
+    }
 
-    // if (this.pageAction == 'update') {
-    //   serviceAction = this.service.update(this.userId!, payload);
-    // } else {
-    //   serviceAction = this.service.create(payload);
-    // }
+    this.subscriptions.add(
+      serviceAction.subscribe({
+        next: ({ id }) => {
+          this.isSubmitting = false;
 
-    // this.subscriptions.add(
-    //   serviceAction.subscribe({
-    //     next: ({ id }) => {
-    //       this.isSubmitting = false;
+          this.router.navigate(['/', 'welfares', id]);
 
-    //       this.router.navigate(['/', 'user-accounts', id]);
+          const snackBarRef = this.snackbar.open(
+            `Welfare successfully ${this.pageAction}d. Navigate back to Welfares List?`,
+            `OK`,
+            {
+              panelClass: `alert success`,
+              duration: 200,
+            }
+          );
+          snackBarRef.onAction().subscribe(() => {
+            this.router.navigate(['../']);
 
-    //       const snackBarRef = this.snackbar.open(
-    //         `User account successfully ${this.pageAction}d. Navigate back to Accounts List?`,
-    //         `OK`,
-    //         {
-    //           panelClass: `alert success`,
-    //           duration: 200,
-    //         }
-    //       );
-    //       snackBarRef.onAction().subscribe(() => {
-    //         this.router.navigate(['../']);
-
-    //         snackBarRef.dismiss();
-    //       });
-    //     },
-    //     error: (err) => {
-    //       this.isSubmitting = false;
-    //     },
-    //   })
-    // );
+            snackBarRef.dismiss();
+          });
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+        },
+      })
+    );
   }
 
   override setDefaultMetaAndTitle(): void {}

@@ -113,9 +113,6 @@ export class UpsertComponent extends EditableViewPage {
     const payload: any = {
       ...this.admin,
     };
-
-    payload['membership'] = Membership.Admin;
-
     let serviceAction;
 
     if (this.pageAction == 'update') {

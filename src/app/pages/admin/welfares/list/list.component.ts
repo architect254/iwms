@@ -76,9 +76,10 @@ export class ListComponent extends ListPage {
             name: welfare.name,
             phone_number: welfare.phone_number,
             email: welfare.email,
-            chairperson: getName('chairperson', welfare.members),
-            treasurer: getName('treasurer', welfare.members),
-            secretary: getName('secretary', welfare.members),
+            hostname: welfare.hostname,
+            chairperson: welfare.chairperson?.name,
+            treasurer: welfare.treasurer?.name,
+            secretary: welfare.secretary?.name,
             create_date: welfare.create_date,
             update_date: welfare.update_date,
           };

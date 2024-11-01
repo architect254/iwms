@@ -35,6 +35,18 @@ export class WelfaresService extends ApiService {
     });
   }
 
+  getMembersByWelfareId(
+    id: string,
+    page: number = 1,
+    take: number = 100,
+    filters?: Filter[]
+  ): Observable<Welfare[]> {
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    return this.http.get<Welfare[]>(`${this.endpoint}/${id}/members`, {
+      params: new HttpParams({ fromString: queryString }),
+    });
+  }
+
   getWelfareById(id: number | string): Observable<Welfare> {
     const endpoint = `${this.endpoint}/${id}`;
     return this.http.get<Welfare>(endpoint);

@@ -29,7 +29,7 @@ export const adminRoutes: Routes = [
       {
         path: 'members',
         data: {
-          title: 'IWMS Members',
+          title: 'IWMS Welfares Members',
         },
         loadChildren: () =>
           import('./members/members.routes').then((members) => members.routes),

@@ -6,6 +6,7 @@ import { ViewComponent } from './view/view.component';
 import { welfaresResolver } from '../welfares/welfares.resolver';
 import { memberResolver } from './member.resolver';
 import { ContainerLayoutComponent } from '../../../shared/views/navigation/container-layout.component';
+import { membersResolver } from './members.resolver';
 
 export const routes: Routes = [
   {
@@ -16,7 +17,7 @@ export const routes: Routes = [
         path: 'add',
         component: UpsertComponent,
         resolve: { welfares: welfaresResolver },
-        data: { title: 'Add User' },
+        data: { title: 'Add Welfare Member' },
       },
       {
         path: ':id/update',
@@ -25,7 +26,7 @@ export const routes: Routes = [
           member: memberResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'Update User', action: 'update' },
+        data: { title: 'Update Welfare Member', action: 'update' },
       },
       {
         path: ':id',
@@ -34,12 +35,12 @@ export const routes: Routes = [
           member: memberResolver,
           welfares: welfaresResolver,
         },
-        data: { title: 'View User' },
+        data: { title: 'View Welfare Member' },
       },
       {
         path: '',
         component: ListComponent,
-        data: { title: 'Accounts List' },
+        data: { title: 'Welfare Members List' },
       },
     ],
   },

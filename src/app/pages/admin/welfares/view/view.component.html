@@ -11,16 +11,27 @@
 }
 <!-- #members -->
 
-@if (members && members.length) {
+<!-- @if (members && members.length) { -->
 <h4 class="member-header mat-headline-large">
   Welfare Members List
-  <button mat-flat-button class="basic-btn" aria-label="View all members" (click)="viewAllMembers()">
+  <button
+    mat-flat-button
+    class="basic-btn"
+    aria-label="View all members"
+    (click)="viewAllMembers()"
+  >
     <mat-icon fontIcon="add" class="btn-icon"></mat-icon
     ><span>View all members</span>
   </button>
 </h4>
 
-@for (item of members | slice:0:5; track $index; ) {
+@if (!members?.length) {
+<small
+  >No members yet.
+  <a class="icon-link text-primary" (click)="createMember()"
+    >Create One...</a
+  ></small
+>} @for (item of members | slice:0:5; track $index; ) {
 <h5 class="member-header member mat-title-medium">
   Welfare Member [{{ $index + 1 }}]
 </h5>
@@ -28,4 +39,5 @@
   class="member-section"
   [dataset]="memberDataView[$index] | async"
 ></iwms-dynamic-view>
-}}
+}
+<!-- } -->

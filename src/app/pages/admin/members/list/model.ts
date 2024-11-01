@@ -1,7 +1,11 @@
-import { User, Membership } from "../../../../core/entities/user.entity";
-import { ToggleOption } from "../../../../shared/components/button-toggle/button-toggle.component";
-import { FilterOption, GridColumn, StatusLabels, StatusColors } from "../../../../shared/views/grid/model";
-
+import { User, Membership } from '../../../../core/entities/user.entity';
+import { ToggleOption } from '../../../../shared/components/button-toggle/button-toggle.component';
+import {
+  FilterOption,
+  GridColumn,
+  StatusLabels,
+  StatusColors,
+} from '../../../../shared/views/grid/model';
 
 const userToggleOptions: ToggleOption[] = [
   { name: 'All', value: 'all', position: 0 },
@@ -41,11 +45,7 @@ const adminToggleOptions: ToggleOption[] = [
 ];
 
 export const getToggleOptions = (user: User) => {
-  if (user.membership == Membership.Admin) {
-    return adminToggleOptions;
-  } else {
-    return memberToggleOptions;
-  }
+  return memberToggleOptions;
 };
 
 const userFilters: FilterOption[] = [
@@ -215,9 +215,6 @@ const deactivatedMembersFilters: FilterOption[] = [
 
 export const getFilterOptions = (user: User) => {
   switch (user.membership) {
-    case Membership.Admin:
-      return adminfilters;
-
     case Membership.Active:
       return membersFilters;
 
@@ -303,16 +300,7 @@ const userColumns: GridColumn[] = [
 
 const adminColumns: GridColumn[] = [...userColumns];
 
-const membersColumns: GridColumn[] = [
-  ...userColumns,
-  {
-    key: 'role',
-    label: 'Role',
-    position: 5,
-    type: 'status',
-    width: '250px',
-  },
-];
+const membersColumns: GridColumn[] = [...userColumns];
 
 const bereavedMembersColumns: GridColumn[] = [
   ...membersColumns,
@@ -370,9 +358,6 @@ const deactivatedMembersColumns: GridColumn[] = [
 
 export const getGridColumns = (user: User) => {
   switch (user.membership) {
-    case Membership.Admin:
-      return adminColumns;
-
     case Membership.Active:
       return membersColumns;
 

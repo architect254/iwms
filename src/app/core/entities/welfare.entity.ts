@@ -1,10 +1,11 @@
-import { BaseEntity } from "./base.entity";
-import { Member } from "./member.entity";
+import { BaseEntity } from './base.entity';
+import { Member } from './member.entity';
 
 export interface Welfare extends BaseEntity {
   name: string;
-  email: string;
   phone_number: string;
+  email: string;
+  hostname: string;
   logo_url?: string;
   chairperson: Member;
   treasurer: Member;

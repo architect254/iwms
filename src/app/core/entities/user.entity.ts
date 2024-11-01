@@ -6,7 +6,6 @@ export enum Gender {
 }
 
 export enum Membership {
-  Admin = 'Admin',
   Active = 'Active',
   Bereaved = 'Bereaved',
   Deceased = 'Deceased',

@@ -1,4 +1,4 @@
-import { ResolveFn } from '@angular/router';
+import { ResolveFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { BereavedMember } from '../../../core/entities/bereaved-member.entity';
 import { DeactivatedMember } from '../../../core/entities/deactivated-member.entity';
@@ -9,6 +9,14 @@ import { MembersService } from './members.service';
 export const membersResolver: ResolveFn<
   (Member | BereavedMember | DeceasedMember | DeactivatedMember)[]
 > = () => {
+  const router = inject(Router);
   const membersService = inject(MembersService);
-  return membersService.getMany();
+
+  const welfareId = router.getCurrentNavigation()?.extras.state?.['welfareId'];
+
+  if (welfareId) {
+    return membersService.getManyByWelfareId(welfareId);
+  } else {
+    return membersService.getMany();
+  }
 };

@@ -33,7 +33,7 @@
         (notifyValidity)="onValidityNotified($event, member + ' Details')"
       ></iwms-dynamic-form>
       <button
-        [disabled]="!isProceedAllowed[member + ' Details']"
+        [disabled]="!isProceedAllowedForMember(member)"
         mat-button
         matStepperNext
       >
@@ -56,14 +56,14 @@
     <ng-template matStepContent>
       <div class="checkbox">
         <mat-checkbox
-          [checked]="!checks[member]['Spouse']"
+          [checked]="checks[member]['Spouse']"
           (change)="
             check($event.checked, { section: member, subsection: 'Spouse' })
           "
           >{{ member }} is not married</mat-checkbox
         >
       </div>
-      @if (checks[member]['Spouse']) {
+      @if (!checks[member]['Spouse']) {
       <iwms-dynamic-form
         [controls]="specialMemberSpouseDetailsFormControls | async"
         [isSubmitting]="isSubmitting"
@@ -75,7 +75,7 @@
       }
       <button mat-button matStepperPrevious>Back</button>
       <button
-        [disabled]="!isProceedAllowed[member + ' Spouse Details']"
+        [disabled]="!isProceedAllowedForMember(member, true)"
         mat-button
         matStepperNext
       >
@@ -97,15 +97,15 @@
     <ng-template matStepContent>
       <div class="checkbox">
         <mat-checkbox
-          [checked]="!checks[member]['Children']"
+          [checked]="checks[member]['Children']"
           (change)="
             check($event.checked, { section: member, subsection: 'Children' })
           "
           >{{ member }} has no children</mat-checkbox
         >
       </div>
-      @if (checks[member]['Children']) { @for (validOffspring of
-      validChildren[member]; track $index) {
+      @if (!checks[member]['Children']) { @for (validOffspring of
+      getChildren(member); track $index) {
       <h5 class="child-header mat-title-large">
         Child Details [{{ $index + 1 }}]
       </h5>
@@ -131,14 +131,11 @@
 
       <button mat-button matStepperPrevious>Back</button>
       <button
-        mat-flat-button
+        mat-button
         class="save-btn"
-        [disabled]="
-          !isProceedAllowed[member + ' Children Details'] && !areChildrenValid
-        "
-        (click)="save()"
+        [disabled]="!checks[member]['Children'] && !areChildrenValid(member)"
       >
-        Save Account
+        Proceed
       </button>
     </ng-template>
   </mat-step>
@@ -148,8 +145,8 @@
 <button
   mat-flat-button
   class="save-btn"
-  [disabled]="!isProceedAllowed"
+  [disabled]="!enableSave"
   (click)="save()"
 >
-  Save Welfare Group
+  Save Welfare
 </button>

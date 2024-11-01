@@ -180,15 +180,9 @@ export class UpsertComponent extends EditableViewPage {
                   form.forEach(
                     (control: DynamicCustomFormControlBase<ValueType>) => {
                       if (control) {
-                        if (
-                          this.user?.membership == Membership.Admin &&
-                          (control.key == 'role' || control.key == 'status')
-                        ) {
-                          control.visible = false;
-                        } else
-                          control.value = (
-                            this.user as unknown as Record<string, ValueType>
-                          )?.[control.key] as ValueType;
+                        control.value = (
+                          this.user as unknown as Record<string, ValueType>
+                        )?.[control.key] as ValueType;
                       }
                     }
                   );
@@ -358,7 +352,7 @@ export class UpsertComponent extends EditableViewPage {
   }
 
   tryDisplayingMemberControls(membership: Membership) {
-    const memberships = [Membership.Admin];
+    const memberships = [Membership.Active];
 
     this.displayMemberControls = !memberships.includes(membership);
     this.coreUserDetailsFormControls.forEach((formGroup) => {

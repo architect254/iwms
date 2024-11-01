@@ -132,56 +132,6 @@ export function specialMemberDetailsFormControls() {
       required: true,
       order: 6,
     }),
-    new CustomDropdownControl({
-      key: 'type',
-      label: 'Account Type',
-      options: [
-        { id: 'Admin', name: 'Admin' },
-        { id: 'Client', name: 'Client' },
-      ],
-      icon: 'checklist',
-      required: true,
-      order: 7,
-    }),
-    new CustomDropdownControl({
-      key: 'state',
-      label: 'Account Status',
-      options: [
-        { id: 'Active', name: 'Active' },
-        { id: 'InActive', name: 'InActive' },
-      ],
-      icon: 'checklist',
-      required: false,
-      order: 8,
-    }),
-    new CustomDropdownControl({
-      key: 'role',
-      label: 'Role',
-      options: [
-        { id: 'ChairPerson', name: 'ChairPerson' },
-        { id: 'Treasurer', name: 'Treasurer' },
-        { id: 'Secretary', name: 'Secretary' },
-        { id: 'Member', name: 'Member' },
-      ],
-      icon: 'checklist',
-      required: false,
-      visible: false,
-      order: 9,
-    }),
-    new CustomDropdownControl({
-      key: 'status',
-      label: 'Membership Status',
-      options: [
-        { id: 'Normal', name: 'Normal' },
-        { id: 'Bereaved', name: 'Bereaved' },
-        { id: 'Deceased', name: 'Deceased' },
-        { id: 'Deactivated', name: 'Deactivated' },
-      ],
-      icon: 'checklist',
-      required: false,
-      visible: false,
-      order: 10,
-    }),
   ];
   return of(controls.sort((a, b) => a.order - b.order));
 }

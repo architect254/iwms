@@ -22,14 +22,28 @@ import { RouterModule, Data } from '@angular/router';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { Member } from '../../../../core/entities/member.entity';
 import { AuthService } from '../../../../core/services/auth.service';
-import { ToggleOption, ButtonToggleComponent } from '../../../../shared/components/button-toggle/button-toggle.component';
+import {
+  ToggleOption,
+  ButtonToggleComponent,
+} from '../../../../shared/components/button-toggle/button-toggle.component';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ListPage } from '../../../../shared/directives/list-page/list-page.directive';
 import { GridSearchComponent } from '../../../../shared/views/grid/grid-search/grid-search.component';
 import { GridComponent } from '../../../../shared/views/grid/grid.component';
-import { FilterOption, GridColumn, StatusLabels, Filter } from '../../../../shared/views/grid/model';
+import {
+  FilterOption,
+  GridColumn,
+  StatusLabels,
+  Filter,
+} from '../../../../shared/views/grid/model';
 import { MembersService } from '../members.service';
-import { getToggleOptions, getFilterOptions, getGridColumns, statusLabels, statusColors } from './model';
+import {
+  getToggleOptions,
+  getFilterOptions,
+  getGridColumns,
+  statusLabels,
+  statusColors,
+} from './model';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -86,6 +100,8 @@ export class ListComponent extends ListPage {
 
   actions = [];
 
+  welfareId!: string;
+
   constructor(
     @SkipSelf() override authService: AuthService,
 
@@ -96,6 +112,9 @@ export class ListComponent extends ListPage {
 
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;
+
+    this.welfareId =
+      this.router.getCurrentNavigation()?.extras.state?.['welfareId'];
   }
 
   override ngOnInit(): void {
@@ -120,26 +139,36 @@ export class ListComponent extends ListPage {
   }
 
   override fetchData(
-    page: number =this.page,
+    page: number = this.page,
     take: number = this.take,
     filters: Filter[] = this.filters
   ) {
+    let action;
+    if (this.welfareId) {
+      action = this.service.getManyByWelfareId(
+        this.welfareId,
+        page,
+        take,
+        filters
+      );
+    } else {
+      action = this.service.getMany(page, take, filters);
+    }
     this.subscriptions.add(
-      this.service.getMany(page, take, filters).subscribe((accounts) => {
-        this.data = accounts.map((account) => {
+      action.subscribe((members) => {
+        this.data = members.map((member) => {
           return {
-            id: account.id,
-            name: account.name,
-            gender: account.gender,
-            id_number: account.id_number,
-            phone_number: account.phone_number,
-            email: account.email,
-            profile_image: account?.profile_image,
-            membership: account.membership,
-            welfare: (account as Member)?.welfare?.name,
-            role: (account as Member).role,
-            create_date: account.create_date,
-            update_date: account.update_date,
+            id: member.id,
+            name: member.name,
+            gender: member.gender,
+            id_number: member.id_number,
+            phone_number: member.phone_number,
+            email: member.email,
+            profile_image: member?.profile_image,
+            membership: member.membership,
+            welfare: (member as Member)?.welfare?.name,
+            create_date: member.create_date,
+            update_date: member.update_date,
           };
         });
       })

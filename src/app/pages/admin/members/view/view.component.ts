@@ -18,7 +18,12 @@ import { ValueType } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ViewPage } from '../../../../shared/directives/view-page/view-page.directive';
 import { MembersService } from '../members.service';
-import { accountDataView, welfareDataView, spouseDataView, childDataView } from './model';
+import {
+  accountDataView,
+  welfareDataView,
+  spouseDataView,
+  childDataView,
+} from './model';
 
 export const ACCOUNT_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -99,18 +104,12 @@ export class ViewComponent extends ViewPage {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
                 if (view) {
-                  if (
-                    this.account.membership == Membership.Admin &&
-                    view.key == 'role'
-                  ) {
-                    view.visible = false;
-                  } else
-                    view.value = (
-                      this.account as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )?.[view.key] as string | number | Date;
+                  view.value = (
+                    this.account as unknown as Record<
+                      string,
+                      string | number | Date
+                    >
+                  )?.[view.key] as string | number | Date;
                   if (!view.value) {
                     view.visible = false;
                   }

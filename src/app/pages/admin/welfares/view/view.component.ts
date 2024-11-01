@@ -85,12 +85,14 @@ export class ViewComponent extends ViewPage {
                       >
                     )?.[view.key] as string | number | Date;
 
-                    if (
-                      view.key == 'manager' ||
-                      view.key == 'accountant' ||
-                      view.key == 'secretary'
-                    ) {
-                      view.value = getName(view.key, this.welfare?.members!);
+                    if (view.key == 'chairperson') {
+                      view.value = this.welfare?.chairperson?.name;
+                    }
+                    if (view.key == 'treasurer') {
+                      view.value = this.welfare?.treasurer?.name;
+                    }
+                    if (view.key == 'secretary') {
+                      view.value = this.welfare?.secretary?.name;
                     }
                   }
                 }
@@ -136,7 +138,13 @@ export class ViewComponent extends ViewPage {
 
   viewAllMembers() {
     this.router.navigate(['/members'], {
-      queryParams: { welfareId: this.welfare?.id },
+      state: { welfareId: this.welfare?.id },
+    });
+  }
+
+  createMember() {
+    this.router.navigate(['/members/add'], {
+      state: { welfareId: this.welfare?.id },
     });
   }
 

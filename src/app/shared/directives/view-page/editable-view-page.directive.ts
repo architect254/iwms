@@ -17,7 +17,7 @@ export abstract class EditableViewPage extends ViewPage {
   isProceedAllowed:
     | boolean
     | Record<string, boolean>
-    | Record<string, boolean | Record<string, boolean>> = false;
+    | Record<string, boolean | Record<string, boolean | boolean[]>> = false;
 
   get isSubmitting(): Observable<boolean> {
     return this._isSubmitting.asObservable();
