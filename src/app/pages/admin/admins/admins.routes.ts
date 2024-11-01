@@ -19,24 +19,22 @@ export const routes: Routes = [
         canMatch: [upsertAdminGuard],
         data: { title: 'Add Admin' },
       },
-      // {
-      //   path: ':id/update',
-      //   component: UpsertComponent,
-      //   resolve: {
-      //     admin: adminResolver,
-      //     welfares: welfaresResolver,
-      //   },
-      //   data: { title: 'Update Admin', action: 'update' },
-      // },
-      // {
-      //   path: ':id',
-      //   component: ViewComponent,
-      //   resolve: {
-      //     admin: adminResolver,
-      //     welfares: welfaresResolver,
-      //   },
-      //   data: { title: 'View Admin' },
-      // },
+      {
+        path: ':id/update',
+        component: UpsertComponent,
+        resolve: {
+          admin: adminResolver,
+        },
+        data: { title: 'Update Admin', action: 'update' },
+      },
+      {
+        path: ':id',
+        component: ViewComponent,
+        resolve: {
+          admin: adminResolver,
+        },
+        data: { title: 'View Admin' },
+      },
       {
         path: '',
         component: ListComponent,

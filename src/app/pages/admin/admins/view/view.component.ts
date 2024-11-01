@@ -17,24 +17,12 @@ import { ValueType } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ViewPage } from '../../../../shared/directives/view-page/view-page.directive';
 import { AdminsService } from '../admins.service';
-import { accountDataView, welfareDataView, spouseDataView, childDataView } from './model';
+import { adminDataView } from './model';
 import { Welfare } from '../../../../core/entities/welfare.entity';
 
-export const ACCOUNT_DATA_VIEW = new InjectionToken<
+export const ADMIN_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
->('account data view');
-
-export const WELFARE_DATA_VIEW = new InjectionToken<
-  Observable<DynamicCustomDataBase<ValueType>[]>
->('welfare data view');
-
-export const SPOUSE_DATA_VIEW = new InjectionToken<
-  Observable<DynamicCustomDataBase<ValueType>[]>
->('spouse data view');
-
-export const CHILD_DATA_VIEW = new InjectionToken<
-  Observable<DynamicCustomDataBase<ValueType>[]>
->('spouse data view');
+>('Admin data view');
 
 @Component({
   selector: 'iwms-view',
@@ -42,41 +30,17 @@ export const CHILD_DATA_VIEW = new InjectionToken<
   imports: [AsyncPipe, HeaderComponent, DynamicViewComponent, JsonPipe],
   providers: [
     {
-      provide: ACCOUNT_DATA_VIEW,
-      useFactory: accountDataView,
-    },
-    {
-      provide: WELFARE_DATA_VIEW,
-      useFactory: welfareDataView,
-    },
-    {
-      provide: SPOUSE_DATA_VIEW,
-      useFactory: spouseDataView,
-    },
-    {
-      provide: CHILD_DATA_VIEW,
-      useFactory: childDataView,
+      provide: ADMIN_DATA_VIEW,
+      useFactory: adminDataView,
     },
   ],
   templateUrl: './view.component.html',
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends ViewPage {
-  account!:
-    | Admin
-    | Member
-    | BereavedMember
-    | DeceasedMember
-    | DeactivatedMember;
-  welfare?: Welfare;
+  admin!: Admin;
 
-  spouse?: Spouse;
-  children?: Child[];
-
-  accountDataView = inject(ACCOUNT_DATA_VIEW);
-  welfareDataView = inject(WELFARE_DATA_VIEW);
-  spouseDataView = inject(SPOUSE_DATA_VIEW);
-  childDataView = [inject(CHILD_DATA_VIEW)];
+  adminDataView = inject(ADMIN_DATA_VIEW);
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -89,28 +53,19 @@ export class ViewComponent extends ViewPage {
 
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
-        this.account = data['account'];
-        this.welfare = (this.account as Member)?.welfare;
-        this.spouse = (this.account as Member)?.spouse;
-        this.children = (this.account as Member)?.children;
+        this.admin = data['admin'];
 
-        this.accountDataView.forEach(
+        this.adminDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
                 if (view) {
-                  if (
-                    this.account.membership == Membership.Admin &&
-                    view.key == 'role'
-                  ) {
-                    view.visible = false;
-                  } else
-                    view.value = (
-                      this.account as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )?.[view.key] as string | number | Date;
+                  view.value = (
+                    this.admin as unknown as Record<
+                      string,
+                      string | number | Date
+                    >
+                  )?.[view.key] as string | number | Date;
                   if (!view.value) {
                     view.visible = false;
                   }
@@ -119,75 +74,6 @@ export class ViewComponent extends ViewPage {
             );
           }
         );
-
-        if (this.welfare) {
-          this.welfareDataView.forEach(
-            (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
-              dataView.forEach(
-                (view: DynamicCustomDataBase<string | number | Date>) => {
-                  if (view) {
-                    view.value = (
-                      this.welfare as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )[view.key] as string | number | Date;
-                  }
-                }
-              );
-            }
-          );
-        }
-
-        if (this.spouse) {
-          this.spouseDataView.forEach(
-            (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
-              dataView.forEach(
-                (view: DynamicCustomDataBase<string | number | Date>) => {
-                  if (view) {
-                    view.value = (
-                      this.spouse as unknown as Record<
-                        string,
-                        string | number | Date
-                      >
-                    )[view.key] as string | number | Date;
-                  }
-                }
-              );
-            }
-          );
-        }
-
-        if (this.children?.length) {
-          this.children.forEach((child, index) => {
-            if (index > 0) {
-              this.childDataView.push(childDataView());
-            }
-          });
-          this.childDataView.forEach(
-            (
-              dataViewGroup: Observable<DynamicCustomDataBase<ValueType>[]>,
-              dataViewGoupIndex
-            ) => {
-              dataViewGroup.forEach(
-                (dataView: DynamicCustomDataBase<ValueType>[]) => {
-                  if (dataView) {
-                    dataView.forEach(
-                      (view: DynamicCustomDataBase<ValueType>) => {
-                        view.value = ((
-                          this.children as unknown as Record<
-                            string,
-                            string | number | Date
-                          >[]
-                        )?.[dataViewGoupIndex])[view.key];
-                      }
-                    );
-                  }
-                }
-              );
-            }
-          );
-        }
       })
     );
   }

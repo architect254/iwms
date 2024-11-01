@@ -129,10 +129,10 @@ export class UpsertComponent extends EditableViewPage {
         next: ({ id }) => {
           this.isSubmitting = false;
 
-          this.router.navigate(['/', 'users', id]);
+          this.router.navigate(['/', 'admins', id]);
 
           const snackBarRef = this.snackbar.open(
-            `Admin successfully ${this.pageAction}d. Navigate back to Users List?`,
+            `Admin successfully ${this.pageAction}d. Navigate back to Admins List?`,
             `OK`,
             {
               panelClass: `alert success`,
