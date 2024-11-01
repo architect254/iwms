@@ -14,7 +14,7 @@ import { MembersService } from '../members/members.service';
   providedIn: 'root',
 })
 export class AdminsService extends MembersService implements Searchable {
-  protected override endpoint = `${this.API_URL}/users`;
+  protected override endpoint = `${this.API_URL}/admins`;
 
   createAdmin(payload: any): Observable<Admin> {
     return this.http.post<Admin>(this.endpoint, payload);

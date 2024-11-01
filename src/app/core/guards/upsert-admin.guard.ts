@@ -6,20 +6,12 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { Membership } from '../entities/user.entity';
 
-export const upsertAdminGuard: CanActivateFn = async (route, state) => {
+export const upsertAdminGuard: CanActivateFn = () => {
   return new Promise<boolean>((resolve) => {
     const authService = inject(AuthService);
-    const router = inject(Router);
 
     firstValueFrom(authService.isAdmin).then((isAdmin) => {
-      const membership =
-        router.getCurrentNavigation()?.extras.state?.['membership'];
-
-      if (isAdmin && membership == Membership.Admin) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
+      resolve(isAdmin);
     });
   });
 };

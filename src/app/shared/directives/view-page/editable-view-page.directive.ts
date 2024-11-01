@@ -14,7 +14,10 @@ export abstract class EditableViewPage extends ViewPage {
   private _triggerValidityNotification = new BehaviorSubject(false);
   private _isSubmitting = new BehaviorSubject(false);
 
-  isProceedAllowed: boolean | IsProceedAllowed = false;
+  isProceedAllowed:
+    | boolean
+    | Record<string, boolean>
+    | Record<string, boolean | Record<string, boolean>> = false;
 
   get isSubmitting(): Observable<boolean> {
     return this._isSubmitting.asObservable();
@@ -52,5 +55,4 @@ export abstract class EditableViewPage extends ViewPage {
 
   abstract save(): void;
 }
-export type IsProceedAllowed = { [key: string]: boolean };
 export type PageAction = 'update' | 'add';

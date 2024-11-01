@@ -40,7 +40,8 @@ export class AuthService extends ApiService {
       map((token) => {
         if (token) {
           const payload: JwtPayload = jwtDecode(token);
-          return payload.account as Admin | Member;
+          const { user } = payload;
+          return user;
         } else return null;
       })
     );
@@ -62,7 +63,11 @@ export class AuthService extends ApiService {
   }
 
   get isAdmin(): Observable<boolean> {
-    return this.user.pipe(map((user) => user?.membership == Membership.Admin));
+    return this.user.pipe(
+      map((user: Member | Admin | null) => {
+        return (user as Admin)?.isAdmin;
+      })
+    );
   }
 
   inilialize() {
@@ -103,5 +108,5 @@ export class AuthService extends ApiService {
   }
 }
 export interface JwtPayload {
-  account: Admin | Member;
+  user: Admin | Member;
 }

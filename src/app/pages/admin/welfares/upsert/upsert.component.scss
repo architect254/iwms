@@ -12,3 +12,9 @@ button {
     }
 }
 
+:host ::ng-deep{
+    div.mat-horizontal-content-container{
+        padding: 0;
+    }
+}
+

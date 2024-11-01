@@ -21,12 +21,10 @@ import { DynamicFormComponent } from '../../../../shared/components/form-control
 import {
   DynamicCustomFormControlBase,
   ValueType,
-  CustomDropdownControl,
 } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import {
   EditableViewPage,
-  IsProceedAllowed,
 } from '../../../../shared/directives/view-page/editable-view-page.directive';
 import { AdminsService } from '../admins.service';
 import { adminUserDetailsFormControls } from './model';

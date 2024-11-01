@@ -116,11 +116,8 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  adminFilters = inject(ADMIN_FILTERS);
-  adminColumns = inject(ADMIN_COLUMNS);
-
-  filterOptions = this.adminFilters;
-  columns = this.adminColumns;
+  filterOptions = inject(ADMIN_FILTERS);
+  columns = inject(ADMIN_COLUMNS);
   labels = inject(LABELS);
   colors = inject(COLORS);
 
@@ -134,8 +131,6 @@ export class ListComponent extends ListPage {
     private service: AdminsService
   ) {
     super(authService);
-
-    this.filters = [{ key: 'membership', value: Membership.Admin }];
   }
 
   override ngOnInit(): void {
@@ -171,7 +166,6 @@ export class ListComponent extends ListPage {
 
   doAdd() {
     this.router.navigate(['add'], {
-      state: { membership: Membership.Admin },
       relativeTo: this.route,
     });
   }

@@ -9,8 +9,141 @@
   [controls]="welfareDetailsFormControls | async"
   [isSubmitting]="isSubmitting"
   [triggerValidityNotification]="triggerValidityNotification"
-  (notifyValidity)="onValidityNotified($event)"
+  (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
 ></iwms-dynamic-form>
+
+@for (member of specialMembers; track member) {
+<mat-stepper
+  [linear]="true"
+  (selectedIndexChange)="setSelected(member, $event)"
+>
+  <mat-step>
+    <!-- #region core account details-->
+
+    <ng-template matStepLabel
+      ><h4 class="core-account-header selected mat-headline-medium">
+        {{ member }} Details
+      </h4>
+    </ng-template>
+    <ng-template matStepContent>
+      <iwms-dynamic-form
+        [controls]="specialMemberDetailsFormControls | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
+        (notifyValidity)="onValidityNotified($event, member + ' Details')"
+      ></iwms-dynamic-form>
+      <button
+        [disabled]="!isProceedAllowed[member + ' Details']"
+        mat-button
+        matStepperNext
+      >
+        Proceed
+      </button>
+    </ng-template>
+  </mat-step>
+
+  <!-- #region spouse details-->
+
+  <mat-step>
+    <ng-template matStepLabel
+      ><h4
+        class="spouse-header mat-headline-medium"
+        [class.selected]="isSelected[member][1]"
+      >
+        {{ member }} Spouse Details
+      </h4>
+    </ng-template>
+    <ng-template matStepContent>
+      <div class="checkbox">
+        <mat-checkbox
+          [checked]="!checks[member]['Spouse']"
+          (change)="
+            check($event.checked, { section: member, subsection: 'Spouse' })
+          "
+          >{{ member }} is not married</mat-checkbox
+        >
+      </div>
+      @if (checks[member]['Spouse']) {
+      <iwms-dynamic-form
+        [controls]="specialMemberSpouseDetailsFormControls | async"
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
+        (notifyValidity)="
+          onValidityNotified($event, member + ' Spouse Details')
+        "
+      ></iwms-dynamic-form>
+      }
+      <button mat-button matStepperPrevious>Back</button>
+      <button
+        [disabled]="!isProceedAllowed[member + ' Spouse Details']"
+        mat-button
+        matStepperNext
+      >
+        Proceed
+      </button>
+    </ng-template>
+  </mat-step>
+  <mat-step>
+    <!-- #region children details-->
+
+    <ng-template matStepLabel
+      ><h4
+        class="children-header mat-headline-medium"
+        [class.selected]="isSelected[member][2]"
+      >
+        {{ member }} Children Details
+      </h4>
+    </ng-template>
+    <ng-template matStepContent>
+      <div class="checkbox">
+        <mat-checkbox
+          [checked]="!checks[member]['Children']"
+          (change)="
+            check($event.checked, { section: member, subsection: 'Children' })
+          "
+          >{{ member }} has no children</mat-checkbox
+        >
+      </div>
+      @if (checks[member]['Children']) { @for (validOffspring of
+      validChildren[member]; track $index) {
+      <h5 class="child-header mat-title-large">
+        Child Details [{{ $index + 1 }}]
+      </h5>
+      <iwms-dynamic-form
+        [controls]="
+          specialMemberChildDetailsFormControls[member][$index] | async
+        "
+        [isSubmitting]="isSubmitting"
+        [triggerValidityNotification]="triggerValidityNotification"
+        (notifyValidity)="
+          onValidityNotified($event, member + ' Children Details', $index, true)
+        "
+      ></iwms-dynamic-form
+      >}
+      <button
+        mat-stroked-button
+        class="add-child-btn"
+        (click)="addChild(member)"
+      >
+        Add Child Details
+      </button>
+      <br />}
+
+      <button mat-button matStepperPrevious>Back</button>
+      <button
+        mat-flat-button
+        class="save-btn"
+        [disabled]="
+          !isProceedAllowed[member + ' Children Details'] && !areChildrenValid
+        "
+        (click)="save()"
+      >
+        Save Account
+      </button>
+    </ng-template>
+  </mat-step>
+</mat-stepper>
+}
 
 <button
   mat-flat-button

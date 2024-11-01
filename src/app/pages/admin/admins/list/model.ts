@@ -58,21 +58,6 @@ export const allUsersFilters: FilterOption[] = [
     icon: 'email',
     combinator: 'Includes',
   },
-  {
-    key: 'membership',
-    label: 'Membership Type/Status',
-    position: 7,
-    type: 'list',
-    icon: 'checklist',
-    combinator: 'Is',
-    options: [
-      { key: 'Admin', value: 'Admin' },
-      { key: 'Active', value: 'Active' },
-      { key: 'Bereaved', value: 'Bereaved' },
-      { key: 'Deceased', value: 'Deceased' },
-      { key: 'DeActivated', value: 'DeActivated' },
-    ],
-  },
 ];
 
 export const adminfilters: FilterOption[] = [...allUsersFilters];
@@ -121,13 +106,6 @@ export const allUsersColumns: GridColumn[] = [
     width: '250px',
   },
   {
-    key: 'membership',
-    label: 'Membership Type/Status',
-    position: 6,
-    type: 'status',
-    width: '250px',
-  },
-  {
     key: 'create_date',
     label: 'First Created',
     position: 99,
@@ -144,7 +122,6 @@ export const allUsersColumns: GridColumn[] = [
 ];
 
 export const adminColumns: GridColumn[] = [...allUsersColumns];
-
 
 export const statusLabels: StatusLabels = {
   Admin: 'Admin',

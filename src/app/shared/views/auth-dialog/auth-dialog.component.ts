@@ -31,6 +31,7 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { passwordsMismatchValidator } from './password.validator';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'adb-auth-dialog',
@@ -42,6 +43,7 @@ import { passwordsMismatchValidator } from './password.validator';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatSelectModule,
     MatSnackBarModule,
     MatIconModule,
     MatDatepickerModule,
@@ -87,6 +89,9 @@ export class AuthComponent extends Page {
   get name() {
     return this.authForm.get(`name`);
   }
+  get gender() {
+    return this.authForm.get(`gender`);
+  }
   get id_number() {
     return this.authForm.get(`id_number`);
   }
@@ -125,6 +130,7 @@ export class AuthComponent extends Page {
             this.authForm = this.fb.group(
               {
                 name: [``, Validators.required],
+                gender: [``, Validators.required],
                 id_number: [``, Validators.required],
                 birth_date: [``, Validators.required],
                 phone_number: [``, Validators.required],

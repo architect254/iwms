@@ -19,11 +19,21 @@ import { Membership } from '../../../../core/entities/user.entity';
 import { Welfare } from '../../../../core/entities/welfare.entity';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DynamicFormComponent } from '../../../../shared/components/form-control/form.component';
-import { DynamicCustomFormControlBase, ValueType, CustomDropdownControl } from '../../../../shared/components/form-control/model';
+import {
+  DynamicCustomFormControlBase,
+  ValueType,
+  CustomDropdownControl,
+} from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
-import { EditableViewPage, IsProceedAllowed } from '../../../../shared/directives/view-page/editable-view-page.directive';
+import { EditableViewPage } from '../../../../shared/directives/view-page/editable-view-page.directive';
 import { MembersService } from '../members.service';
-import { coreUserDetailsFormControls, newWelfareDetailsFormControls, chooseWelfareFormControls, spouseDetailsFormControls, childDetailsFormControls } from './model';
+import {
+  coreUserDetailsFormControls,
+  newWelfareDetailsFormControls,
+  chooseWelfareFormControls,
+  spouseDetailsFormControls,
+  childDetailsFormControls,
+} from './model';
 
 export const CORE_USER_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -101,14 +111,14 @@ export class UpsertComponent extends EditableViewPage {
 
   readonly isSelected: IsSelected = [true, false, false, false];
 
-  override readonly isProceedAllowed: IsProceedAllowed = {
+  override readonly isProceedAllowed: Record<string, boolean> = {
     'Core Account Details': false,
     'Welfare Details': false,
     'Spouse Details': false,
     'Children Details': false,
   };
 
-  readonly checks: IsProceedAllowed = {
+  readonly checks: Record<string, boolean> = {
     'Create New Welfare': false,
     'Not Married': false,
     'No Children': false,

@@ -6,6 +6,9 @@ export interface Welfare extends BaseEntity {
   email: string;
   phone_number: string;
   logo_url?: string;
+  chairperson: Member;
+  treasurer: Member;
+  secretary: Member;
   members: Member[];
 }
 

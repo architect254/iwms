@@ -108,6 +108,24 @@
       </mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Gender</mat-label>
+      <mat-select formControlName="gender">
+        @for (option of ['Male', 'Female']; track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+        }
+      </mat-select>
+      <mat-icon matPrefix>person</mat-icon>
+      <mat-error *ngIf="gender?.errors">
+        <span
+          class="is-danger"
+          *ngIf="gender?.invalid && gender?.touched && gender?.hasError('required')"
+        >
+          Gender is <strong>required*</strong>
+        </span>
+      </mat-error>
+    </mat-form-field>
+
     <section class="double-column">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>ID No.</mat-label>

@@ -17,9 +17,9 @@ export const adminRoutes: Routes = [
           import('./admins/admins.routes').then((admins) => admins.routes),
       },
       {
-        path: 'welfare-groups',
+        path: 'welfares',
         data: {
-          title: 'Welfare Groups',
+          title: 'IWMS Welfares',
         },
         loadChildren: () =>
           import('./welfares/welfares.routes').then(
