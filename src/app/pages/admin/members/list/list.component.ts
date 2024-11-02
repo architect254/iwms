@@ -2,6 +2,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
   Component,
+  EnvironmentInjector,
+  Inject,
   inject,
   InjectionToken,
   Injector,
@@ -35,23 +37,32 @@ import {
   GridColumn,
   StatusLabels,
   Filter,
+  ActionConfig,
 } from '../../../../shared/views/grid/model';
 import { MembersService } from '../members.service';
 import {
-  getToggleOptions,
-  getFilterOptions,
-  getGridColumns,
   statusLabels,
   statusColors,
+  adminToggleOptions,
+  bereavedMembersColumns,
+  deceasedMembersColumns,
+  deactivatedMembersColumns,
+  membersFilters,
+  activeMembersColumns,
+  allMemberColumns,
+  sort,
+  getActionConfig,
 } from './model';
+import { DEACTIVATED_MEMBERS_COLUMNS } from '../../admins/list/list.component';
+import { Membership } from '../../../../core/entities/user.entity';
+import { bereavedMemberDetailsFormControls } from '../../../../shared/views/bereaved-member-dialog/model';
+import { BereavedMemberDialogComponent } from '../../../../shared/views/bereaved-member-dialog/bereaved-member-dialog.component';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
 );
 
 export const FILTERS = new InjectionToken<FilterOption[]>('Grid filters');
-
-export const COLUMNS = new InjectionToken<GridColumn[]>('Grid columns');
 
 export const LABELS = new InjectionToken<StatusLabels>('Grid status labels');
 
@@ -81,9 +92,8 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
     RouterModule,
   ],
   providers: [
-    { provide: TOGGLE_OPTIONS, useFactory: getToggleOptions },
-    { provide: FILTERS, useFactory: getFilterOptions },
-    { provide: COLUMNS, useFactory: getGridColumns },
+    { provide: TOGGLE_OPTIONS, useValue: adminToggleOptions },
+    { provide: FILTERS, useValue: membersFilters },
     { provide: LABELS, useValue: statusLabels },
     { provide: COLORS, useValue: statusColors },
   ],
@@ -94,24 +104,22 @@ export class ListComponent extends ListPage {
   toggleOptions = inject(TOGGLE_OPTIONS);
 
   filterOptions = inject(FILTERS);
-  columns = inject(COLUMNS);
+  columns!: GridColumn[];
   labels = inject(LABELS);
   colors = inject(COLORS);
-
-  actions = [];
 
   welfareId!: string;
 
   constructor(
     @SkipSelf() override authService: AuthService,
-
-    private service: MembersService,
-    private injector: Injector
+    private service: MembersService
   ) {
     super(authService);
 
+    this.columns = sort(allMemberColumns);
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;
+    this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
 
     this.welfareId =
       this.router.getCurrentNavigation()?.extras.state?.['welfareId'];
@@ -122,20 +130,32 @@ export class ListComponent extends ListPage {
   }
 
   onToggle(option: ToggleOption) {
+    this.toggledOption = option;
     this.toggledOptionValue = option.value;
-    runInInjectionContext(this.injector, () => {
-      switch (this.toggledOptionValue) {
-        case 'all':
-          this.filterOptions = inject(FILTERS);
-          this.columns = inject(COLUMNS);
-          break;
+    this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
+    switch (this.toggledOptionValue) {
+      case 'all':
+        this.columns = sort(allMemberColumns);
+        break;
+      case Membership.Active:
+        this.columns = sort(activeMembersColumns);
+        break;
+      case Membership.Bereaved:
+        this.columns = sort(bereavedMembersColumns);
+        break;
+      case Membership.Deceased:
+        this.columns = sort(deceasedMembersColumns);
+        break;
+      case Membership.Deactivated:
+        this.columns = sort(deactivatedMembersColumns);
+        break;
 
-        default:
-          break;
-      }
-      this.cdr.detectChanges();
-      this.doRefresh();
-    });
+      default:
+        break;
+    }
+    console.log('toggled', this.filters, this.columns);
+    this.cdr.detectChanges();
+    this.doRefresh();
   }
 
   override fetchData(
@@ -169,10 +189,29 @@ export class ListComponent extends ListPage {
             welfare: (member as Member)?.welfare?.name,
             create_date: member.create_date,
             update_date: member.update_date,
+            actionConfig: getActionConfig(member),
           };
         });
       })
     );
+  }
+
+  doAction(action: ActionConfig) {
+    console.log('action', action);
+
+    switch (action.label) {
+      case 'To Bereaved Member':
+        this.dialogRef = this.dialog.open(BereavedMemberDialogComponent, {
+          data: action.entity,
+          width: '700px',
+          height: '600px',
+        });
+
+        break;
+
+      default:
+        break;
+    }
   }
 
   override setTwitterCardMeta(): void {

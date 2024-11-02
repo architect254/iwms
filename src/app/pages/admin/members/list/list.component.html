@@ -12,11 +12,11 @@
   ></iwms-grid-search
 ></iwms-header>
 <iwms-grid
-  [name]="toggledOption.name + ' Accounts'"
+  [name]="toggledOption.name + ' Members'"
   [data]="data"
   [columns]="columns"
   [labels]="labels"
   [colors]="colors"
-  [actions]="actions"
+  (act)="doAction($event)"
   (refresh)="doRefresh()"
 ></iwms-grid>

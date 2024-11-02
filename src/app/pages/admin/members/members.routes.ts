@@ -40,7 +40,7 @@ export const routes: Routes = [
       {
         path: '',
         component: ListComponent,
-        data: { title: 'Welfare Members List' },
+        data: { title: 'Members List' },
       },
     ],
   },

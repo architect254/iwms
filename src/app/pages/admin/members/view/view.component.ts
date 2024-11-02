@@ -67,8 +67,7 @@ export const CHILD_DATA_VIEW = new InjectionToken<
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends ViewPage {
-  account!:
-    | Admin
+  member!:
     | Member
     | BereavedMember
     | DeceasedMember
@@ -78,7 +77,7 @@ export class ViewComponent extends ViewPage {
   spouse?: Spouse;
   children?: Child[];
 
-  accountDataView = inject(ACCOUNT_DATA_VIEW);
+  memberDataView = inject(ACCOUNT_DATA_VIEW);
   welfareDataView = inject(WELFARE_DATA_VIEW);
   spouseDataView = inject(SPOUSE_DATA_VIEW);
   childDataView = [inject(CHILD_DATA_VIEW)];
@@ -94,18 +93,18 @@ export class ViewComponent extends ViewPage {
 
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
-        this.account = data['account'];
-        this.welfare = (this.account as Member)?.welfare;
-        this.spouse = (this.account as Member)?.spouse;
-        this.children = (this.account as Member)?.children;
+        this.member = data['member'];
+        this.welfare = (this.member as Member)?.welfare;
+        this.spouse = (this.member as Member)?.spouse;
+        this.children = (this.member as Member)?.children;
 
-        this.accountDataView.forEach(
+        this.memberDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
                 if (view) {
                   view.value = (
-                    this.account as unknown as Record<
+                    this.member as unknown as Record<
                       string,
                       string | number | Date
                     >

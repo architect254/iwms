@@ -47,50 +47,6 @@ export function accountDataView(): Observable<
       type: 'email',
       order: 6,
     }),
-    new CustomStatusData({
-      key: 'type',
-      label: 'Account Type',
-      colors: {
-        Admin: 'red',
-        Client: 'green',
-      },
-      icon: 'checklist',
-      order: 7,
-    }),
-    new CustomStatusData({
-      key: 'state',
-      label: 'Account Status',
-      colors: {
-        Active: 'green',
-        InActive: 'black',
-      },
-      icon: 'checklist',
-      order: 8,
-    }),
-    new CustomStatusData({
-      key: 'role',
-      label: 'Membership Role',
-      colors: {
-        ChairPerson: 'orange',
-        Treasurer: 'blue',
-        Secretary: 'purple',
-        Member: 'cyan',
-      },
-      icon: 'checklist',
-      order: 9,
-    }),
-    new CustomStatusData({
-      key: 'status',
-      label: 'Membership Status',
-      colors: {
-        Normal: 'green',
-        Bereaved: 'red',
-        Deceased: 'grey',
-        Deactivated: 'black',
-      },
-      icon: 'checklist',
-      order: 9,
-    }),
   ];
   return of(data.sort((a, b) => a.order - b.order));
 }

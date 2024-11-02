@@ -18,12 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import {
-  Action,
-  GridColumn,
-  StatusColors,
-  StatusLabels,
-} from './model';
+import { ActionConfig, GridColumn, StatusColors, StatusLabels } from './model';
 
 @Component({
   selector: 'iwms-grid',
@@ -56,18 +51,20 @@ export class GridComponent<T> {
   @Input() columns!: GridColumn[];
   @Input() labels?: StatusLabels;
   @Input() colors?: StatusColors;
-  @Input() actions?: Action<T>[];
 
   @Input() defaultSortColumn: string = '';
   @Input() defaultSortColumnDirection: SortDirection = 'asc';
 
   @Output() refresh = new EventEmitter<never>();
   @Output() add = new EventEmitter<never>();
+  @Output() act = new EventEmitter<ActionConfig>();
 
   dataSource!: MatTableDataSource<any[]>;
   resultsLength = 0;
   isLoadingResults = true;
   isLimitReached = false;
+
+  actionConfig?: ActionConfig;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -118,11 +115,23 @@ export class GridComponent<T> {
   //     });
   // }
 
+  check(isChecked: boolean, entity: any) {
+    if (isChecked) {
+      this.actionConfig = entity.actionConfig;
+    } else {
+      delete this.actionConfig;
+    }
+  }
+
   doRefresh() {
     this.refresh.emit();
   }
 
-  doAdd(){
-    this.add.emit()
+  doAdd() {
+    this.add.emit();
+  }
+
+  doAction(action: ActionConfig) {
+    this.act.emit(action);
   }
 }

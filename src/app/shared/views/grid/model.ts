@@ -34,17 +34,10 @@ export interface Filter {
 export type StatusLabels = { [status: string]: string };
 export type StatusColors = { [status: string]: string };
 
-export class Action<T> {
-  private display: boolean = true;
-
-  key: string;
+export interface ActionConfig {
+  entity: any | any[];
+  position: number;
   label: string;
-
-  constructor(key: string, label: string, constraint: (entity: T) => void) {
-    this.key = key;
-    this.label = label;
-    this.constraint = constraint;
-  }
-
-  constraint: (entity: T) => void;
+  icon: string;
+  actions?: ActionConfig[];
 }

@@ -9,6 +9,30 @@
 @if (welfare) {
 <iwms-dynamic-view [dataset]="welfareDataView | async"></iwms-dynamic-view>
 }
+
+<!-- #chairperson-->
+@if (chairperson) {
+<h4 class="member-header mat-headline-large">Chairperson</h4>
+
+<iwms-dynamic-view [dataset]="chairpersonDataView | async"></iwms-dynamic-view>
+
+}
+
+<!-- #treasurer-->
+@if (treasurer) {
+<h4 class="member-header mat-headline-large">Treasurer</h4>
+
+<iwms-dynamic-view [dataset]="treasurerDataView | async"></iwms-dynamic-view>
+
+}
+
+<!-- #secretary-->
+@if (secretary) {
+<h4 class="member-header mat-headline-large">Secretary</h4>
+
+<iwms-dynamic-view [dataset]="secretaryDataView | async"></iwms-dynamic-view>
+
+}
 <!-- #members -->
 
 <!-- @if (members && members.length) { -->

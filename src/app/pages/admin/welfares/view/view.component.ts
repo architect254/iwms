@@ -18,8 +18,17 @@ import { welfareDataView, memberDataView } from './model';
 
 export const WELFARE_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
->('welfare data view');
+>('Welfare data view');
 
+export const CHAIRPERSON_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('Chairperson data view');
+export const TREASURER_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('Treaurer data view');
+export const SECRETARY_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('Secretary data view');
 export const MEMBER_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
 >('member data view');
@@ -38,6 +47,9 @@ export const MEMBER_DATA_VIEW = new InjectionToken<
   ],
   providers: [
     { provide: WELFARE_DATA_VIEW, useFactory: welfareDataView },
+    { provide: CHAIRPERSON_DATA_VIEW, useFactory: memberDataView },
+    { provide: TREASURER_DATA_VIEW, useFactory: memberDataView },
+    { provide: SECRETARY_DATA_VIEW, useFactory: memberDataView },
     { provide: MEMBER_DATA_VIEW, useFactory: memberDataView },
   ],
   templateUrl: './view.component.html',
@@ -47,9 +59,16 @@ export class ViewComponent extends ViewPage {
   override listUrl: string = '/welfare-groups';
 
   welfare?: Welfare;
+  chairperson!: Member;
+  treasurer!: Member;
+  secretary!: Member;
   members?: Member[];
 
   welfareDataView = inject(WELFARE_DATA_VIEW);
+  chairpersonDataView = inject(CHAIRPERSON_DATA_VIEW);
+  treasurerDataView = inject(TREASURER_DATA_VIEW);
+  secretaryDataView = inject(SECRETARY_DATA_VIEW);
+
   memberDataView = [inject(MEMBER_DATA_VIEW)];
 
   constructor(
@@ -70,6 +89,9 @@ export class ViewComponent extends ViewPage {
         )}/update`;
 
         this.welfare = data['welfare'];
+        this.chairperson = this.welfare?.chairperson!;
+        this.treasurer = this.welfare?.treasurer!;
+        this.secretary = this.welfare?.secretary!;
         this.members = this.welfare?.members;
 
         if (this.welfare) {
@@ -84,22 +106,69 @@ export class ViewComponent extends ViewPage {
                         string | number | Date
                       >
                     )?.[view.key] as string | number | Date;
-
-                    if (view.key == 'chairperson') {
-                      view.value = this.welfare?.chairperson?.name;
-                    }
-                    if (view.key == 'treasurer') {
-                      view.value = this.welfare?.treasurer?.name;
-                    }
-                    if (view.key == 'secretary') {
-                      view.value = this.welfare?.secretary?.name;
-                    }
                   }
                 }
               );
             }
           );
 
+          if (this.chairperson) {
+            this.chairpersonDataView.forEach(
+              (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
+                dataView.forEach(
+                  (view: DynamicCustomDataBase<string | number | Date>) => {
+                    if (view) {
+                      view.value = (
+                        this.chairperson as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )?.[view.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+            console.log('chair', this.chairperson);
+          }
+          if (this.treasurer) {
+            this.treasurerDataView.forEach(
+              (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
+                dataView.forEach(
+                  (view: DynamicCustomDataBase<string | number | Date>) => {
+                    if (view) {
+                      view.value = (
+                        this.treasurer as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )?.[view.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+            console.log('ctres', this.treasurer);
+          }
+          if (this.secretary) {
+            this.secretaryDataView.forEach(
+              (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
+                dataView.forEach(
+                  (view: DynamicCustomDataBase<string | number | Date>) => {
+                    if (view) {
+                      view.value = (
+                        this.secretary as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )?.[view.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+            console.log('sec', this.secretary);
+          }
           if (this.members?.length) {
             this.members.forEach((member, memberIndex) => {
               if (memberIndex > 0) {

@@ -34,24 +34,6 @@ export function welfareDataView(): Observable<
       icon: 'web',
       order: 4,
     }),
-    new CustomTextData({
-      key: 'chairperson',
-      label: 'Chairperson',
-      icon: 'badge',
-      order: 5,
-    }),
-    new CustomTextData({
-      key: 'treasurer',
-      label: 'Treasurer',
-      icon: 'badge',
-      order: 6,
-    }),
-    new CustomTextData({
-      key: 'secretary',
-      label: 'Secretary',
-      icon: 'badge',
-      order: 7,
-    }),
   ];
   return of(data.sort((a, b) => a.order - b.order));
 }
@@ -101,40 +83,6 @@ export function memberDataView(): Observable<
       icon: 'contact_mail',
       type: 'email',
       order: 6,
-    }),
-    new CustomStatusData({
-      key: 'state',
-      label: 'Account Status',
-      colors: {
-        Active: 'green',
-        InActive: 'black',
-      },
-      icon: 'checklist',
-      order: 7,
-    }),
-    new CustomStatusData({
-      key: 'role',
-      label: 'Membership Type',
-      colors: {
-        Manager: 'orange',
-        Accountant: 'blue',
-        Secretary: 'purple',
-        Member: 'cyan',
-      },
-      icon: 'checklist',
-      order: 8,
-    }),
-    new CustomStatusData({
-      key: 'status',
-      label: 'Membership Status',
-      colors: {
-        Normal: 'green',
-        Bereaved: 'red',
-        Deceased: 'grey',
-        Deactivated: 'black',
-      },
-      icon: 'checklist',
-      order: 9,
     }),
   ];
   return of(data.sort((a, b) => a.order - b.order));

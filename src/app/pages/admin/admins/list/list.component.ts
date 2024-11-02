@@ -35,7 +35,6 @@ import {
   FilterOption,
   Filter,
   StatusLabels,
-  Action,
 } from '../../../../shared/views/grid/model';
 import {
   ButtonToggleComponent,
@@ -122,8 +121,6 @@ export class ListComponent extends ListPage {
   colors = inject(COLORS);
 
   injector = inject(EnvironmentInjector);
-
-  actions = [new Action('', '', () => {})];
 
   constructor(
     @SkipSelf() override authService: AuthService,

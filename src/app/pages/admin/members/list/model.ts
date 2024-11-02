@@ -1,3 +1,8 @@
+import { Admin } from '../../../../core/entities/admin.entity';
+import { BereavedMember } from '../../../../core/entities/bereaved-member.entity';
+import { DeactivatedMember } from '../../../../core/entities/deactivated-member.entity';
+import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
+import { Member } from '../../../../core/entities/member.entity';
 import { User, Membership } from '../../../../core/entities/user.entity';
 import { ToggleOption } from '../../../../shared/components/button-toggle/button-toggle.component';
 import {
@@ -5,6 +10,7 @@ import {
   GridColumn,
   StatusLabels,
   StatusColors,
+  ActionConfig,
 } from '../../../../shared/views/grid/model';
 
 const userToggleOptions: ToggleOption[] = [
@@ -12,41 +18,30 @@ const userToggleOptions: ToggleOption[] = [
 ];
 const memberToggleOptions: ToggleOption[] = [
   ...userToggleOptions,
-  {
-    name: 'All Welfare Members',
-    value: 'members',
-    position: 2,
-  },
+
   {
     name: 'Active',
-    value: 'active',
+    value: Membership.Active,
     position: 3,
   },
   {
     name: 'Bereaved',
-    value: 'bereaved',
+    value: Membership.Bereaved,
     position: 4,
   },
   {
     name: 'Deceased',
-    value: 'deceased',
+    value: Membership.Deceased,
     position: 5,
   },
   {
     name: 'De-Activated',
-    value: 'deactivated',
+    value: Membership.Deactivated,
     position: 6,
   },
 ];
 
-const adminToggleOptions: ToggleOption[] = [
-  { name: 'Admin', value: 'admins', position: 1 },
-  ...memberToggleOptions,
-];
-
-export const getToggleOptions = (user: User) => {
-  return memberToggleOptions;
-};
+export const adminToggleOptions: ToggleOption[] = [...memberToggleOptions];
 
 const userFilters: FilterOption[] = [
   {
@@ -118,9 +113,7 @@ const userFilters: FilterOption[] = [
   },
 ];
 
-const adminfilters: FilterOption[] = [...userFilters];
-
-const membersFilters: FilterOption[] = [
+export const membersFilters: FilterOption[] = [
   ...userFilters,
   {
     key: 'role',
@@ -298,82 +291,95 @@ const userColumns: GridColumn[] = [
   },
 ];
 
-const adminColumns: GridColumn[] = [...userColumns];
-
 const membersColumns: GridColumn[] = [...userColumns];
 
-const bereavedMembersColumns: GridColumn[] = [
+export const allMemberColumns: GridColumn[] = [...userColumns];
+
+export const activeMembersColumns: GridColumn[] = [...userColumns];
+
+export const bereavedMembersColumns: GridColumn[] = [
   ...membersColumns,
   {
     key: 'bereavement_date',
     label: 'Date of Bereavement',
-    position: 6,
+    position: 7,
     type: 'date',
     width: '250px',
   },
   {
     key: 'deceased',
     label: 'Name of Deceased',
-    position: 7,
+    position: 8,
     type: 'string',
     width: '250px',
   },
   {
     key: 'deceased_relationship',
     label: 'Relationship with Deceased',
-    position: 8,
+    position: 9,
     type: 'status',
     width: '250px',
   },
 ];
 
-const deceasedMembersColumns: GridColumn[] = [
+export const deceasedMembersColumns: GridColumn[] = [
   ...membersColumns,
   {
     key: 'demise_date',
     label: 'Date of Demise',
-    position: 6,
+    position: 7,
     type: 'date',
     width: '250px',
   },
 ];
 
-const deactivatedMembersColumns: GridColumn[] = [
+export const deactivatedMembersColumns: GridColumn[] = [
   ...membersColumns,
   {
     key: 'deactivation_date',
     label: 'Date of Deactivation',
-    position: 6,
+    position: 7,
     type: 'date',
     width: '250px',
   },
   {
     key: 'reason',
     label: 'Reason for Deactivation',
-    position: 7,
+    position: 8,
     type: 'string',
     width: '250px',
   },
 ];
 
-export const getGridColumns = (user: User) => {
-  switch (user.membership) {
-    case Membership.Active:
-      return membersColumns;
+export function sort(array: GridColumn[]) {
+  return array.sort((a, b) => a.position - b.position);
+}
 
-    case Membership.Bereaved:
-      return bereavedMembersColumns;
+export function getActionConfig(
+  member: Member | BereavedMember | DeceasedMember | DeactivatedMember
+) {
+  let actionConfig;
+  actionConfig = {
+    actions: [
+      {
+        entity: member,
+        position: 0,
+        label: 'Change Status',
+        icon: 'edit',
+        actions: [
+          {
+            entity: member,
+            position: 0,
+            label: 'To Bereaved',
+            icon: 'badge',
+          },
+        ],
+      },
+    ],
+  } as ActionConfig;
+  return actionConfig;
+}
 
-    case Membership.Deceased:
-      return deceasedMembersColumns;
-
-    case Membership.Deactivated:
-      return deactivatedMembersColumns;
-
-    default:
-      return userColumns;
-  }
-};
 export const statusLabels: StatusLabels = {
   Admin: 'Admin',
   ChairPerson: 'ChairPerson',

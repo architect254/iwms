@@ -17,7 +17,7 @@ import { Filter } from '../../../shared/views/grid/model';
   providedIn: 'root',
 })
 export class MembersService extends ApiService implements Searchable {
-  protected override endpoint = `${this.API_URL}/users`;
+  protected override endpoint = `${this.API_URL}/members`;
 
   create(
     payload: any
@@ -35,6 +35,11 @@ export class MembersService extends ApiService implements Searchable {
     return this.http.put<
       Member | BereavedMember | DeceasedMember | DeactivatedMember
     >(endpoint, payload);
+  }
+
+  updateToBereaved(id: number | string, payload: any): Observable<void> {
+    const endpoint = this.endpoint + '/' + id + '/is-bereaved';
+    return this.http.put<void>(endpoint, payload);
   }
 
   getMany(
