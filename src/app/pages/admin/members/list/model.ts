@@ -385,7 +385,7 @@ export function getActionConfig(
 export const statusLabels: StatusLabels = {
   Active: 'Active',
   InActive: 'InActive',
-  Normal: 'Normal',
+  Member: 'Member',
   Bereaved: 'Bereaved',
   Deceased: 'Deceased',
   Deactivated: 'Deactivated',
