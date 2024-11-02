@@ -300,24 +300,24 @@ export const activeMembersColumns: GridColumn[] = [...userColumns];
 export const bereavedMembersColumns: GridColumn[] = [
   ...membersColumns,
   {
-    key: 'bereavement_date',
-    label: 'Date of Bereavement',
-    position: 7,
-    type: 'date',
-    width: '250px',
-  },
-  {
     key: 'deceased',
     label: 'Name of Deceased',
-    position: 8,
+    position: 7,
     type: 'string',
     width: '250px',
   },
   {
-    key: 'deceased_relationship',
+    key: 'relationship_with_deceased',
     label: 'Relationship with Deceased',
-    position: 9,
+    position: 8,
     type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'bereavement_date',
+    label: 'Date of Bereavement',
+    position: 9,
+    type: 'date',
     width: '250px',
   },
 ];
@@ -364,12 +364,14 @@ export function getActionConfig(
       {
         entity: member,
         position: 0,
+        key: 'change_status',
         label: 'Change Status',
         icon: 'edit',
         actions: [
           {
             entity: member,
             position: 0,
+            key: 'to_bereaved',
             label: 'To Bereaved',
             icon: 'badge',
           },
@@ -381,12 +383,6 @@ export function getActionConfig(
 }
 
 export const statusLabels: StatusLabels = {
-  Admin: 'Admin',
-  ChairPerson: 'ChairPerson',
-  Treasurer: 'Treasurer',
-  Secretary: 'Secretary',
-  Member: 'Member',
-  Client: 'Client',
   Active: 'Active',
   InActive: 'InActive',
   Normal: 'Normal',
@@ -395,14 +391,22 @@ export const statusLabels: StatusLabels = {
   Deactivated: 'Deactivated',
   Male: 'Male',
   Female: 'Female',
+  Father: 'Father',
+  Mother: 'Mother',
+  Brother: 'Brother',
+  Sister: 'Sister',
+  Son: 'Son',
+  Daughter: 'Daughter',
+  GrandMa: 'GrandMa',
+  GrandPa: 'GrandPa',
+  Uncle: 'Uncle',
+  Aunt: 'Aunt',
+  Nephew: 'Nephew',
+  Niece: 'Niece',
+  Cousin: 'Cousin',
 };
 
 export const statusColors: StatusColors = {
-  Admin: 'red',
-  Client: 'green',
-  ChairPerson: 'orange',
-  Treasurer: 'blue',
-  Secretary: 'purple',
   Member: 'cyan',
   Active: 'green',
   InActive: 'gray',
@@ -412,6 +416,19 @@ export const statusColors: StatusColors = {
   Deactivated: 'grey',
   Male: 'blue',
   Female: 'red',
+  Father: 'blue',
+  Mother: 'purple',
+  Brother: 'violet',
+  Sister: 'indigo',
+  Son: 'teal',
+  Daughter: 'bisque',
+  GrandMa: 'burlywood',
+  GrandPa: 'coral',
+  Uncle: 'darkcyan',
+  Aunt: 'darkorchid',
+  Nephew: 'dodgerblue',
+  Niece: 'hotpink',
+  Cousin: 'salmon',
 };
 export interface FilterRequest {
   name?: string;

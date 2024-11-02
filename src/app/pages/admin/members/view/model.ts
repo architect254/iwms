@@ -1,7 +1,12 @@
-import { Observable, of } from "rxjs";
-import { DynamicCustomDataBase, CustomTextData, CustomStatusData, CustomDateData } from "../../../../shared/components/data-view/view.service";
+import { Observable, of } from 'rxjs';
+import {
+  DynamicCustomDataBase,
+  CustomTextData,
+  CustomStatusData,
+  CustomDateData,
+} from '../../../../shared/components/data-view/view.service';
 
-export function accountDataView(): Observable<
+export function memberDataView(): Observable<
   DynamicCustomDataBase<string | number | Date>[]
 > {
   const data: DynamicCustomDataBase<string | number | Date>[] = [
@@ -46,6 +51,51 @@ export function accountDataView(): Observable<
       icon: 'contact_mail',
       type: 'email',
       order: 6,
+    }),
+    new CustomStatusData({
+      key: 'membership',
+      label: 'Membership Type/Status',
+      colors: {
+        Active: 'green',
+        Bereaved: 'orange',
+        Deceased: 'red',
+        Deactivated: 'grey',
+      },
+      icon: 'checklist',
+      order: 7,
+    }),
+    new CustomTextData({
+      key: 'deceased',
+      label: 'Deceased Name',
+      icon: 'badge',
+      order: 8,
+    }),
+    new CustomStatusData({
+      key: 'relationship_with_deceased',
+      label: 'Relationship With Deceased',
+      colors: {
+        Father: 'blue',
+        Mother: 'purple',
+        Brother: 'violet',
+        Sister: 'indigo',
+        Son: 'teal',
+        Daughter: 'bisque',
+        GrandMa: 'burlywood',
+        GrandPa: 'coral',
+        Uncle: 'darkcyan',
+        Aunt: 'darkorchid',
+        Nephew: 'dodgerblue',
+        Niece: 'hotpink',
+        Cousin: 'salmon',
+      },
+      icon: 'checklist',
+      order: 9,
+    }),
+    new CustomDateData({
+      key: 'bereavement_date',
+      label: 'Date of Bereavement',
+      icon: 'person',
+      order: 10,
     }),
   ];
   return of(data.sort((a, b) => a.order - b.order));

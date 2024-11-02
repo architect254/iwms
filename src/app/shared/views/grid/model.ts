@@ -37,6 +37,7 @@ export type StatusColors = { [status: string]: string };
 export interface ActionConfig {
   entity: any | any[];
   position: number;
+  key: string;
   label: string;
   icon: string;
   actions?: ActionConfig[];

@@ -19,27 +19,27 @@ import { HeaderComponent } from '../../../../shared/components/header/header.com
 import { ViewPage } from '../../../../shared/directives/view-page/view-page.directive';
 import { MembersService } from '../members.service';
 import {
-  accountDataView,
   welfareDataView,
   spouseDataView,
   childDataView,
+  memberDataView,
 } from './model';
 
-export const ACCOUNT_DATA_VIEW = new InjectionToken<
+export const MEMBER_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
->('account data view');
+>('Member data view');
 
 export const WELFARE_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
->('welfare data view');
+>('Welfare data view');
 
 export const SPOUSE_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
->('spouse data view');
+>('Spouse data view');
 
 export const CHILD_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
->('spouse data view');
+>('Child data view');
 
 @Component({
   selector: 'iwms-view',
@@ -47,8 +47,8 @@ export const CHILD_DATA_VIEW = new InjectionToken<
   imports: [AsyncPipe, HeaderComponent, DynamicViewComponent, JsonPipe],
   providers: [
     {
-      provide: ACCOUNT_DATA_VIEW,
-      useFactory: accountDataView,
+      provide: MEMBER_DATA_VIEW,
+      useFactory: memberDataView,
     },
     {
       provide: WELFARE_DATA_VIEW,
@@ -77,7 +77,7 @@ export class ViewComponent extends ViewPage {
   spouse?: Spouse;
   children?: Child[];
 
-  memberDataView = inject(ACCOUNT_DATA_VIEW);
+  memberDataView = inject(MEMBER_DATA_VIEW);
   welfareDataView = inject(WELFARE_DATA_VIEW);
   spouseDataView = inject(SPOUSE_DATA_VIEW);
   childDataView = [inject(CHILD_DATA_VIEW)];

@@ -57,6 +57,7 @@ import { DEACTIVATED_MEMBERS_COLUMNS } from '../../admins/list/list.component';
 import { Membership } from '../../../../core/entities/user.entity';
 import { bereavedMemberDetailsFormControls } from '../../../../shared/views/bereaved-member-dialog/model';
 import { BereavedMemberDialogComponent } from '../../../../shared/views/bereaved-member-dialog/bereaved-member-dialog.component';
+import { BereavedMember } from '../../../../core/entities/bereaved-member.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -187,6 +188,10 @@ export class ListComponent extends ListPage {
             profile_image: member?.profile_image,
             membership: member.membership,
             welfare: (member as Member)?.welfare?.name,
+            deceased: (member as BereavedMember)?.deceased,
+            relationship_with_deceased: (member as BereavedMember)
+              ?.relationship_with_deceased,
+            bereavement_date: (member as BereavedMember)?.bereavement_date,
             create_date: member.create_date,
             update_date: member.update_date,
             actionConfig: getActionConfig(member),
@@ -199,8 +204,8 @@ export class ListComponent extends ListPage {
   doAction(action: ActionConfig) {
     console.log('action', action);
 
-    switch (action.label) {
-      case 'To Bereaved Member':
+    switch (action.key) {
+      case 'to_bereaved':
         this.dialogRef = this.dialog.open(BereavedMemberDialogComponent, {
           data: action.entity,
           width: '700px',

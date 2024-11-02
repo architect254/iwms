@@ -1,4 +1,4 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { BereavedMember } from '../../../core/entities/bereaved-member.entity';
@@ -37,9 +37,28 @@ export class MembersService extends ApiService implements Searchable {
     >(endpoint, payload);
   }
 
-  updateToBereaved(id: number | string, payload: any): Observable<void> {
+  updateToBereaved(
+    id: number | string,
+    payload: {
+      deceased: string;
+      relationship_with_deceased: string;
+      bereavement_date: string;
+    }
+  ): Observable<{
+    deceased: string;
+    relationship_with_deceased: string;
+    bereavement_date: string;
+  }> {
     const endpoint = this.endpoint + '/' + id + '/is-bereaved';
-    return this.http.put<void>(endpoint, payload);
+    return this.http.put<{
+      deceased: string;
+      relationship_with_deceased: string;
+      bereavement_date: string;
+    }>(endpoint, payload, {
+      headers: new HttpHeaders().set('content-type', 'application/json'),
+      observe: 'body',
+      responseType: 'json',
+    });
   }
 
   getMany(

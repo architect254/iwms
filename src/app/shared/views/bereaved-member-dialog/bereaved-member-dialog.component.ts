@@ -75,7 +75,7 @@ export class BereavedMemberDialogComponent extends Page {
     BEREAVED_MEMBER_DETAILS_FORM_CONTROLS
   );
 
-  bereavedDto!: BereavedMember;
+  bereavedDto!: any;
 
   isSubmitting: Observable<boolean> = of(false);
   canConfirm = false;
@@ -94,12 +94,15 @@ export class BereavedMemberDialogComponent extends Page {
   }
 
   onValidityNotified(data: any) {
-    console.log('bereaved valid', data);
-    this.bereavedDto = { ...this.member, ...data } as BereavedMember;
+    this.bereavedDto = data
+    console.log('bereaved valid 0', this.bereavedDto, data);
     this.canConfirm = true;
   }
 
   confirm() {
+    this.isSubmitting = of(true);
+
+    console.log('bereaved dto', this.bereavedDto)
     this.subscriptions.add(
       this.service
         .updateToBereaved(this.member.id!, this.bereavedDto)
@@ -110,7 +113,6 @@ export class BereavedMemberDialogComponent extends Page {
           },
         })
     );
-    this.isSubmitting = of(true);
   }
 
   override setDefaultMetaAndTitle(): void {}
