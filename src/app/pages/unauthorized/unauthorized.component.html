@@ -1,0 +1,18 @@
+<mat-toolbar>
+  <header class="app-header app-name" routerLink="/">
+    <span class="start">IW</span><span class="end">MS</span>
+  </header>
+</mat-toolbar>
+<div class="text-center">
+  <h1 class="mat-display-large">Unauthorized To View Page 🙃</h1>
+  <p class="mat-title-large">
+    We're sorry. You do not have the permissions to view this page.
+  </p>
+  <p class="mat-label-large">
+    Kindly,
+    <a class="icon-link text-primary" (click)="location.back()">Go Back</a>
+    or
+    <a class="icon-link text-primary" routerLink="/">Log In!</a> to account with
+    the required permissions
+  </p>
+</div>

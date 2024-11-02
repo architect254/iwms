@@ -1,0 +1,13 @@
+<div [formGroup]="form">
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>{{ control.label }}</mat-label>
+    <input
+      matInput
+      [id]="control.key"
+      [name]="control!.key"
+      [type]="control.type"
+      [formControlName]="control.key"
+    />
+    <mat-icon matPrefix>{{ control.icon }}</mat-icon>
+  </mat-form-field>
+</div>

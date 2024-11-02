@@ -1,0 +1,124 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($iwms-theme) {
+  .mat-sidenav {
+    &.mat-drawer.mat-drawer-side {
+      border-right-color: mat.get-theme-color($iwms-theme, primary, 95);
+    }
+  }
+
+  .mat-toolbar {
+    background-color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+  .secondary-toolbar {
+    background-color: mat.get-theme-color($iwms-theme, primary, 95);
+  }
+
+  iwms-sign-up,
+  iwms-sign-in {
+    background-color: mat.get-theme-color($iwms-theme, primary, 95);
+
+    .header {
+      color: mat.get-theme-color($iwms-theme, primary, 30);
+
+      .app-name {
+        box-shadow: mat.get-theme-color($iwms-theme, primary, 30) 0px 30px 60px -12px inset, mat.get-theme-color($iwms-theme, secondary, 10) 0px 18px 36px -18px inset;
+        padding: 16px 8px 0 8px;
+        border-radius: 4px;
+
+        .start {
+          color: mat.get-theme-color($iwms-theme, primary, 100);
+        }
+
+        .end {
+          @supports (-webkit-text-stroke: 1px mat.get-theme-color($iwms-theme, primary, 30)) {
+            -webkit-text-stroke: 1px mat.get-theme-color($iwms-theme, primary, 100);
+            -webkit-text-fill-color: mat.get-theme-color($iwms-theme, primary, 30);
+            -webkit-text-stroke-width: 1px;
+          }
+        }
+      }
+    }
+
+  }
+
+  .add-icon {
+    color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+  .core-account-header,.member-header,
+  .welfare-header,
+  .children-header,
+  .spouse-header {
+    color: mat.get-theme-color($iwms-theme, primary, 35);
+  }
+
+  iwms-upsert {
+    --stepper-color: var(--mat-stepper-header-icon-background-color, var(--mat-app-on-surface-variant));
+
+    .core-account-header,.member-header,
+    .welfare-header,
+    .children-header,
+    .spouse-header {
+      color: var(--stepper-color);
+
+      &.selected {
+        color: mat.get-theme-color($iwms-theme, primary, 35);
+
+      }
+    }
+  }
+
+  .child-section,.member-section {
+    background-color: mat.get-theme-color($iwms-theme, primary, 95);
+  }
+
+  .footer {
+    background-color: lighten(mat.get-theme-color($iwms-theme, primary, 30), 10) !important;
+    color: mat.get-theme-color($iwms-theme, primary, 99) !important;
+  }
+}
+
+@mixin typography($iwms-theme) {
+  .app-name {
+    font: mat.get-theme-typography($iwms-theme, display-small, font);
+    color: mat.get-theme-color($iwms-theme, primary, 100);
+  }
+
+  .page-title {
+    font: mat.get-theme-typography($iwms-theme, title-large, font);
+    color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+  iwms-sign-up,
+  iwms-sign-in {
+
+    .header {
+
+      .app-name {
+
+        .start {
+          font: mat.get-theme-typography($iwms-theme, display-large, font);
+        }
+
+        .end {
+          font: mat.get-theme-typography($iwms-theme, display-large, font);
+
+        }
+      }
+    }
+
+  }
+}
+
+@mixin theme($iwms-theme) {
+  @if mat.theme-has($iwms-theme, color) {
+    @include color($iwms-theme);
+  }
+
+  @if mat.theme-has($iwms-theme, typography) {
+    @include typography($iwms-theme);
+  }
+}

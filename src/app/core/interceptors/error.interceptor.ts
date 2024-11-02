@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { ErrorHandler, inject } from '@angular/core';
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -26,7 +26,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBarRef = snackBar.open(errorResponse?.message, `Retry`, {
           panelClass: `.api-error-alert.server`,
-          duration: 1500,
+          duration: 5000,
         });
 
         snackBarRef.onAction().subscribe(() => {
@@ -40,7 +40,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBarRef = snackBar.open(errorResponse?.message, `OK`, {
           panelClass: `.api-error-alert.browser`,
-          duration: 1500,
+          duration: 5000,
         });
 
         snackBarRef.onAction().subscribe(() => {
@@ -52,3 +52,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+class MyErrorHandler implements ErrorHandler {
+  handleError(error: Error) {
+    console.error(error);
+  }
+}

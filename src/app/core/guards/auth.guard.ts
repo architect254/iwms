@@ -1,43 +1,16 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
 
-import { first, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = async (route, state) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
+export const authGuard: CanActivateFn = async () => {
+  return new Promise<boolean>((resolve) => {
+    const authService = inject(AuthService);
 
-  return await firstValueFrom(
-    authService.isAuthenticated$.pipe(
-      map(async (isAuthenticated: boolean) => {
-        if (!isAuthenticated) {
-          if (state.url == '/home') {
-            return true;
-          } else {
-            return new RedirectCommand(router.parseUrl('/home'));
-          }
-        } else {
-          console.log('route', state.url);
-          if (state.url == '/home' || state.url == '/') {
-            let nextRoute = '';
-
-            return await firstValueFrom(
-              authService.currentTokenUserValue$.pipe(
-                map((user) => {
-                  if (user?.user_role == 'Site Admin') {
-                    nextRoute = '/users';
-                  } else {
-                    nextRoute = '/memberships';
-                  }
-                  return new RedirectCommand(router.parseUrl(nextRoute));
-                })
-              )
-            );
-          } else return true;
-        }
-      })
-    )
-  );
+    firstValueFrom(authService.isAuthenticated).then((isAuthenticated) => {
+      resolve(isAuthenticated);
+    });
+  });
 };

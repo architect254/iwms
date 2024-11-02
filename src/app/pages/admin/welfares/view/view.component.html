@@ -1,0 +1,67 @@
+<iwms-header
+  [title]="pageTitle"
+  [updateUrl]="updateUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
+
+<!-- #welfare -->
+@if (welfare) {
+<iwms-dynamic-view [dataset]="welfareDataView | async"></iwms-dynamic-view>
+}
+
+<!-- #chairperson-->
+@if (chairperson) {
+<h4 class="member-header mat-headline-large">Chairperson</h4>
+
+<iwms-dynamic-view [dataset]="chairpersonDataView | async"></iwms-dynamic-view>
+
+}
+
+<!-- #treasurer-->
+@if (treasurer) {
+<h4 class="member-header mat-headline-large">Treasurer</h4>
+
+<iwms-dynamic-view [dataset]="treasurerDataView | async"></iwms-dynamic-view>
+
+}
+
+<!-- #secretary-->
+@if (secretary) {
+<h4 class="member-header mat-headline-large">Secretary</h4>
+
+<iwms-dynamic-view [dataset]="secretaryDataView | async"></iwms-dynamic-view>
+
+}
+<!-- #members -->
+
+<!-- @if (members && members.length) { -->
+<h4 class="member-header mat-headline-large">
+  Welfare Members List
+  <button
+    mat-flat-button
+    class="basic-btn"
+    aria-label="View all members"
+    (click)="viewAllMembers()"
+  >
+    <mat-icon fontIcon="add" class="btn-icon"></mat-icon
+    ><span>View all members</span>
+  </button>
+</h4>
+
+@if (!members?.length) {
+<small
+  >No members yet.
+  <a class="icon-link text-primary" (click)="createMember()"
+    >Create One...</a
+  ></small
+>} @for (item of members | slice:0:5; track $index; ) {
+<h5 class="member-header member mat-title-medium">
+  Welfare Member [{{ $index + 1 }}]
+</h5>
+<iwms-dynamic-view
+  class="member-section"
+  [dataset]="memberDataView[$index] | async"
+></iwms-dynamic-view>
+}
+<!-- } -->

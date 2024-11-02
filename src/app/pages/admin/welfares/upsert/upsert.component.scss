@@ -1,0 +1,20 @@
+.checkbox{
+    display: flex;
+    margin: 24px 8px;
+}
+button {
+    &.add-child-btn {
+        margin-bottom: 32px;
+    }
+
+    &.save-btn:not(.admin-save) {
+        margin-left: 24px;
+    }
+}
+
+:host ::ng-deep{
+    div.mat-horizontal-content-container{
+        padding: 0;
+    }
+}
+

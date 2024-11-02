@@ -1,0 +1,10 @@
+<iwms-header
+  [title]="pageTitle"
+  [updateUrl]="updateUrl"
+  [listUrl]="listUrl"
+></iwms-header>
+
+<!-- #admin -->
+
+<h4 class="core-account-header mat-headline-large">Admin Details</h4>
+<iwms-dynamic-view [dataset]="adminDataView | async"></iwms-dynamic-view>

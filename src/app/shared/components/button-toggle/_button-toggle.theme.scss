@@ -1,0 +1,16 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($iwms-theme) {}
+
+@mixin typography($iwms-theme) {}
+
+@mixin theme($iwms-theme) {
+  @if mat.theme-has($iwms-theme, color) {
+    @include color($iwms-theme);
+  }
+
+  @if mat.theme-has($iwms-theme, typography) {
+    @include typography($iwms-theme);
+  }
+}

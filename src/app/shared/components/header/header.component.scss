@@ -1,0 +1,26 @@
+.header,
+.header-toggle {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0;
+    
+    .page-title {
+        margin: 4px 0 !important;
+    }
+
+    .header-nav-btns {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+}
+.header{
+    position: relative;
+    margin: 24px 0;
+}
+
+.header-toggle {
+    gap: 16px;
+}

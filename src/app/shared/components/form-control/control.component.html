@@ -1,0 +1,14 @@
+@if(control.visible){ @switch (control.controlType) { @case ('text') {
+<iwms-text-control [control]="control" [form]="form"></iwms-text-control> }
+@case ('date') {
+<iwms-date-control [control]="control" [form]="form"></iwms-date-control>
+} @case ('dropdown') {
+<iwms-dropdown-control
+  [control]="control"
+  [form]="form"
+></iwms-dropdown-control>
+} @case ('search') {
+<iwms-search-control [control]="control" [form]="form"></iwms-search-control>
+} } @if (isNotValid) {
+<mat-error class="errorMessage">{{ control.label }} is required</mat-error>
+} }

@@ -1,0 +1,7 @@
+#toggle.mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
+.mat-button-toggle-group-appearance-standard {
+    --mat-standard-button-toggle-shape: 4px;
+
+    border-radius: var(--mat-standard-button-toggle-shape, var(--mat-app-corner-full));
+    border: solid 1px var(--mat-standard-button-toggle-divider-color, var(--mat-app-outline));
+}

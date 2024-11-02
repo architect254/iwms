@@ -1,16 +1,12 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
 import {
   BehaviorSubject,
-  finalize,
   first,
-  last,
   map,
   Observable,
-  of,
+  ReplaySubject,
   tap,
-  throwError,
 } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -19,40 +15,40 @@ import { jwtDecode } from 'jwt-decode';
 
 import { LocalStorageService, STORAGE_KEYS } from './local-storage.service';
 import { ApiService } from './api.service';
-import { SignInDto, SignUpDto } from '../../shared/auth-dialog/auth.dto';
-import { User } from '../../pages/users/user.model';
+import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
+import { Admin } from '../entities/admin.entity';
+import { Member } from '../entities/member.entity';
+import { Membership } from '../entities/user.entity';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
 
-  private _storageService = inject(LocalStorageService);
-
-  private currentTokenSubject: BehaviorSubject<any> = new BehaviorSubject(
-    this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN)
-  );
-  public currentToken$: Observable<any> = this.currentTokenSubject
-    .asObservable()
-    .pipe(first());
+  private _token = new ReplaySubject(1);
 
   private jwtHelper = new JwtHelperService();
 
-  constructor() {
+  constructor(private _storage: LocalStorageService) {
     super();
   }
 
-  get currentTokenUserValue$(): Observable<User | null> {
-    return this.currentToken$.pipe(
+  get token(): Observable<any> {
+    return this._token.asObservable().pipe(first());
+  }
+
+  get user(): Observable<Admin | Member | null> {
+    return this.token.pipe(
       map((token) => {
         if (token) {
           const payload: JwtPayload = jwtDecode(token);
-          return payload.user as User;
+          const { user } = payload;
+          return user;
         } else return null;
       })
     );
   }
 
-  get isAuthenticated$(): Observable<boolean> {
-    return this.currentToken$.pipe(
+  get isAuthenticated(): Observable<boolean> {
+    return this.token.pipe(
       map((token) => {
         // return !this.jwtHelper
         //   .isTokenExpired(token, Date.now())
@@ -64,6 +60,22 @@ export class AuthService extends ApiService {
         }
       })
     );
+  }
+
+  get isAdmin(): Observable<boolean> {
+    return this.user.pipe(
+      map((user: Member | Admin | null) => {
+        return (user as Admin)?.isAdmin;
+      })
+    );
+  }
+
+  inilialize() {
+    return new Promise<void>((resolve) => {
+      const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
+      this._token.next(token);
+      resolve();
+    });
   }
 
   signUp(credentials: SignUpDto) {
@@ -79,18 +91,11 @@ export class AuthService extends ApiService {
         first(),
         tap({
           next: ({ token }) => {
-            this._storageService.set(STORAGE_KEYS.ACCESS_TOKEN, token);
-            this.checkUser();
+            this._storage.set(STORAGE_KEYS.ACCESS_TOKEN, token);
+            this._token.next(token);
           },
         })
       );
-  }
-
-  checkUser() {
-    const token = this._storageService.get(STORAGE_KEYS.ACCESS_TOKEN);
-    if (token) {
-      this.currentTokenSubject.next(token);
-    }
   }
 
   resetPassword(payload: any) {
@@ -98,14 +103,10 @@ export class AuthService extends ApiService {
   }
 
   logout() {
-    this._storageService.clear();
-    this.currentTokenSubject.next(null);
-  }
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
+    this._storage.clear();
+    this._token.next(null);
   }
 }
 export interface JwtPayload {
-  user: User;
+  user: Admin | Member;
 }

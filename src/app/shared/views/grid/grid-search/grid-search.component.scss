@@ -1,0 +1,23 @@
+.filter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+
+    .search,
+    .search-option {
+        max-width: 250px;
+    }
+}
+
+.selected-filter-options {
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 4px 0;
+    width: 100%;
+}

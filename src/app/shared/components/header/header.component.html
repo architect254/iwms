@@ -1,0 +1,59 @@
+<header class="container-fluid header" id="header">
+  <div class="header-toggle">
+    <h2 class="page-title">{{ title }}</h2>
+
+    <!-- #region dynamic content-->
+    <ng-content select="[toggle]"></ng-content>
+  </div>
+  <ng-content select="[search]"></ng-content>
+
+  <!-- #region naviation buttons-->
+
+  @if (listUrl || updateUrl || viewUrl || displayBack) {
+  <div class="header-nav-btns">
+    @if(updateUrl){
+    <a
+      mat-icon-button
+      class="basic-btn"
+      aria-label="Go to edit page"
+      title="Go to edit page"
+      [routerLink]="[updateUrl]"
+      [href]="updateUrl"
+    >
+      <mat-icon fontIcon="edit_note" class="btn-icon"></mat-icon>
+    </a>
+    } @if(viewUrl){
+    <a
+      mat-icon-button
+      class="basic-btn"
+      aria-label="Go to view page"
+      title="Go to view page"
+      [routerLink]="[viewUrl]"
+      [href]="viewUrl"
+    >
+      <mat-icon fontIcon="wysiwyg" class="btn-icon"></mat-icon>
+    </a>
+    } @if (listUrl) {
+    <a
+      mat-icon-button
+      class="basic-btn"
+      aria-label="Go to list page"
+      title="Go to list page"
+      [routerLink]="[listUrl]"
+    >
+      <mat-icon fontIcon="format_list_numbered" class="btn-icon"></mat-icon>
+    </a>
+    } @if (displayBack) {
+    <button
+      mat-icon-button
+      class="basic-btn"
+      aria-label="Go back"
+      title="Go back"
+      (click)="location.back()"
+    >
+      <mat-icon fontIcon="arrow_back" class="btn-icon"></mat-icon>
+    </button>
+    }
+  </div>
+  }
+</header>

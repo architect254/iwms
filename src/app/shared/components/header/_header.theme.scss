@@ -1,0 +1,28 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($iwms-theme) {
+  button[mat-flat-button].basic-btn {
+    background-color: transparent;
+    color: mat.get-theme-color($iwms-theme, primary, 30);
+  }
+
+
+}
+
+@mixin typography($iwms-theme) {
+  .app-name {
+    font: mat.get-theme-typography($iwms-theme, title-medium, font);
+    color: mat.get-theme-color($iwms-theme, secondary, 100);
+  }
+}
+
+@mixin theme($iwms-theme) {
+  @if mat.theme-has($iwms-theme, color) {
+    @include color($iwms-theme);
+  }
+
+  @if mat.theme-has($iwms-theme, typography) {
+    @include typography($iwms-theme);
+  }
+}

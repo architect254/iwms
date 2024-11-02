@@ -1,0 +1,10 @@
+<iwms-header [title]="pageTitle">
+  <iwms-grid-search></iwms-grid-search
+></iwms-header>
+<iwms-grid
+  name="Welfares"
+  [data]="data"
+  [columns]="columns"
+  (add)="doAdd()"
+  (refresh)="doRefresh()"
+></iwms-grid>

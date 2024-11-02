@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const authService: AuthService = inject(AuthService);
 
-  return authService.currentToken$.pipe(
+  return authService.currentToken.pipe(
     switchMap((token) => {
       const isApiUrl = req.url.startsWith(environment.serverUrl);
 

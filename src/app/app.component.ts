@@ -8,13 +8,13 @@ import {
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { PageDirective } from './shared/page/page.directive';
+import { Page } from './shared/directives/page/page.directive';
 import { SwUpdate } from '@angular/service-worker';
 import { first, tap } from 'rxjs';
-import { AppShellComponent } from './app-shell/app-shell.component';
 import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { AuthComponent } from './shared/auth-dialog/auth-dialog.component';
+import { AuthComponent } from './shared/views/auth-dialog/auth-dialog.component';
 import { AuthService } from './core/services/auth.service';
+import { AppShellComponent } from './shared/views/app-shell/app-shell.component';
 
 @Component({
   selector: 'root',
@@ -24,7 +24,7 @@ import { AuthService } from './core/services/auth.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent extends PageDirective {
+export class AppComponent extends Page {
   private readonly platform = inject(PLATFORM_ID);
 
   constructor(
@@ -38,8 +38,8 @@ export class AppComponent extends PageDirective {
       // console.warn('browser');
       // Safe to use document, window, localStorage, etc. :-)
       // console.log(document);
-      this.$subscriptions$.add(
-        this.authService.isAuthenticated$.subscribe({
+      this.subscriptions.add(
+        this.authService.isAuthenticated.subscribe({
           next: (isAuthenticated) => {
             console.log('isAuthenticated', isAuthenticated);
             if (!isAuthenticated) {
@@ -58,7 +58,7 @@ export class AppComponent extends PageDirective {
       // console.log(this.document);
     }
 
-    this.$subscriptions$.add(
+    this.subscriptions.add(
       this.appRef.isStable.pipe(first((stable) => stable)).subscribe((t) =>
         this.zone.run(() => {
           this.checkForNewVersion();
