@@ -1,5 +1,9 @@
 <iwms-header [title]="pageTitle">
-  <iwms-grid-search></iwms-grid-search
+  <iwms-grid-search
+    search
+    [filters]="filterOptions"
+    (applyFilter)="doApplyFilter($event)"
+  ></iwms-grid-search
 ></iwms-header>
 <iwms-grid
   name="Welfares"
