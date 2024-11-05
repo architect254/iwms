@@ -56,7 +56,7 @@ export const MEMBER_DATA_VIEW = new InjectionToken<
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends ViewPage {
-  override listUrl: string = '/welfare-groups';
+  override listUrl: string = '/welfares';
 
   welfare?: Welfare;
   chairperson!: Member;
@@ -84,7 +84,7 @@ export class ViewComponent extends ViewPage {
 
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
-        this.updateUrl = `/welfare-groups/${this.route.snapshot.paramMap.get(
+        this.updateUrl = `/welfares/${this.route.snapshot.paramMap.get(
           'id'
         )}/update`;
 
@@ -207,7 +207,7 @@ export class ViewComponent extends ViewPage {
 
   viewAllMembers() {
     this.router.navigate(['/members'], {
-      state: { welfareId: this.welfare?.id },
+      queryParams: { welfareId: this.welfare?.id },
     });
   }
 

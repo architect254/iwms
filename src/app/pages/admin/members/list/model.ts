@@ -13,15 +13,10 @@ import {
   ActionConfig,
 } from '../../../../shared/views/grid/model';
 
-const userToggleOptions: ToggleOption[] = [
-  { name: 'All', value: 'all', position: 0 },
-];
 const memberToggleOptions: ToggleOption[] = [
-  ...userToggleOptions,
-
   {
-    name: 'Active',
-    value: Membership.Active,
+    name: 'All',
+    value: '',
     position: 3,
   },
   {

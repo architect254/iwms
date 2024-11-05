@@ -116,14 +116,16 @@ export class ListComponent extends ListPage {
     private service: MembersService
   ) {
     super(authService);
-
     this.columns = sort(allMemberColumns);
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;
     this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
 
-    this.welfareId =
-      this.router.getCurrentNavigation()?.extras.state?.['welfareId'];
+    this.subscriptions.add(
+      this.route.queryParamMap.subscribe(
+        (params) => (this.welfareId = params.get('welfareId')!)
+      )
+    );
   }
 
   override ngOnInit(): void {
@@ -135,9 +137,6 @@ export class ListComponent extends ListPage {
     this.toggledOptionValue = option.value;
     this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
     switch (this.toggledOptionValue) {
-      case 'all':
-        this.columns = sort(allMemberColumns);
-        break;
       case Membership.Active:
         this.columns = sort(activeMembersColumns);
         break;
@@ -152,9 +151,9 @@ export class ListComponent extends ListPage {
         break;
 
       default:
+        this.columns = sort(allMemberColumns);
         break;
     }
-    console.log('toggled', this.filters, this.columns);
     this.cdr.detectChanges();
     this.doRefresh();
   }
