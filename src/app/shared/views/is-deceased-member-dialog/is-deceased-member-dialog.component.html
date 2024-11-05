@@ -1,0 +1,33 @@
+<mat-toolbar>
+  <header class="app-header app-name">
+    <span class="start">IW</span><span class="end">MS</span>
+  </header>
+</mat-toolbar>
+<header class="header">
+  <h2 class="mat-headline-medium text-center page-title">
+    Deceased {{ member.name }}'s Form
+  </h2>
+</header>
+<section class="form-container">
+  <iwms-dynamic-form
+    [controls]="deceasedMemberDetailsFormControls | async"
+    [isSubmitting]="isSubmitting"
+    (notifyValidity)="onValidityNotified($event)"
+  ></iwms-dynamic-form>
+
+  <br />
+  <button
+    mat-flat-button
+    [disabled]="!canConfirm || (isSubmitting | async)"
+    (click)="confirm()"
+    class="w-100 mt-4 mb-1"
+  >
+    <mat-icon matSuffix *ngIf="!(isSubmitting | async); else submitting"
+      >how_to_reg</mat-icon
+    >
+    <ng-template #submitting
+      ><mat-spinner diameter="30" strokeWidth="4"></mat-spinner
+    ></ng-template>
+    <span *ngIf="canConfirm && !(isSubmitting | async)">Confirm</span>
+  </button>
+</section>

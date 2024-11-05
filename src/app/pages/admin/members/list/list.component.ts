@@ -55,9 +55,10 @@ import {
 } from './model';
 import { DEACTIVATED_MEMBERS_COLUMNS } from '../../admins/list/list.component';
 import { Membership } from '../../../../core/entities/user.entity';
-import { bereavedMemberDetailsFormControls } from '../../../../shared/views/bereaved-member-dialog/model';
-import { BereavedMemberDialogComponent } from '../../../../shared/views/bereaved-member-dialog/bereaved-member-dialog.component';
 import { BereavedMember } from '../../../../core/entities/bereaved-member.entity';
+import { IsBereavedMemberDialogComponent } from '../../../../shared/views/is-bereaved-member-dialog/is-bereaved-member-dialog.component';
+import { IsDeceasedMemberDialogComponent } from '../../../../shared/views/is-deceased-member-dialog/is-deceased-member-dialog.component';
+import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -191,6 +192,7 @@ export class ListComponent extends ListPage {
             relationship_with_deceased: (member as BereavedMember)
               ?.relationship_with_deceased,
             bereavement_date: (member as BereavedMember)?.bereavement_date,
+            demise_date: (member as DeceasedMember)?.demise_date,
             create_date: member.create_date,
             update_date: member.update_date,
             actionConfig: getActionConfig(member),
@@ -201,21 +203,29 @@ export class ListComponent extends ListPage {
   }
 
   doAction(action: ActionConfig) {
-    console.log('action', action);
-
     switch (action.key) {
-      case 'to_bereaved':
-        this.dialogRef = this.dialog.open(BereavedMemberDialogComponent, {
+      case 'is_bereaved':
+        this.dialogRef = this.dialog.open(IsBereavedMemberDialogComponent, {
           data: action.entity,
           width: '700px',
-          height: '600px',
+          height: '590px',
         });
-
+        break;
+      case 'is_deceased':
+        this.dialogRef = this.dialog.open(IsDeceasedMemberDialogComponent, {
+          data: action.entity,
+          width: '700px',
+          height: '430px',
+        });
         break;
 
       default:
         break;
     }
+
+    this.subscriptions.add(
+      this.dialogRef.afterClosed().subscribe(() => this.doRefresh())
+    );
   }
 
   override setTwitterCardMeta(): void {

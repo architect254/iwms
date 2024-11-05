@@ -353,6 +353,69 @@ export function sort(array: GridColumn[]) {
 export function getActionConfig(
   member: Member | BereavedMember | DeceasedMember | DeactivatedMember
 ) {
+  const activeMemberActions = [
+    {
+      entity: member,
+      position: 0,
+      key: 'is_bereaved',
+      label: 'Is Bereaved',
+      icon: 'badge',
+    },
+    {
+      entity: member,
+      position: 1,
+      key: 'is_deceased',
+      label: 'Is Deceased',
+      icon: 'badge',
+    },
+    {
+      entity: member,
+      position: 1,
+      key: 'is_deactivated',
+      label: 'Is Deactivated',
+      icon: 'badge',
+    },
+  ];
+  const bereavedMemberActions = [
+    {
+      entity: member,
+      position: 0,
+      key: 'is_deceased',
+      label: 'Is Deceased',
+      icon: 'badge',
+    },
+    {
+      entity: member,
+      position: 1,
+      key: 'is_deactivated',
+      label: 'Is Deactivated',
+      icon: 'badge',
+    },
+  ];
+  const deactivatedMemberActions = [
+    {
+      entity: member,
+      position: 0,
+      key: 'is_active',
+      label: 'Is Active',
+      icon: 'badge',
+    },
+  ];
+
+  let actions;
+
+  switch (member.membership) {
+    case Membership.Member:
+      actions = activeMemberActions;
+      break;
+
+    case Membership.Bereaved:
+      actions = bereavedMemberActions;
+      break;
+    case Membership.Deactivated:
+      actions = deactivatedMemberActions;
+      break;
+  }
   let actionConfig;
   actionConfig = {
     actions: [
@@ -362,15 +425,7 @@ export function getActionConfig(
         key: 'change_status',
         label: 'Change Status',
         icon: 'edit',
-        actions: [
-          {
-            entity: member,
-            position: 0,
-            key: 'to_bereaved',
-            label: 'To Bereaved',
-            icon: 'badge',
-          },
-        ],
+        actions,
       },
     ],
   } as ActionConfig;

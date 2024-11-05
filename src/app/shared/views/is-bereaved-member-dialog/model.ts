@@ -57,3 +57,9 @@ export function bereavedMemberDetailsFormControls() {
   ];
   return of(controls.sort((a, b) => a.order - b.order));
 }
+
+export interface BereavedMemberDto {
+  deceased: string;
+  relationship_with_deceased: string;
+  bereavement_date: string;
+}
