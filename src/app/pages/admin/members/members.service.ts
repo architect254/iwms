@@ -76,6 +76,14 @@ export class MembersService extends ApiService implements Searchable {
     });
   }
 
+  activate(id: number | string): Observable<void> {
+    const endpoint = this.endpoint + '/' + id + '/activate';
+    return this.http.put<void>(endpoint, null, {
+      observe: 'body',
+      responseType: 'json',
+    });
+  }
+
   getMany(
     page: number = 1,
     take: number = 100,
@@ -102,7 +110,7 @@ export class MembersService extends ApiService implements Searchable {
     const queryString = this.buildFilterQueryString(page, take, filters);
     return this.http.get<
       (Member | BereavedMember | DeceasedMember | DeactivatedMember)[]
-    >(`${this.endpoint}/welfare/${id}`, {
+    >(`${this.endpoint}/by-welfare/${id}`, {
       params: new HttpParams({ fromString: queryString }),
     });
   }
@@ -117,6 +125,12 @@ export class MembersService extends ApiService implements Searchable {
   }
 
   search(searchDto: SearchDto): Observable<SearchOption[]> {
-    return of([]);
+    const { page, take, term } = searchDto;
+    const filters = [{ key: 'name', value: term }];
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    const endpoint = `${this.endpoint}/search`;
+    return this.http.get<SearchOption[]>(endpoint, {
+      params: new HttpParams({ fromString: queryString }),
+    });
   }
 }

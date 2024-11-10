@@ -371,8 +371,8 @@ export function getActionConfig(
     {
       entity: member,
       position: 1,
-      key: 'is_deactivated',
-      label: 'Is Deactivated',
+      key: 'deactivate',
+      label: 'Deactivate',
       icon: 'badge',
     },
   ];
@@ -387,8 +387,8 @@ export function getActionConfig(
     {
       entity: member,
       position: 1,
-      key: 'is_deactivated',
-      label: 'Is Deactivated',
+      key: 'deactivate',
+      label: 'Deactivate',
       icon: 'badge',
     },
   ];
@@ -396,8 +396,8 @@ export function getActionConfig(
     {
       entity: member,
       position: 0,
-      key: 'is_active',
-      label: 'Is Active',
+      key: 'activate',
+      label: 'Activate',
       icon: 'badge',
     },
   ];
@@ -418,7 +418,7 @@ export function getActionConfig(
   }
   let actionConfig;
   actionConfig = {
-    actions: [
+    actions: actions && [
       {
         entity: member,
         position: 0,

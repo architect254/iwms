@@ -1,4 +1,15 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EnvironmentInjector,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  runInInjectionContext,
+  SimpleChanges,
+} from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -6,7 +17,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 
-import { CustomSearchControl, SearchDto, SearchOption } from '../model';
+import {
+  CustomSearchControl,
+  Searchable,
+  SearchDto,
+  SearchOption,
+} from '../model';
 import {
   catchError,
   debounceTime,
@@ -15,7 +31,10 @@ import {
   of,
   Subscription,
   switchMap,
+  tap,
 } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   standalone: true,
@@ -25,25 +44,40 @@ import {
     CommonModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatButtonModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     MatIconModule,
     AsyncPipe,
   ],
 })
-export class CustomSearchControlComponent<T> implements OnInit, OnDestroy {
+export class CustomSearchControlComponent implements OnChanges, OnDestroy {
   @Input() control!: CustomSearchControl;
   @Input() form!: FormGroup;
 
   filteredOptions!: SearchOption[];
-  selectedOption!: SearchOption;
 
-  private _service = inject(this.control.service);
+  private _service!: Searchable;
+
+  isLoading = false;
+
+  private searchText = '';
+  private selectedOption!: any;
 
   // this._auto.autocomplete.options[whatever].select();
 
   subscriptions = new Subscription();
 
-  ngOnInit(): void {
+  constructor(
+    private injector: EnvironmentInjector,
+    private cdr: ChangeDetectorRef
+  ) {}
+  ngOnChanges(): void {
+    if (this.control) {
+      this._service = runInInjectionContext(this.injector, () =>
+        inject(this.control!.service)
+      );
+    }
     this.subscriptions.add(
       this.form.controls[this.control.key].valueChanges
         .pipe(
@@ -51,29 +85,41 @@ export class CustomSearchControlComponent<T> implements OnInit, OnDestroy {
           debounceTime(10),
           filter((searchText) => !!searchText),
           switchMap((searchText) => {
-            let searchDto: SearchDto = { term: searchText, skip: 0, take: 10 };
-            return this._service.search(searchDto).pipe(
-              catchError((err) => {
-                if (err.error.status === 404) {
-                  return of([
-                    { id: '', name: `--- No results for: ${searchText} ---` },
-                  ]);
-                } else return [];
-              })
-            );
+            this.isLoading = true;
+
+            this.searchText = searchText;
+            let searchDto: SearchDto = { term: searchText, page: 1, take: 10 };
+            return this._service.search(searchDto).pipe(tap(() => {}));
           })
         )
         .subscribe(
-          (options: SearchOption[]) => (this.filteredOptions = options)
+          (options: SearchOption[]) => {
+            this.isLoading = false;
+
+            if (options.length) {
+              this.filteredOptions = options;
+              this.cdr.detectChanges();
+            }
+          },
+          (error) => {
+            this.isLoading = false;
+
+            this.filteredOptions = [
+              { id: '', name: `--- No results found ---` },
+            ];
+          }
         )
     );
   }
 
   onNew() {}
 
-  displayFn(id: string): string {
-    return this.filteredOptions.find((option) => option.id == id)?.name || '';
-  }
+  // displayFn(id: string) {
+  //   this.selectedOption = this.filteredOptions?.find(
+  //     (option) => option.id == id
+  //   );
+  //   return this.selectedOption?.name || '';
+  // }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

@@ -1,9 +1,9 @@
 @if (controls) {
 <form class="form" [formGroup]="form">
-  @for (control of controls; track control) {
+  @for (control of controls; track control.order) { @if (control.visible) {
   <div class="form-row">
     <iwms-control [control]="control" [form]="form"></iwms-control>
   </div>
-  }
+  } }
 </form>
 }

@@ -5,6 +5,7 @@ import {
   CustomStatusData,
   CustomDateData,
 } from '../../../../shared/components/data-view/view.service';
+import { ContributionType } from '../../../../core/entities/contribution.entity';
 
 export function memberDataView(): Observable<
   DynamicCustomDataBase<string | number | Date>[]
@@ -96,6 +97,24 @@ export function memberDataView(): Observable<
       label: 'Date of Bereavement',
       icon: 'person',
       order: 10,
+    }),
+    new CustomDateData({
+      key: 'demise_date',
+      label: 'Date of Demise',
+      icon: 'person',
+      order: 11,
+    }),
+    new CustomDateData({
+      key: 'deactivation_date',
+      label: 'Date of Deactivation',
+      icon: 'person',
+      order: 12,
+    }),
+    new CustomTextData({
+      key: 'reason',
+      label: 'Reason for Deactivation',
+      icon: 'badge',
+      order: 13,
     }),
   ];
   return of(data.sort((a, b) => a.order - b.order));
@@ -199,6 +218,51 @@ export function childDataView(): Observable<DynamicCustomDataBase<string>[]> {
       label: 'Date of Birth',
       icon: 'cake',
       order: 3,
+    }),
+  ];
+  return of(data.sort((a, b) => a.order - b.order));
+}
+
+export function memberContributionDataView(): Observable<
+  DynamicCustomDataBase<string>[]
+> {
+  const data: DynamicCustomDataBase<string>[] = [
+    new CustomStatusData({
+      key: 'type',
+      label: 'Transaction Type',
+      colors: {
+        [ContributionType.Membership]: 'green',
+        [ContributionType.Monthly]: 'blue',
+        [ContributionType.BereavedMember]: 'red',
+        [ContributionType.DeceasedMember]: 'black',
+        [ContributionType.MembershipReactivation]: 'orange',
+      },
+      icon: 'checklist',
+      order: 1,
+    }),
+    new CustomTextData({
+      key: 'transaction.amount',
+      label: 'Amount',
+      icon: 'badge',
+      order: 2,
+    }),
+    new CustomTextData({
+      key: 'from',
+      label: 'From',
+      icon: 'badge',
+      order: 3,
+    }),
+    new CustomTextData({
+      key: 'to',
+      label: 'To',
+      icon: 'badge',
+      order: 4,
+    }),
+    new CustomDateData({
+      key: 'create_date',
+      label: 'Date of Contribution',
+      icon: 'cake',
+      order: 5,
     }),
   ];
   return of(data.sort((a, b) => a.order - b.order));

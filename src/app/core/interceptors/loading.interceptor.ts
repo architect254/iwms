@@ -7,15 +7,22 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   let service_count = 0;
   const loadingService = inject(LoadingService);
 
-  service_count++;
-  loadingService.isLoading = true;
+  const isSearch = req.url.split('/').pop()?.includes('search');
 
+  if (!isSearch) {
+    service_count++;
+    loadingService.isLoading = true;
+  } else {
+    loadingService.isLoading = false;
+  }
   return next(req).pipe(
     finalize(() => {
-      service_count--;
+      if (!isSearch) {
+        service_count--;
 
-      if (service_count === 0) {
-        loadingService.isLoading = false;
+        if (service_count === 0) {
+          loadingService.isLoading = false;
+        }
       }
     })
   );

@@ -34,6 +34,16 @@ export const adminRoutes: Routes = [
         loadChildren: () =>
           import('./members/members.routes').then((members) => members.routes),
       },
+      {
+        path: 'contributions',
+        data: {
+          title: 'IWMS Members Contributions',
+        },
+        loadChildren: () =>
+          import('./contributions/contributions.routes').then(
+            (contributions) => contributions.routes
+          ),
+      },
       { path: '', redirectTo: '/admins', pathMatch: 'full' },
     ],
   },

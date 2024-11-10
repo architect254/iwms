@@ -5,11 +5,11 @@ import { DeceasedMember } from './deceased-member.entity';
 import { Transaction } from './transaction.entity';
 
 export enum ContributionType {
-  Activation = 'Activation',
+  Membership = 'Membership',
   Monthly = 'Monthly',
-  BereavedMember = 'BereavedMember',
-  DeceasedMember = 'DeceasedMember',
-  ReActivation = 'ReActivation',
+  BereavedMember = 'Bereaved Member',
+  DeceasedMember = 'Deceased Member',
+  MembershipReactivation = 'Membership Reactivation',
 }
 
 export interface Contribution extends BaseEntity {
@@ -19,4 +19,31 @@ export interface Contribution extends BaseEntity {
   to?: BereavedMember | DeceasedMember;
 }
 
-export class Contribution implements Contribution {}
+export interface MembershipContribution extends Contribution {}
+export class MembershipContribution implements MembershipContribution {
+  type: ContributionType = ContributionType.Membership;
+}
+
+export interface MonthlyContribution extends Contribution {
+  monthly: Date;
+}
+export class MonthlyContribution implements MonthlyContribution {
+  type: ContributionType = ContributionType.Monthly;
+}
+
+export interface BereavedMemberContribution extends Contribution {}
+export class BereavedMemberContribution implements BereavedMemberContribution {
+  type: ContributionType = ContributionType.BereavedMember;
+}
+
+export interface DeceasedMemberContribution extends Contribution {}
+export class DeceasedMemberContribution implements DeceasedMemberContribution {
+  type: ContributionType = ContributionType.DeceasedMember;
+}
+
+export interface MembershipReactivationContribution extends Contribution {}
+export class MembershipReactivationContribution
+  implements MembershipReactivationContribution
+{
+  type: ContributionType = ContributionType.MembershipReactivation;
+}

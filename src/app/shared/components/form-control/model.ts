@@ -1,24 +1,50 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ProviderToken } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApiService } from '../../../core/services/api.service';
+
+// Depending on whether rollup is used, moment needs to be imported differently.
+// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
+// syntax. However, rollup creates a synthetic default module and we thus need to import it using
+// the `default as` syntax.
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import { default as _rollupMoment, Moment } from 'moment';
+
+const moment = _rollupMoment || _moment;
 
 export function toFormGroup(
   controls: DynamicCustomFormControlBase<ValueType>[]
 ) {
   const group: any = {};
-  controls?.forEach((control) => {
-    console.log('control', control);
-
-    if (control.key == 'id') {
-      console.log('control', control);
-    }
-    group[control.key] = control.required
-      ? new FormControl(control.value || '', {
+  controls
+    .filter((control) => control.visible)
+    ?.forEach((control) => {
+      if (control.controlType == 'month') {
+        if (control.required) {
+          group[control.key] = new FormControl(moment(), {
+            validators: [Validators.required],
+            updateOn: control.updateOn,
+          });
+        } else {
+          group[control.key] = new FormControl(moment(), {
+            updateOn: control.updateOn,
+          });
+        }
+        if (control.value) {
+          group[control.key].setValue(control.value);
+        }
+      } else if (control.required) {
+        group[control.key] = new FormControl(control.value || '', {
           validators: [Validators.required],
           updateOn: control.updateOn,
-        })
-      : new FormControl(control.value || '', { updateOn: control.updateOn });
-  });
+        });
+      } else {
+        group[control.key] = new FormControl(control.value || '', {
+          updateOn: control.updateOn,
+        });
+      }
+    });
   return new FormGroup(group);
 }
 
@@ -33,7 +59,7 @@ export class DynamicCustomFormControlBase<T> {
   order: number;
   controlType: string;
   type: string;
-  updateOn: 'blur' | 'change';
+  updateOn: 'blur' | 'change' = 'change';
   constructor(
     config: {
       value?: T;
@@ -46,7 +72,6 @@ export class DynamicCustomFormControlBase<T> {
       order?: number;
       controlType?: string;
       type?: string;
-      updateOn?: 'blur' | 'change';
     } = {}
   ) {
     this.value = config.value;
@@ -59,7 +84,6 @@ export class DynamicCustomFormControlBase<T> {
     this.order = config.order === undefined ? 1 : config.order;
     this.controlType = config.controlType || '';
     this.type = config.type || '';
-    this.updateOn = config.updateOn || 'blur';
   }
 }
 
@@ -135,11 +159,31 @@ export class CustomDateControl extends DynamicCustomFormControlBase<string> {
   }
 }
 
+export class CustomMonthControl extends DynamicCustomFormControlBase<string> {
+  override controlType = 'month';
+  constructor(
+    config: {
+      value?: string;
+      placeholder?: string;
+      key?: string;
+      label?: string;
+      icon?: string;
+      required?: boolean;
+      visible?: boolean;
+      order?: number;
+      controlType?: string;
+      type?: string;
+    } = {}
+  ) {
+    super(config);
+  }
+}
+
 export type ValueType = string | number | Date;
 
 export interface SearchDto {
   term: string;
-  skip: number;
+  page: number;
   take: number;
 }
 export interface SearchOption {

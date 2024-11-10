@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { DynamicCustomFormControlBase } from './model';
 import { CustomTextControlComponent } from './controls/text-control.component';
 import { CustomDropdownControlComponent } from './controls/dropdown-control.component';
 import { CustomSearchControlComponent } from './controls/search-control.component';
 import { CustomDateControlComponent } from './controls/date-control.component';
 import { MatInputModule } from '@angular/material/input';
+import { CustomMonthControlComponent } from './controls/month-control.component';
 
 @Component({
   standalone: true,
@@ -22,6 +22,7 @@ import { MatInputModule } from '@angular/material/input';
     CustomDropdownControlComponent,
     CustomSearchControlComponent,
     CustomDateControlComponent,
+    CustomMonthControlComponent,
   ],
 })
 export class DynamicFormControlComponent {

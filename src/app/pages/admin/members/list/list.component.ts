@@ -59,6 +59,9 @@ import { BereavedMember } from '../../../../core/entities/bereaved-member.entity
 import { IsBereavedMemberDialogComponent } from '../../../../shared/views/is-bereaved-member-dialog/is-bereaved-member-dialog.component';
 import { IsDeceasedMemberDialogComponent } from '../../../../shared/views/is-deceased-member-dialog/is-deceased-member-dialog.component';
 import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
+import { IsDeactivatedMemberDialogComponent } from '../../../../shared/views/is-deactivated-member-dialog/is-deactivated-member-dialog.component';
+import { ConfirmationDialogComponent } from '../../../../shared/views/confirmation-dialog/confirmation-dialog.component';
+import { DeactivatedMember } from '../../../../core/entities/deactivated-member.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -193,6 +196,8 @@ export class ListComponent extends ListPage {
               ?.relationship_with_deceased,
             bereavement_date: (member as BereavedMember)?.bereavement_date,
             demise_date: (member as DeceasedMember)?.demise_date,
+            deactivation_date: (member as DeactivatedMember)?.deactivation_date,
+            reason: (member as DeactivatedMember)?.reason,
             create_date: member.create_date,
             update_date: member.update_date,
             actionConfig: getActionConfig(member),
@@ -218,6 +223,27 @@ export class ListComponent extends ListPage {
           height: '430px',
         });
         break;
+      case 'deactivate':
+        this.dialogRef = this.dialog.open(IsDeactivatedMemberDialogComponent, {
+          data: action.entity,
+          width: '700px',
+          height: '430px',
+        });
+        break;
+      case 'activate':
+        this.dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          data: { action: action.key, message: `delete ${action.entity.name}` },
+          width: '700px',
+          height: '250px',
+        });
+
+        this.subscriptions.add(
+          this.dialogRef
+            .afterClosed()
+            .subscribe((act) => this.activateMember(action.entity.id))
+        );
+
+        break;
 
       default:
         break;
@@ -226,6 +252,21 @@ export class ListComponent extends ListPage {
     this.subscriptions.add(
       this.dialogRef.afterClosed().subscribe(() => this.doRefresh())
     );
+  }
+
+  activateMember(id: string) {
+    this.subscriptions.add(
+      this.service.activate(id).subscribe(() => {
+        this.doRefresh();
+      })
+    );
+  }
+
+  doAdd() {
+    this.router.navigate(['add'], {
+      queryParams: { welfareId: this.welfareId },
+      relativeTo: this.route,
+    });
   }
 
   override setTwitterCardMeta(): void {

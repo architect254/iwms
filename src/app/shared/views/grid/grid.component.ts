@@ -59,7 +59,7 @@ export class GridComponent<T> {
   @Output() add = new EventEmitter<never>();
   @Output() act = new EventEmitter<ActionConfig>();
 
-  dataSource!: MatTableDataSource<any[]>;
+  dataSource!: MatTableDataSource<any>;
   resultsLength = 0;
   isLoadingResults = true;
   isLimitReached = false;
@@ -121,6 +121,13 @@ export class GridComponent<T> {
     } else {
       delete this.actionConfig;
     }
+    this.dataSource.data.forEach((data, index) => {
+      if (data?.id != entity?.id) {
+        data.checked = false;
+      } else {
+        data.checked = true;
+      }
+    });
   }
 
   doRefresh() {

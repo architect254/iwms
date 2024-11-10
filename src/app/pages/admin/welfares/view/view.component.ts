@@ -14,7 +14,8 @@ import { ValueType } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ViewPage } from '../../../../shared/directives/view-page/view-page.directive';
 import { WelfaresService } from '../welfares.service';
-import { welfareDataView, memberDataView } from './model';
+import { welfareDataView, memberDataView, contributionDataView } from './model';
+import { Contribution } from '../../../../core/entities/contribution.entity';
 
 export const WELFARE_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -32,6 +33,10 @@ export const SECRETARY_DATA_VIEW = new InjectionToken<
 export const MEMBER_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
 >('member data view');
+
+export const CONTRIBUTION_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('Contribution data view');
 
 @Component({
   selector: 'iwms-view',
@@ -62,7 +67,9 @@ export class ViewComponent extends ViewPage {
   chairperson!: Member;
   treasurer!: Member;
   secretary!: Member;
+
   members?: Member[];
+  contributions?: Contribution[];
 
   welfareDataView = inject(WELFARE_DATA_VIEW);
   chairpersonDataView = inject(CHAIRPERSON_DATA_VIEW);
@@ -70,6 +77,8 @@ export class ViewComponent extends ViewPage {
   secretaryDataView = inject(SECRETARY_DATA_VIEW);
 
   memberDataView = [inject(MEMBER_DATA_VIEW)];
+
+  contributionDataView = [inject(MEMBER_DATA_VIEW)];
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -93,6 +102,7 @@ export class ViewComponent extends ViewPage {
         this.treasurer = this.welfare?.treasurer!;
         this.secretary = this.welfare?.secretary!;
         this.members = this.welfare?.members;
+        this.contributions = this.welfare?.contributions;
 
         if (this.welfare) {
           this.welfareDataView.forEach(
@@ -129,7 +139,6 @@ export class ViewComponent extends ViewPage {
                 );
               }
             );
-            console.log('chair', this.chairperson);
           }
           if (this.treasurer) {
             this.treasurerDataView.forEach(
@@ -148,7 +157,6 @@ export class ViewComponent extends ViewPage {
                 );
               }
             );
-            console.log('ctres', this.treasurer);
           }
           if (this.secretary) {
             this.secretaryDataView.forEach(
@@ -167,7 +175,6 @@ export class ViewComponent extends ViewPage {
                 );
               }
             );
-            console.log('sec', this.secretary);
           }
           if (this.members?.length) {
             this.members.forEach((member, memberIndex) => {
@@ -200,6 +207,38 @@ export class ViewComponent extends ViewPage {
               }
             );
           }
+
+          if (this.contributions?.length) {
+            this.contributions.forEach((contribution, contributionIndex) => {
+              if (contributionIndex > 0) {
+                this.contributionDataView.push(contributionDataView());
+              }
+            });
+
+            this.contributionDataView.forEach(
+              (
+                dataViewGroup: Observable<DynamicCustomDataBase<ValueType>[]>,
+                dataViewGoupIndex
+              ) => {
+                dataViewGroup.forEach(
+                  (dataView: DynamicCustomDataBase<ValueType>[]) => {
+                    if (dataView) {
+                      dataView.forEach(
+                        (view: DynamicCustomDataBase<ValueType>) => {
+                          view.value = ((
+                            this.contributions as unknown as Record<
+                              string,
+                              ValueType
+                            >[]
+                          )?.[dataViewGoupIndex])[view.key];
+                        }
+                      );
+                    }
+                  }
+                );
+              }
+            );
+          }
         }
       })
     );
@@ -213,6 +252,18 @@ export class ViewComponent extends ViewPage {
 
   createMember() {
     this.router.navigate(['/members/add'], {
+      state: { welfareId: this.welfare?.id },
+    });
+  }
+
+  viewAllContributions() {
+    this.router.navigate(['/contributions'], {
+      queryParams: { welfareId: this.welfare?.id },
+    });
+  }
+
+  createContribution() {
+    this.router.navigate(['/contributions/add'], {
       state: { welfareId: this.welfare?.id },
     });
   }

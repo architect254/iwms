@@ -19,23 +19,23 @@
         <mat-icon fontIcon="keyboard_arrow_down" class="btn-icon"></mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        @for (action of actionConfig?.actions; track action.position) {
-        @if(!action.actions){
+        @for (action of actionConfig?.actions; track action?.position) {
+        @if(action && !action.actions){
         <button mat-menu-item (click)="doAction(action)">
           <mat-icon [fontIcon]="action.icon" class="btn-icon"></mat-icon>
-          {{ action.label }}
+          {{ action?.label }}
         </button>
         }@else{
         <button mat-menu-item [matMenuTriggerFor]="subMenu">
           <mat-icon [fontIcon]="action.icon" class="btn-icon"></mat-icon>
-          {{ action.label }}
+          {{ action?.label }}
         </button>
 
         <mat-menu #subMenu="matMenu">
-          @for(subaction of action.actions; track subaction.position){
+          @for(subaction of action?.actions; track subaction?.position){
           <button mat-menu-item (click)="doAction(subaction)">
             <mat-icon [fontIcon]="subaction.icon" class="btn-icon"></mat-icon>
-            {{ subaction.label }}
+            {{ subaction?.label }}
           </button>
           }
         </mat-menu>
@@ -102,10 +102,13 @@
           mat-header-cell
           *matHeaderCellDef
         >
-          <mat-checkbox></mat-checkbox>
+          <mat-checkbox disabled></mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let row" class="cell select-cell">
-          <mat-checkbox (change)="check($event.checked, row)"></mat-checkbox>
+          <mat-checkbox
+            [checked]="row.checked"
+            (change)="check($event.checked, row)"
+          ></mat-checkbox>
         </td>
         }@case('date'){
         <th
@@ -130,7 +133,7 @@
           {{ column!.label }}
         </th>
         <td class="cell mat-body-medium" mat-cell *matCellDef="let row">
-          @if (column.key == 'name') {
+          @if (column.key == 'name' || column.key == 'id') {
           <a
             [title]="'View ' + row[column.key]"
             [href]="row.id"

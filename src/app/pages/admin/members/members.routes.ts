@@ -24,7 +24,6 @@ export const routes: Routes = [
         component: UpsertComponent,
         resolve: {
           member: memberResolver,
-          welfares: welfaresResolver,
         },
         data: { title: 'Update Welfare Member', action: 'update' },
       },

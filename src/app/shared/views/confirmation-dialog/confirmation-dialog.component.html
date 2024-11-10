@@ -1,0 +1,21 @@
+<mat-toolbar>
+  <header class="app-header app-name">
+    <span class="start">IW</span><span class="end">MS</span>
+  </header>
+</mat-toolbar>
+<div mat-dialog-content>
+  <!-- <mat-icon color="warn" fontSet="material-icons-outlined">cancel</mat-icon> -->
+  <h1 class="mat-display-medium">Are You Sure?</h1>
+  <div class="mat-body-medium">Do you really want to {{ data.message }}?</div>
+</div>
+<div mat-dialog-actions>
+  <button mat-stroked-button (click)="onCancel()">No Thanks</button>
+  <button
+    mat-flat-button
+    [mat-dialog-close]="data"
+    cdkFocusInitial
+    color="primary"
+  >
+    Ok
+  </button>
+</div>
