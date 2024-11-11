@@ -22,154 +22,65 @@ import {
   MembershipReactivationContribution,
   MonthlyContribution,
 } from '../../../core/entities/contribution.entity';
+import { BankAccountDto } from './upsert/bank-account/model';
+import {
+  BankAccount,
+  PettyCashAccount,
+} from '../../../core/entities/account.entity';
+import { PettyCashAccountDto } from './upsert/petty-cash-account/model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FinanceService extends ApiService implements Searchable {
-  protected override endpoint = `${this.API_URL}/finance`;
+  protected override endpoint = `${this.API_URL}/finances`;
 
-  create(
-    payload: any
-  ): Observable<
-    | MembershipContribution
-    | MonthlyContribution
-    | BereavedMemberContribution
-    | DeceasedMemberContribution
-    | MembershipReactivationContribution
-  > {
-    return this.http.post<
-      | MembershipContribution
-      | MonthlyContribution
-      | BereavedMemberContribution
-      | DeceasedMemberContribution
-      | MembershipReactivationContribution
-    >(this.endpoint, payload);
+  createAccount(
+    payload: BankAccountDto | PettyCashAccountDto
+  ): Observable<BankAccount | PettyCashAccount> {
+    const endpoint = `${this.endpoint}/accounts`;
+    return this.http.post<BankAccount>(endpoint, payload);
   }
 
-  update(
-    id: number | string,
-    payload: any
-  ): Observable<
-    | MembershipContribution
-    | MonthlyContribution
-    | BereavedMemberContribution
-    | DeceasedMemberContribution
-    | MembershipReactivationContribution
-  > {
-    const endpoint = this.endpoint + '/' + id;
-    return this.http.put<
-      | MembershipContribution
-      | MonthlyContribution
-      | BereavedMemberContribution
-      | DeceasedMemberContribution
-      | MembershipReactivationContribution
-    >(endpoint, payload);
+  updateAccount(
+    id: string,
+    payload: BankAccountDto | PettyCashAccountDto
+  ): Observable<BankAccount | PettyCashAccount> {
+    const endpoint = `${this.endpoint}/accounts/${id}`;
+    return this.http.put<BankAccount>(endpoint, payload);
   }
 
-  getMany(
+  getManyAccounts(
     page: number = 1,
     take: number = 100,
     filters?: Filter[]
-  ): Observable<
-    (
-      | MembershipContribution
-      | MonthlyContribution
-      | BereavedMemberContribution
-      | DeceasedMemberContribution
-      | MembershipReactivationContribution
-    )[]
-  > {
+  ): Observable<(BankAccount | PettyCashAccount)[]> {
     const queryString = this.buildFilterQueryString(page, take, filters);
-    return this.http.get<
-      (
-        | MembershipContribution
-        | MonthlyContribution
-        | BereavedMemberContribution
-        | DeceasedMemberContribution
-        | MembershipReactivationContribution
-      )[]
-    >(`${this.endpoint}`, {
-      params: new HttpParams({ fromString: queryString }),
-    });
+    return this.http.get<(BankAccount | PettyCashAccount)[]>(
+      `${this.endpoint}/accounts`,
+      {
+        params: new HttpParams({ fromString: queryString }),
+      }
+    );
   }
 
-  getManyByWelfareId(
+  getManyAccountsByWelfareId(
     id: string,
     page: number = 1,
     take: number = 100,
     filters?: Filter[]
-  ): Observable<
-    (
-      | MembershipContribution
-      | MonthlyContribution
-      | BereavedMemberContribution
-      | DeceasedMemberContribution
-      | MembershipReactivationContribution
-    )[]
-  > {
+  ): Observable<(BankAccount | PettyCashAccount)[]> {
     const queryString = this.buildFilterQueryString(page, take, filters);
-    return this.http.get<
-      (
-        | MembershipContribution
-        | MonthlyContribution
-        | BereavedMemberContribution
-        | DeceasedMemberContribution
-        | MembershipReactivationContribution
-      )[]
-    >(`${this.endpoint}/by-welfare/${id}`, {
-      params: new HttpParams({ fromString: queryString }),
-    });
+    return this.http.get<(BankAccount | PettyCashAccount)[]>(
+      `${this.endpoint}/accounts/by-welfare/${id}`,
+      {
+        params: new HttpParams({ fromString: queryString }),
+      }
+    );
   }
 
-  getManyByMemberId(
-    id: string,
-    page: number = 1,
-    take: number = 100,
-    filters?: Filter[]
-  ): Observable<
-    (
-      | MembershipContribution
-      | MonthlyContribution
-      | BereavedMemberContribution
-      | DeceasedMemberContribution
-      | MembershipReactivationContribution
-    )[]
-  > {
-    const queryString = this.buildFilterQueryString(page, take, filters);
-    return this.http.get<
-      (
-        | MembershipContribution
-        | MonthlyContribution
-        | BereavedMemberContribution
-        | DeceasedMemberContribution
-        | MembershipReactivationContribution
-      )[]
-    >(`${this.endpoint}/by-member/${id}`, {
-      params: new HttpParams({ fromString: queryString }),
-    });
-  }
-
-  get(
-    id: number | string
-  ): Observable<
-    | MembershipContribution
-    | MonthlyContribution
-    | BereavedMemberContribution
-    | DeceasedMemberContribution
-    | MembershipReactivationContribution
-  > {
-    const endpoint = `${this.endpoint}/${id}`;
-    return this.http.get<
-      | MembershipContribution
-      | MonthlyContribution
-      | BereavedMemberContribution
-      | DeceasedMemberContribution
-      | MembershipReactivationContribution
-    >(endpoint);
-  }
-
-  search(searchDto: SearchDto): Observable<SearchOption[]> {
-    return of([]);
+  getAccount(id: number | string): Observable<BankAccount | PettyCashAccount> {
+    const endpoint = `${this.endpoint}/accounts/${id}`;
+    return this.http.get<BankAccount | PettyCashAccount>(endpoint);
   }
 }

@@ -11,8 +11,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { RouterModule, Data } from '@angular/router';
-import { Member } from '../../../../core/entities/member.entity';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import {
   ToggleOption,
@@ -29,33 +28,36 @@ import {
   Filter,
   ActionConfig,
 } from '../../../../shared/views/grid/model';
-import { ContributionsService } from '../finance.service';
+import { FinanceService } from '../finance.service';
 import {
   statusLabels,
   statusColors,
-  adminToggleOptions,
-  monthlyContributionColumns,
-  membershipContributionColumns,
-  bereavedMemberContributionColumns,
-  deceasedMemberContributionColumns,
-  membershipReactivationContributionColumns,
+  financesToggleOptions,
   sort,
   getActionConfig,
-  membersFilters,
-  contributionColumns,
+  financeFilters,
+  accountsToggleOptions,
+  expenditureToggleOptions,
+  bankAccountColumns,
+  pettyCashAccountColumns,
 } from './model';
-import { Membership } from '../../../../core/entities/user.entity';
-import { BereavedMember } from '../../../../core/entities/bereaved-member.entity';
-import { IsBereavedMemberDialogComponent } from '../../../../shared/views/is-bereaved-member-dialog/is-bereaved-member-dialog.component';
-import { IsDeceasedMemberDialogComponent } from '../../../../shared/views/is-deceased-member-dialog/is-deceased-member-dialog.component';
-import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
+import { BankAccountUpsertDialogComponent } from '../upsert/bank-account/bank-account.component';
 import {
-  ContributionType,
-  MonthlyContribution,
-} from '../../../../core/entities/contribution.entity';
+  AccountType,
+  BankAccount,
+} from '../../../../core/entities/account.entity';
+import { PettyCashAccountUpsertDialogComponent } from '../upsert/petty-cash-account/petty-cash-account.component';
 
-export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
-  'Header toggle options'
+export const FINANCES_TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
+  'Finances header toggle options'
+);
+
+export const ACCOUNTS_TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
+  'Accounts toggle options'
+);
+
+export const EXPENDITURES_TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
+  'Expenditures toggle options'
 );
 
 export const FILTERS = new InjectionToken<FilterOption[]>('Grid filters');
@@ -88,8 +90,13 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
     RouterModule,
   ],
   providers: [
-    { provide: TOGGLE_OPTIONS, useValue: adminToggleOptions },
-    { provide: FILTERS, useValue: membersFilters },
+    { provide: FINANCES_TOGGLE_OPTIONS, useValue: financesToggleOptions },
+    { provide: ACCOUNTS_TOGGLE_OPTIONS, useValue: accountsToggleOptions },
+    {
+      provide: EXPENDITURES_TOGGLE_OPTIONS,
+      useValue: expenditureToggleOptions,
+    },
+    { provide: FILTERS, useValue: financeFilters },
     { provide: LABELS, useValue: statusLabels },
     { provide: COLORS, useValue: statusColors },
   ],
@@ -97,7 +104,13 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  toggleOptions = inject(TOGGLE_OPTIONS);
+  financesToggleOptions = inject(FINANCES_TOGGLE_OPTIONS);
+
+  fincancesToggledOption: ToggleOption;
+  fincancesToggledOptionValue: string = '';
+
+  acountsToggleOptions = inject(ACCOUNTS_TOGGLE_OPTIONS);
+  expenditureToggleOptions = inject(EXPENDITURES_TOGGLE_OPTIONS);
 
   filterOptions = inject(FILTERS);
   columns!: GridColumn[];
@@ -109,10 +122,13 @@ export class ListComponent extends ListPage {
 
   constructor(
     @SkipSelf() override authService: AuthService,
-    private service: ContributionsService
+    private service: FinanceService
   ) {
     super(authService);
-    this.columns = sort(contributionColumns);
+    this.columns = sort(bankAccountColumns);
+    this.fincancesToggledOption = this.financesToggleOptions[0];
+    this.fincancesToggledOptionValue = this.fincancesToggledOption.value;
+    this.toggleOptions = accountsToggleOptions;
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;
     this.filters = [{ key: 'type', value: this.toggledOptionValue }];
@@ -134,24 +150,11 @@ export class ListComponent extends ListPage {
     this.toggledOptionValue = option.value;
     this.filters = [{ key: 'type', value: this.toggledOptionValue }];
     switch (this.toggledOptionValue) {
-      case ContributionType.Membership:
-        this.columns = sort(membershipContributionColumns);
+      case AccountType.Bank:
+        this.columns = sort(bankAccountColumns);
         break;
-      case ContributionType.Monthly:
-        this.columns = sort(monthlyContributionColumns);
-        break;
-      case ContributionType.BereavedMember:
-        this.columns = sort(bereavedMemberContributionColumns);
-        break;
-      case ContributionType.DeceasedMember:
-        this.columns = sort(deceasedMemberContributionColumns);
-        break;
-      case ContributionType.MembershipReactivation:
-        this.columns = sort(membershipReactivationContributionColumns);
-        break;
-
-      default:
-        this.columns = sort(contributionColumns);
+      case AccountType.PettyCash:
+        this.columns = sort(pettyCashAccountColumns);
         break;
     }
     this.cdr.detectChanges();
@@ -164,61 +167,92 @@ export class ListComponent extends ListPage {
     filters: Filter[] = this.filters
   ) {
     let action;
-    if (this.memberId) {
-      action = this.service.getManyByMemberId(
-        this.memberId,
-        page,
-        take,
-        filters
-      );
-    } else if (this.welfareId) {
-      action = this.service.getManyByWelfareId(
-        this.welfareId,
-        page,
-        take,
-        filters
-      );
-    } else {
-      action = this.service.getMany(page, take, filters);
-    }
-    this.subscriptions.add(
-      action.subscribe((contributions) => {
-        this.data = contributions.map((contribution) => {
-          return {
-            id: contribution.id,
-            type: contribution.type,
-            from: contribution.from.name,
-            to: contribution.to?.name,
-            create_date: contribution.create_date,
-            update_date: contribution.update_date,
-            month: (contribution as MonthlyContribution).monthly,
-            actionConfig: getActionConfig(contribution),
-          };
-        });
 
-        console.log('data', statusLabels[this.data[1].type]);
-      })
-    );
+    switch (this.fincancesToggledOptionValue) {
+      case 'accounts':
+        switch (this.toggledOptionValue) {
+          case AccountType.Bank:
+            if (this.welfareId) {
+              action = this.service.getManyAccountsByWelfareId(
+                this.welfareId,
+                page,
+                take,
+                filters
+              );
+            } else {
+              action = this.service.getManyAccounts(page, take, filters);
+            }
+            this.subscriptions.add(
+              action.subscribe((accounts) => {
+                this.data = accounts.map((account) => {
+                  return {
+                    id: account.id,
+                    type: account.type,
+                    name: account.name,
+                    number: (account as BankAccount).number,
+                    current_amount: account.current_amount,
+                    base_amount: account.base_amount,
+                    welfare: account.welfare.name,
+                    create_date: account.create_date,
+                    update_date: account.update_date,
+                    actionConfig: getActionConfig(account),
+                  };
+                });
+              })
+            );
+            break;
+          case AccountType.PettyCash:
+            if (this.welfareId) {
+              action = this.service.getManyAccountsByWelfareId(
+                this.welfareId,
+                page,
+                take,
+                filters
+              );
+            } else {
+              action = this.service.getManyAccounts(page, take, filters);
+            }
+            this.subscriptions.add(
+              action.subscribe((accounts) => {
+                this.data = accounts.map((account) => {
+                  return {
+                    id: account.id,
+                    type: account.type,
+                    name: account.name,
+                    current_amount: account.current_amount,
+                    base_amount: account.base_amount,
+                    welfare: account.welfare.name,
+                    create_date: account.create_date,
+                    update_date: account.update_date,
+                    actionConfig: getActionConfig(account),
+                  };
+                });
+              })
+            );
+            break;
+        }
+        break;
+    }
   }
 
-  doAction(action: ActionConfig) {
-    switch (action.key) {
-      case 'is_bereaved':
-        this.dialogRef = this.dialog.open(IsBereavedMemberDialogComponent, {
-          data: action.entity,
+  upsert(action: 'create' | 'update', entity?: any) {
+    switch (this.toggledOptionValue) {
+      case AccountType.Bank:
+        this.dialogRef = this.dialog.open(BankAccountUpsertDialogComponent, {
+          data: { action, bankAccount: entity },
           width: '700px',
-          height: '590px',
+          height: 'max-content',
         });
         break;
-      case 'is_deceased':
-        this.dialogRef = this.dialog.open(IsDeceasedMemberDialogComponent, {
-          data: action.entity,
-          width: '700px',
-          height: '430px',
-        });
-        break;
-
-      default:
+      case AccountType.PettyCash:
+        this.dialogRef = this.dialog.open(
+          PettyCashAccountUpsertDialogComponent,
+          {
+            data: { action, pettyCashAccount: entity },
+            width: '700px',
+            height: 'max-content',
+          }
+        );
         break;
     }
 
@@ -228,10 +262,7 @@ export class ListComponent extends ListPage {
   }
 
   doAdd() {
-    this.router.navigate(['add'], {
-      relativeTo: this.route,
-      queryParams: { type: this.toggledOptionValue },
-    });
+    this.upsert('create');
   }
 
   override setTwitterCardMeta(): void {

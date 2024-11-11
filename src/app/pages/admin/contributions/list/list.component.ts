@@ -50,7 +50,9 @@ import { IsBereavedMemberDialogComponent } from '../../../../shared/views/is-ber
 import { IsDeceasedMemberDialogComponent } from '../../../../shared/views/is-deceased-member-dialog/is-deceased-member-dialog.component';
 import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
 import {
+  BereavedMemberContribution,
   ContributionType,
+  DeceasedMemberContribution,
   MonthlyContribution,
 } from '../../../../core/entities/contribution.entity';
 
@@ -97,7 +99,7 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  toggleOptions = inject(TOGGLE_OPTIONS);
+  override toggleOptions = inject(TOGGLE_OPTIONS);
 
   filterOptions = inject(FILTERS);
   columns!: GridColumn[];
@@ -187,11 +189,14 @@ export class ListComponent extends ListPage {
           return {
             id: contribution.id,
             type: contribution.type,
-            from: contribution.from.name,
-            to: contribution.to?.name,
+            member: contribution.member.name,
+            bereavedMember: (contribution as BereavedMemberContribution)
+              .bereavedMember?.name,
+            deceasedMember: (contribution as DeceasedMemberContribution)
+              .deceasedMember?.name,
             create_date: contribution.create_date,
             update_date: contribution.update_date,
-            month: (contribution as MonthlyContribution).monthly,
+            for_month: (contribution as MonthlyContribution).for_month,
             actionConfig: getActionConfig(contribution),
           };
         });

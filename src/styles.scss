@@ -38,10 +38,6 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
   .reduced-size {
     @include mat.all-component-densities(-4);
   }
-
-  .alert {
-    color: green;
-  }
 }
 
 @import 'bootstrap/scss/bootstrap';
@@ -96,6 +92,11 @@ body {
     display: block;
     margin-bottom: 100px;
   }
+}
+
+.alert-success {
+  color: green;
+  background-color: lightblue;
 }
 
 ::-webkit-scrollbar {

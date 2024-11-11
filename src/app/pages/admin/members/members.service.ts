@@ -123,14 +123,4 @@ export class MembersService extends ApiService implements Searchable {
       Member | BereavedMember | DeceasedMember | DeactivatedMember
     >(endpoint);
   }
-
-  search(searchDto: SearchDto): Observable<SearchOption[]> {
-    const { page, take, term } = searchDto;
-    const filters = [{ key: 'name', value: term }];
-    const queryString = this.buildFilterQueryString(page, take, filters);
-    const endpoint = `${this.endpoint}/search`;
-    return this.http.get<SearchOption[]>(endpoint, {
-      params: new HttpParams({ fromString: queryString }),
-    });
-  }
 }

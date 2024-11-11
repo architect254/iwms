@@ -168,8 +168,4 @@ export class ContributionsService extends ApiService implements Searchable {
       | MembershipReactivationContribution
     >(endpoint);
   }
-
-  search(searchDto: SearchDto): Observable<SearchOption[]> {
-    return of([]);
-  }
 }

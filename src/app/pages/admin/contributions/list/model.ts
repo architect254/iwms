@@ -259,16 +259,9 @@ export const contributionColumns: GridColumn[] = [
     width: '250px',
   },
   {
-    key: 'from',
+    key: 'member',
     label: 'From Member',
     position: 2,
-    type: 'string',
-    width: '250px',
-  },
-  {
-    key: 'to',
-    label: 'To Member',
-    position: 3,
     type: 'string',
     width: '250px',
   },
@@ -295,9 +288,9 @@ export const membershipContributionColumns: GridColumn[] = [
 export const monthlyContributionColumns: GridColumn[] = [
   ...contributionColumns,
   {
-    key: 'month',
+    key: 'for_month',
     label: 'For Month',
-    position: 5,
+    position: 3,
     type: 'date',
     width: '250px',
   },
@@ -305,10 +298,24 @@ export const monthlyContributionColumns: GridColumn[] = [
 
 export const bereavedMemberContributionColumns: GridColumn[] = [
   ...contributionColumns,
+  {
+    key: 'bereavedMember',
+    label: 'To Bereaved Member',
+    position: 3,
+    type: 'string',
+    width: '250px',
+  },
 ];
 
 export const deceasedMemberContributionColumns: GridColumn[] = [
   ...contributionColumns,
+  {
+    key: 'deceasedMember',
+    label: 'To Deceased Member',
+    position: 3,
+    type: 'string',
+    width: '250px',
+  },
 ];
 
 export const membershipReactivationContributionColumns: GridColumn[] = [

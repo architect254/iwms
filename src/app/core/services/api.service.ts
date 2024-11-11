@@ -1,8 +1,14 @@
 import { inject, Injectable, InjectionToken } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Filter } from '../../shared/views/grid/model';
+import {
+  Searchable,
+  SearchDto,
+  SearchOption,
+} from '../../shared/components/form-control/model';
+import { Observable } from 'rxjs';
 
 export const API_SERVER_URL = new InjectionToken<string>(
   'Dynamic API Server URL'
@@ -18,7 +24,7 @@ export const apiServerUrlFactory = (): string => {
 @Injectable({
   providedIn: 'root',
 })
-export class ApiService {
+export class ApiService implements Searchable {
   readonly #SERVER_URL: string = inject(API_SERVER_URL);
   readonly API_URL = `${this.#SERVER_URL}/api`;
 
@@ -56,5 +62,15 @@ export class ApiService {
     }page=${page}&take=${take}`;
 
     return queryString;
+  }
+
+  search(searchDto: SearchDto): Observable<SearchOption[]> {
+    const { page, take, term } = searchDto;
+    const filters = [{ key: 'name', value: term }];
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    const endpoint = `${this.endpoint}/search`;
+    return this.http.get<SearchOption[]>(endpoint, {
+      params: new HttpParams({ fromString: queryString }),
+    });
   }
 }

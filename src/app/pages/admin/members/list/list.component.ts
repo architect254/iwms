@@ -106,7 +106,7 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  toggleOptions = inject(TOGGLE_OPTIONS);
+  override toggleOptions = inject(TOGGLE_OPTIONS);
 
   filterOptions = inject(FILTERS);
   columns!: GridColumn[];

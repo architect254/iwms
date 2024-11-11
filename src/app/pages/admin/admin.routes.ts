@@ -44,6 +44,16 @@ export const adminRoutes: Routes = [
             (contributions) => contributions.routes
           ),
       },
+      {
+        path: 'finances',
+        data: {
+          title: 'IWMS Welfare Finances',
+        },
+        loadChildren: () =>
+          import('./finance/finance.routes').then(
+            (finances) => finances.routes
+          ),
+      },
       { path: '', redirectTo: '/admins', pathMatch: 'full' },
     ],
   },

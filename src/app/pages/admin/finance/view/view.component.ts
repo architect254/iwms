@@ -17,7 +17,7 @@ import { DynamicCustomDataBase } from '../../../../shared/components/data-view/v
 import { ValueType } from '../../../../shared/components/form-control/model';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { ViewPage } from '../../../../shared/directives/view-page/view-page.directive';
-import { ContributionsService } from '../finance.service';
+import { FinanceService } from '../finance.service';
 import { memberContributionDataView } from './model';
 import {
   BereavedMemberContribution,
@@ -59,7 +59,7 @@ export class ViewComponent extends ViewPage {
   override updateUrl: string = '';
   constructor(
     @SkipSelf() override authService: AuthService,
-    private service: ContributionsService
+    private service: FinanceService
   ) {
     super(authService);
   }

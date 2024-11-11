@@ -2,7 +2,7 @@ import { Member } from './member.entity';
 import { BaseEntity } from './base.entity';
 import { BereavedMember } from './bereaved-member.entity';
 import { DeceasedMember } from './deceased-member.entity';
-import { Transaction } from './transaction.entity';
+import { Account } from './account.entity';
 
 export enum ContributionType {
   Membership = 'Membership',
@@ -14,36 +14,31 @@ export enum ContributionType {
 
 export interface Contribution extends BaseEntity {
   type: ContributionType;
-  transaction: Transaction;
-  from: Member | BereavedMember;
-  to?: BereavedMember | DeceasedMember;
+  member: Member;
+  amount: number;
+  account: Account;
 }
 
 export interface MembershipContribution extends Contribution {}
-export class MembershipContribution implements MembershipContribution {
-  type: ContributionType = ContributionType.Membership;
-}
+
+export class MembershipContribution implements MembershipContribution {}
 
 export interface MonthlyContribution extends Contribution {
-  monthly: Date;
+  for_month: Date;
 }
-export class MonthlyContribution implements MonthlyContribution {
-  type: ContributionType = ContributionType.Monthly;
+export class MonthlyContribution implements MonthlyContribution {}
+
+export interface BereavedMemberContribution extends Contribution {
+  bereavedMember: BereavedMember;
 }
 
-export interface BereavedMemberContribution extends Contribution {}
-export class BereavedMemberContribution implements BereavedMemberContribution {
-  type: ContributionType = ContributionType.BereavedMember;
-}
+export class BereavedMemberContribution implements BereavedMemberContribution {}
 
-export interface DeceasedMemberContribution extends Contribution {}
-export class DeceasedMemberContribution implements DeceasedMemberContribution {
-  type: ContributionType = ContributionType.DeceasedMember;
+export interface DeceasedMemberContribution extends Contribution {
+  deceasedMember: DeceasedMember;
 }
+export class DeceasedMemberContribution implements DeceasedMemberContribution {}
 
 export interface MembershipReactivationContribution extends Contribution {}
 export class MembershipReactivationContribution
-  implements MembershipReactivationContribution
-{
-  type: ContributionType = ContributionType.MembershipReactivation;
-}
+  implements MembershipReactivationContribution {}
