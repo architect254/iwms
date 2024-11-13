@@ -189,7 +189,8 @@ export class ListComponent extends ListPage {
           return {
             id: contribution.id,
             type: contribution.type,
-            member: contribution.member.name,
+            amount: contribution.amount,
+            name: contribution.member?.name,
             bereavedMember: (contribution as BereavedMemberContribution)
               .bereavedMember?.name,
             deceasedMember: (contribution as DeceasedMemberContribution)

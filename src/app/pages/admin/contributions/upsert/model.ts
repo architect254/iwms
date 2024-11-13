@@ -8,6 +8,7 @@ import {
   CustomMonthControl,
 } from '../../../../shared/components/form-control/model';
 import { MembersService } from '../../members/members.service';
+import { FinanceService } from '../../finance/finance.service';
 
 export function memberContributionDetailsFormControls() {
   const controls: DynamicCustomFormControlBase<ValueType>[] = [
@@ -63,6 +64,17 @@ export function memberContributionDetailsFormControls() {
       required: true,
       visible: true,
       order: 5,
+    }),
+    new CustomSearchControl({
+      key: 'accountName',
+      label: 'To Account',
+      value: '',
+      placeholder: 'Example Account',
+      icon: 'money',
+      service: FinanceService,
+      required: true,
+      visible: true,
+      order: 6,
     }),
   ];
   return of(controls.sort((a, b) => a.order - b.order));

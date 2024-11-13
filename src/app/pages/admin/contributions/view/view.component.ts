@@ -22,6 +22,7 @@ import { memberContributionDataView } from './model';
 import {
   BereavedMemberContribution,
   Contribution,
+  ContributionType,
   DeceasedMemberContribution,
   MembershipContribution,
   MembershipReactivationContribution,
@@ -55,7 +56,7 @@ export class ViewComponent extends ViewPage {
     | MembershipReactivationContribution;
 
   memberContributionDataView = inject(MEMBER_CONTRIBUTION_DATA_VIEW);
-
+  type!: ContributionType;
   override updateUrl: string = '';
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -69,30 +70,66 @@ export class ViewComponent extends ViewPage {
     this.subscriptions.add(
       this.route.data.subscribe((data: Data) => {
         this.contribution = data['contribution'];
+        this.type = this.contribution.type;
 
         this.memberContributionDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
             dataView.forEach(
               (view: DynamicCustomDataBase<string | number | Date>) => {
-                if (view && view.key != 'from' && view.key != 'to') {
+                if (view) {
                   view.value = (
                     this.contribution as unknown as Record<
                       string,
                       string | number | Date
                     >
                   )?.[view.key] as string | number | Date;
-                } else {
-                  view.value = (this.contribution as unknown as any)?.[
-                    view.key
-                  ].name;
-                }
-                if (view.key == 'amount') {
-                  view.value = (
-                    this.contribution as unknown as any
-                  )?.transaction.amount;
-                }
-                if (!view.value) {
-                  view.visible = false;
+                  if (view.key == 'member') {
+                    view.visible = true;
+                    view.value = (this.contribution as unknown as any)?.[
+                      view.key
+                    ]?.['name'];
+                  }
+                  if (
+                    this.type == ContributionType.BereavedMember &&
+                    view.key == 'bereavedMember'
+                  ) {
+                    view.visible = true;
+                    view.value = (this.contribution as unknown as any)?.[
+                      view.key
+                    ]?.['name'];
+                  }
+                  if (
+                    this.type == ContributionType.DeceasedMember &&
+                    view.key == 'deceasedMember'
+                  ) {
+                    {
+                      view.visible = true;
+                      view.value = (this.contribution as unknown as any)?.[
+                        view.key
+                      ]?.['name'];
+                    }
+                  }
+                  if (view.key == 'account') {
+                    view.visible = true;
+                    view.value = (this.contribution as unknown as any)?.[
+                      view.key
+                    ]?.['name'];
+                  }
+                  if (
+                    this.type == ContributionType.Monthly &&
+                    view.key == 'for_month'
+                  ) {
+                    view.visible = true;
+                    view.value = (
+                      this.contribution as unknown as Record<
+                        string,
+                        string | number | Date
+                      >
+                    )?.[view.key] as string | number | Date;
+                  }
+                  if (!view.value) {
+                    view.visible = false;
+                  }
                 }
               }
             );

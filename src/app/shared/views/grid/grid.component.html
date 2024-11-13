@@ -122,6 +122,18 @@
         <td mat-cell *matCellDef="let row" class="cell date-cell">
           {{ row[column!.key] | date }}
         </td>
+        }@case('currency'){
+        <th
+          class="column-header currency-column-header"
+          mat-header-cell
+          *matHeaderCellDef
+          [style.min-width]="column?.width"
+        >
+          {{ column!.label }}
+        </th>
+        <td mat-cell *matCellDef="let row" class="cell currency-cell">
+          {{ row[column!.key] | currency : "KES" : "Ksh " }}
+        </td>
         }@default {
         <th
           class="column-header mat-body-medium"

@@ -19,11 +19,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import {
-  AccountType,
-  BankAccount,
-  PettyCashAccount,
-} from '../../../../../core/entities/account.entity';
 import { FinanceService } from '../../finance.service';
 import { DynamicFormComponent } from '../../../../../shared/components/form-control/form.component';
 import {
@@ -33,16 +28,22 @@ import {
 import { AuthService } from '../../../../../core/services/auth.service';
 import { Page } from '../../../../../shared/directives/page/page.directive';
 import {
-  pettyCashAccountDetailsFormControls,
-  PettyCashAccountDto,
+  externalFundsTransferExpenditureDetailsFormControls,
+  ExternalFundsTransferExpenditureDto,
 } from './model';
+import { externalFundsTransferExpenditureColumns } from '../../list/model';
+import {
+  ExpenditureType,
+  ExternalFundsTransferExpenditure,
+} from '../../../../../core/entities/expenditure.entity';
 
-export const PETTY_CASH_ACCOUNT_DETAILS_FORM_CONTROLS = new InjectionToken<
-  Observable<DynamicCustomFormControlBase<ValueType>[]>
->('Petty cash account details form controls');
+export const EXTERNAL_FUNDS_TRANSFER_EXPENDITURE_DETAILS_FORM_CONTROLS =
+  new InjectionToken<Observable<DynamicCustomFormControlBase<ValueType>[]>>(
+    'External funds transfer expenditure details form controls'
+  );
 
 @Component({
-  selector: 'iwms-petty-cash-account-upsert-dialog',
+  selector: 'iwms-external-funds-transfer-upsert-dialog',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -60,20 +61,20 @@ export const PETTY_CASH_ACCOUNT_DETAILS_FORM_CONTROLS = new InjectionToken<
   ],
   providers: [
     {
-      provide: PETTY_CASH_ACCOUNT_DETAILS_FORM_CONTROLS,
-      useFactory: pettyCashAccountDetailsFormControls,
+      provide: EXTERNAL_FUNDS_TRANSFER_EXPENDITURE_DETAILS_FORM_CONTROLS,
+      useFactory: externalFundsTransferExpenditureDetailsFormControls,
     },
   ],
-  templateUrl: './petty-cash-account.component.html',
-  styleUrl: './petty-cash-account.component.scss',
+  templateUrl: './external-funds-transfer-expenditure.component.html',
+  styleUrl: './external-funds-transfer-expenditure.component.scss',
 })
-export class PettyCashAccountUpsertDialogComponent extends Page {
-  pettyCashAccountDetailsFormControls = inject(
-    PETTY_CASH_ACCOUNT_DETAILS_FORM_CONTROLS
+export class ExternalFundsTransferExpenditureUpsertDialogComponent extends Page {
+  externalFundsTransferExpenditureDetailsFormControls = inject(
+    EXTERNAL_FUNDS_TRANSFER_EXPENDITURE_DETAILS_FORM_CONTROLS
   );
 
-  pettyCashAccount: PettyCashAccount;
-  pettyCashAccountDto!: PettyCashAccountDto;
+  externalFundsTransferExpenditure: ExternalFundsTransferExpenditure;
+  externalFundsTransferExpenditureDto!: ExternalFundsTransferExpenditureDto;
 
   action: 'create' | 'update';
   isSubmitting: Observable<boolean> = of(false);
@@ -82,13 +83,13 @@ export class PettyCashAccountUpsertDialogComponent extends Page {
   constructor(
     @SkipSelf() authService: AuthService,
     private service: FinanceService,
-    override dialogRef: MatDialogRef<PettyCashAccountUpsertDialogComponent>,
+    override dialogRef: MatDialogRef<ExternalFundsTransferExpenditureUpsertDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     super(authService);
-    const { action, pettyCashAccount } = data;
+    const { action, externalFundsTransferExpenditure } = data;
     this.action = action;
-    this.pettyCashAccount = pettyCashAccount;
+    this.externalFundsTransferExpenditure = externalFundsTransferExpenditure;
   }
 
   override ngOnInit(): void {
@@ -96,10 +97,11 @@ export class PettyCashAccountUpsertDialogComponent extends Page {
   }
 
   onValidityNotified(data: any) {
-    data = JSON.parse(data) as PettyCashAccountDto;
+    data = JSON.parse(data) as ExternalFundsTransferExpenditureDto;
 
-    this.pettyCashAccountDto = data;
-    this.pettyCashAccountDto.type = AccountType.PettyCash;
+    this.externalFundsTransferExpenditureDto = data;
+    this.externalFundsTransferExpenditureDto.type =
+      ExpenditureType.ExternalFundsTransfer;
     this.canConfirm = true;
   }
 
@@ -109,12 +111,15 @@ export class PettyCashAccountUpsertDialogComponent extends Page {
     let serviceAction;
 
     if (this.action == 'update') {
-      serviceAction = this.service.updateAccount(
-        this.pettyCashAccount.id!,
-        this.pettyCashAccountDto
+      serviceAction = this.service.updateExpenditure(
+        this.externalFundsTransferExpenditure.id!,
+        this.externalFundsTransferExpenditureDto
       );
     } else {
-      serviceAction = this.service.createAccount(this.pettyCashAccountDto);
+      console.log('exp payload', this.externalFundsTransferExpenditureDto);
+      serviceAction = this.service.createExpenditure(
+        this.externalFundsTransferExpenditureDto
+      );
     }
 
     this.subscriptions.add(

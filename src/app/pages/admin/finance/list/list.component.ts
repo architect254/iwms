@@ -40,6 +40,8 @@ import {
   expenditureToggleOptions,
   bankAccountColumns,
   pettyCashAccountColumns,
+  internalFundsTransferExpenditureColumns,
+  externalFundsTransferExpenditureColumns,
 } from './model';
 import { BankAccountUpsertDialogComponent } from '../upsert/bank-account/bank-account.component';
 import {
@@ -47,6 +49,12 @@ import {
   BankAccount,
 } from '../../../../core/entities/account.entity';
 import { PettyCashAccountUpsertDialogComponent } from '../upsert/petty-cash-account/petty-cash-account.component';
+import {
+  ExpenditureType,
+  ExternalFundsTransferExpenditure,
+} from '../../../../core/entities/expenditure.entity';
+import { InternalFundsTransferExpenditureUpsertDialogComponent } from '../upsert/internal-funds-transfer-expenditure/internal-funds-transfer-expenditure.component';
+import { ExternalFundsTransferExpenditureUpsertDialogComponent } from '../upsert/external-funds-transfer-expenditure/external-funds-transfer-expenditure.component';
 
 export const FINANCES_TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Finances header toggle options'
@@ -109,7 +117,7 @@ export class ListComponent extends ListPage {
   fincancesToggledOption: ToggleOption;
   fincancesToggledOptionValue: string = '';
 
-  acountsToggleOptions = inject(ACCOUNTS_TOGGLE_OPTIONS);
+  accountsToggleOptions = inject(ACCOUNTS_TOGGLE_OPTIONS);
   expenditureToggleOptions = inject(EXPENDITURES_TOGGLE_OPTIONS);
 
   filterOptions = inject(FILTERS);
@@ -149,12 +157,29 @@ export class ListComponent extends ListPage {
     this.toggledOption = option;
     this.toggledOptionValue = option.value;
     this.filters = [{ key: 'type', value: this.toggledOptionValue }];
+
     switch (this.toggledOptionValue) {
+      case 'accounts':
+        this.toggleOptions = accountsToggleOptions;
+        this.toggledOption = this.toggleOptions[0];
+        this.onToggle(this.toggledOption);
+        break;
       case AccountType.Bank:
         this.columns = sort(bankAccountColumns);
         break;
       case AccountType.PettyCash:
         this.columns = sort(pettyCashAccountColumns);
+        break;
+      case 'expenditures':
+        this.toggleOptions = expenditureToggleOptions;
+        this.toggledOption = this.toggleOptions[0];
+        this.onToggle(this.toggledOption);
+        break;
+      case ExpenditureType.InternalFundsTransfer:
+        this.columns = sort(internalFundsTransferExpenditureColumns);
+        break;
+      case ExpenditureType.ExternalFundsTransfer:
+        this.columns = sort(externalFundsTransferExpenditureColumns);
         break;
     }
     this.cdr.detectChanges();
@@ -168,74 +193,117 @@ export class ListComponent extends ListPage {
   ) {
     let action;
 
-    switch (this.fincancesToggledOptionValue) {
-      case 'accounts':
-        switch (this.toggledOptionValue) {
-          case AccountType.Bank:
-            if (this.welfareId) {
-              action = this.service.getManyAccountsByWelfareId(
-                this.welfareId,
-                page,
-                take,
-                filters
-              );
-            } else {
-              action = this.service.getManyAccounts(page, take, filters);
-            }
-            this.subscriptions.add(
-              action.subscribe((accounts) => {
-                this.data = accounts.map((account) => {
-                  return {
-                    id: account.id,
-                    type: account.type,
-                    name: account.name,
-                    number: (account as BankAccount).number,
-                    current_amount: account.current_amount,
-                    base_amount: account.base_amount,
-                    welfare: account.welfare.name,
-                    create_date: account.create_date,
-                    update_date: account.update_date,
-                    actionConfig: getActionConfig(account),
-                  };
-                });
-              })
-            );
-            break;
-          case AccountType.PettyCash:
-            if (this.welfareId) {
-              action = this.service.getManyAccountsByWelfareId(
-                this.welfareId,
-                page,
-                take,
-                filters
-              );
-            } else {
-              action = this.service.getManyAccounts(page, take, filters);
-            }
-            this.subscriptions.add(
-              action.subscribe((accounts) => {
-                this.data = accounts.map((account) => {
-                  return {
-                    id: account.id,
-                    type: account.type,
-                    name: account.name,
-                    current_amount: account.current_amount,
-                    base_amount: account.base_amount,
-                    welfare: account.welfare.name,
-                    create_date: account.create_date,
-                    update_date: account.update_date,
-                    actionConfig: getActionConfig(account),
-                  };
-                });
-              })
-            );
-            break;
+    switch (this.toggledOptionValue) {
+      case AccountType.Bank:
+        if (this.welfareId) {
+          action = this.service.getManyAccountsByWelfareId(
+            this.welfareId,
+            page,
+            take,
+            filters
+          );
+        } else {
+          action = this.service.getManyAccounts(page, take, filters);
         }
+        this.subscriptions.add(
+          action.subscribe((accounts) => {
+            this.data = accounts.map((account) => {
+              return {
+                id: account.id,
+                type: account.type,
+                name: account.name,
+                number: (account as BankAccount).number,
+                current_amount: account.current_amount,
+                base_amount: account.base_amount,
+                welfare: account.welfare.name,
+                create_date: account.create_date,
+                update_date: account.update_date,
+                actionConfig: getActionConfig(account),
+              };
+            });
+          })
+        );
+        break;
+      case AccountType.PettyCash:
+        if (this.welfareId) {
+          action = this.service.getManyAccountsByWelfareId(
+            this.welfareId,
+            page,
+            take,
+            filters
+          );
+        } else {
+          action = this.service.getManyAccounts(page, take, filters);
+        }
+        this.subscriptions.add(
+          action.subscribe((accounts) => {
+            this.data = accounts.map((account) => {
+              return {
+                id: account.id,
+                type: account.type,
+                name: account.name,
+                current_amount: account.current_amount,
+                base_amount: account.base_amount,
+                welfare: account.welfare.name,
+                create_date: account.create_date,
+                update_date: account.update_date,
+                actionConfig: getActionConfig(account),
+              };
+            });
+          })
+        );
+        break;
+
+      case ExpenditureType.InternalFundsTransfer:
+        if (this.welfareId) {
+          action = this.service.getManyExpendituresByWelfareId(
+            this.welfareId,
+            page,
+            take,
+            filters
+          );
+        } else {
+          action = this.service.getManyExpenditures(page, take, filters);
+        }
+        this.subscriptions.add(
+          action.subscribe((expenditures) => {
+            this.data = expenditures.map((expenditure) => {
+              return {
+                id: expenditure.id,
+                type: expenditure.type,
+              };
+            });
+          })
+        );
+        break;
+      case ExpenditureType.ExternalFundsTransfer:
+        if (this.welfareId) {
+          action = this.service.getManyExpendituresByWelfareId(
+            this.welfareId,
+            page,
+            take,
+            filters
+          );
+        } else {
+          action = this.service.getManyExpenditures(page, take, filters);
+        }
+        this.subscriptions.add(
+          action.subscribe((accounts) => {
+            this.data = accounts.map((account) => {
+              return {
+                id: account.id,
+                type: account.type,
+                actionConfig: getActionConfig(account),
+              };
+            });
+          })
+        );
         break;
     }
   }
 
   upsert(action: 'create' | 'update', entity?: any) {
+    console.log('toggl', this.toggledOptionValue);
     switch (this.toggledOptionValue) {
       case AccountType.Bank:
         this.dialogRef = this.dialog.open(BankAccountUpsertDialogComponent, {
@@ -254,10 +322,30 @@ export class ListComponent extends ListPage {
           }
         );
         break;
+      case ExpenditureType.InternalFundsTransfer:
+        this.dialogRef = this.dialog.open(
+          InternalFundsTransferExpenditureUpsertDialogComponent,
+          {
+            data: { action, internalFundsTransferExpenditure: entity },
+            width: '700px',
+            height: 'max-content',
+          }
+        );
+        break;
+      case ExpenditureType.ExternalFundsTransfer:
+        this.dialogRef = this.dialog.open(
+          ExternalFundsTransferExpenditureUpsertDialogComponent,
+          {
+            data: { action, externalFundsTransferExpenditure: entity },
+            width: '700px',
+            height: 'max-content',
+          }
+        );
+        break;
     }
 
     this.subscriptions.add(
-      this.dialogRef.afterClosed().subscribe(() => this.doRefresh())
+      this.dialogRef?.afterClosed().subscribe(() => this.doRefresh())
     );
   }
 

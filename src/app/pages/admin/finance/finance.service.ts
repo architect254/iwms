@@ -28,11 +28,13 @@ import {
   PettyCashAccount,
 } from '../../../core/entities/account.entity';
 import { PettyCashAccountDto } from './upsert/petty-cash-account/model';
+import { InternalFundsTransferExpenditureDto } from './upsert/internal-funds-transfer-expenditure/model';
+import { InternalFundsTransferExpenditure } from '../../../core/entities/expenditure.entity';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FinanceService extends ApiService implements Searchable {
+export class FinanceService extends ApiService {
   protected override endpoint = `${this.API_URL}/finances`;
 
   createAccount(
@@ -79,8 +81,69 @@ export class FinanceService extends ApiService implements Searchable {
     );
   }
 
-  getAccount(id: number | string): Observable<BankAccount | PettyCashAccount> {
+  getAccount(id: string): Observable<BankAccount | PettyCashAccount> {
     const endpoint = `${this.endpoint}/accounts/${id}`;
     return this.http.get<BankAccount | PettyCashAccount>(endpoint);
+  }
+
+  createExpenditure(
+    payload: InternalFundsTransferExpenditureDto
+  ): Observable<InternalFundsTransferExpenditure> {
+    const endpoint = `${this.endpoint}/expenditures`;
+    return this.http.post<InternalFundsTransferExpenditure>(endpoint, payload);
+  }
+
+  updateExpenditure(
+    id: string,
+    payload: InternalFundsTransferExpenditureDto
+  ): Observable<InternalFundsTransferExpenditure> {
+    const endpoint = `${this.endpoint}/expenditures/${id}`;
+    return this.http.put<InternalFundsTransferExpenditure>(endpoint, payload);
+  }
+
+  getManyExpenditures(
+    page: number = 1,
+    take: number = 100,
+    filters?: Filter[]
+  ): Observable<(InternalFundsTransferExpenditure | PettyCashAccount)[]> {
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    return this.http.get<
+      (InternalFundsTransferExpenditure | PettyCashAccount)[]
+    >(`${this.endpoint}/expenditures`, {
+      params: new HttpParams({ fromString: queryString }),
+    });
+  }
+
+  getManyExpendituresByWelfareId(
+    id: string,
+    page: number = 1,
+    take: number = 100,
+    filters?: Filter[]
+  ): Observable<(InternalFundsTransferExpenditure | PettyCashAccount)[]> {
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    return this.http.get<
+      (InternalFundsTransferExpenditure | PettyCashAccount)[]
+    >(`${this.endpoint}/expenditures/by-welfare/${id}`, {
+      params: new HttpParams({ fromString: queryString }),
+    });
+  }
+
+  getExpenditures(
+    id: number | string
+  ): Observable<InternalFundsTransferExpenditure | PettyCashAccount> {
+    const endpoint = `${this.endpoint}/expenditures/${id}`;
+    return this.http.get<InternalFundsTransferExpenditure | PettyCashAccount>(
+      endpoint
+    );
+  }
+
+  override search(searchDto: SearchDto): Observable<SearchOption[]> {
+    const { page, take, term } = searchDto;
+    const filters = [{ key: 'name', value: term }];
+    const queryString = this.buildFilterQueryString(page, take, filters);
+    const endpoint = `${this.endpoint}/accounts/search`;
+    return this.http.get<SearchOption[]>(endpoint, {
+      params: new HttpParams({ fromString: queryString }),
+    });
   }
 }

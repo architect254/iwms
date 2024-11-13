@@ -1,9 +1,16 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
+import {
+  Component,
+  inject,
+  InjectionToken,
+  signal,
+  SkipSelf,
+} from '@angular/core';
 import { Data } from '@angular/router';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -31,6 +38,7 @@ import { Child } from '../../../../core/entities/child.entity';
 import { Spouse } from '../../../../core/entities/spouse.entity';
 import { childDetailsFormControls } from '../../members/upsert/model';
 import { Membership } from '../../../../core/entities/user.entity';
+import { MatIconModule } from '@angular/material/icon';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -81,6 +89,8 @@ export const SECRETARY_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
     DynamicFormComponent,
     MatButtonModule,
     MatStepperModule,
+    MatExpansionModule,
+    MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
     JsonPipe,
@@ -165,6 +175,8 @@ export class UpsertComponent extends EditableViewPage {
   secretaryChildDetailsFormControls = [
     inject(SECRETARY_CHILD_DETAILS_FORM_CONTROLS),
   ];
+
+  step = signal(0);
 
   readonly isSelected: Record<string, [boolean, boolean, boolean]> = {
     Chairperson: [true, false, false],
@@ -519,6 +531,18 @@ export class UpsertComponent extends EditableViewPage {
     );
   }
 
+  setStep(index: number) {
+    this.step.set(index);
+  }
+
+  nextStep() {
+    this.step.update((i) => i + 1);
+  }
+
+  prevStep() {
+    this.step.update((i) => i - 1);
+  }
+
   setSelected(member: string, index: number) {
     this.isSelected[member][index] = true;
   }
@@ -708,7 +732,6 @@ export class UpsertComponent extends EditableViewPage {
     delete payload.chairperson;
     delete payload.treasurer;
     delete payload.secretary;
-
 
     if (this.chairperson) {
       payload['chairpersonDto'] = this.chairperson;

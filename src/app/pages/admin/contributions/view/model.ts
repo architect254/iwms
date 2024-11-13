@@ -4,6 +4,8 @@ import {
   CustomTextData,
   CustomStatusData,
   CustomDateData,
+  CustomMonthData,
+  CustomCurrencyData,
 } from '../../../../shared/components/data-view/view.service';
 
 export function memberContributionDataView(): Observable<
@@ -23,7 +25,7 @@ export function memberContributionDataView(): Observable<
       icon: 'checklist',
       order: 1,
     }),
-    new CustomTextData({
+    new CustomCurrencyData({
       key: 'amount',
       label: 'Amount',
       value: '100',
@@ -31,18 +33,35 @@ export function memberContributionDataView(): Observable<
       order: 2,
     }),
     new CustomTextData({
-      key: 'from',
-      label: 'From Member',
+      key: 'member',
+      label: 'Member',
       icon: 'badge',
       order: 3,
     }),
-    new CustomTextData({
-      key: 'to',
-      label: 'To Member',
-      icon: 'badge',
+    new CustomMonthData({
+      key: 'for_month',
+      label: 'For Month',
+      icon: 'cake',
       order: 4,
     }),
-
+    new CustomTextData({
+      key: 'bereavedMember',
+      label: 'Bereaved Member',
+      icon: 'badge',
+      order: 5,
+    }),
+    new CustomTextData({
+      key: 'deceasedMember',
+      label: 'Deceased Member',
+      icon: 'badge',
+      order: 6,
+    }),
+    new CustomTextData({
+      key: 'account',
+      label: 'To Account',
+      icon: 'badge',
+      order: 7,
+    }),
   ];
   return of(data.sort((a, b) => a.order - b.order));
 }

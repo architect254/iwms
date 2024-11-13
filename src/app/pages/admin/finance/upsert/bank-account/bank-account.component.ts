@@ -128,7 +128,7 @@ export class BankAccountUpsertDialogComponent extends Page {
             `OK`,
             {
               panelClass: `alert-success`,
-              duration: 200,
+              duration: 5000,
             }
           );
           snackBarRef.onAction().subscribe(() => {

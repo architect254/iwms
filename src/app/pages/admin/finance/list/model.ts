@@ -7,6 +7,7 @@ import {
 } from '../../../../core/entities/contribution.entity';
 import { DeactivatedMember } from '../../../../core/entities/deactivated-member.entity';
 import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
+import { ExpenditureType } from '../../../../core/entities/expenditure.entity';
 import { Member } from '../../../../core/entities/member.entity';
 import { User, Membership } from '../../../../core/entities/user.entity';
 import { ToggleOption } from '../../../../shared/components/button-toggle/button-toggle.component';
@@ -47,12 +48,12 @@ export const accountsToggleOptions: ToggleOption[] = [
 export const expenditureToggleOptions: ToggleOption[] = [
   {
     name: 'Internal Funds Transfer Expenditures',
-    value: 'internal',
+    value: ExpenditureType.InternalFundsTransfer,
     position: 0,
   },
   {
     name: 'External Funds Transfer Expenditures',
-    value: 'external',
+    value: ExpenditureType.ExternalFundsTransfer,
     position: 1,
   },
 ];
@@ -94,14 +95,14 @@ const accountColumns: GridColumn[] = [
     key: 'current_amount',
     label: 'Total Amount Currently',
     position: 4,
-    type: 'string',
+    type: 'currency',
     width: '250px',
   },
   {
     key: 'base_amount',
     label: 'Total Starting Amount',
     position: 5,
-    type: 'string',
+    type: 'currency',
     width: '250px',
   },
   {
@@ -132,13 +133,94 @@ export const bankAccountColumns: GridColumn[] = [
   {
     key: 'number',
     label: 'Account Number',
-    position: 3,
+    position: 2,
     type: 'string',
     width: '250px',
   },
 ];
 
 export const pettyCashAccountColumns: GridColumn[] = [...accountColumns];
+
+const expenditureColumns: GridColumn[] = [
+  {
+    key: 'select',
+    label: 'Select',
+    position: 0,
+    type: 'select',
+    width: '250px',
+  },
+  {
+    key: 'type',
+    label: 'Expenditure Type',
+    position: 1,
+    type: 'status',
+    width: '250px',
+  },
+  {
+    key: 'from',
+    label: 'From Account',
+    position: 2,
+    type: 'string',
+    width: '250px',
+  },
+  {
+    key: 'amount',
+    label: 'Total Amount',
+    position: 4,
+    type: 'currency',
+    width: '250px',
+  },
+  {
+    key: 'for',
+    label: 'Expenditure For',
+    position: 5,
+    type: 'string',
+    width: '250px',
+  },
+  {
+    key: 'welfare',
+    label: 'Welfare Name',
+    position: 6,
+    type: 'string',
+    width: '250px',
+  },
+  {
+    key: 'create_date',
+    label: 'First Created',
+    position: 99,
+    type: 'date',
+    width: '250px',
+  },
+  {
+    key: 'update_date',
+    label: 'Last Updated',
+    position: 100,
+    type: 'date',
+    width: '250px',
+  },
+];
+
+export const internalFundsTransferExpenditureColumns: GridColumn[] = [
+  ...expenditureColumns,
+  {
+    key: 'to',
+    label: 'To Account',
+    position: 3,
+    type: 'string',
+    width: '250px',
+  },
+];
+
+export const externalFundsTransferExpenditureColumns: GridColumn[] = [
+  ...expenditureColumns,
+  {
+    key: 'to',
+    label: 'To',
+    position: 3,
+    type: 'string',
+    width: '250px',
+  },
+];
 
 export function sort(array: GridColumn[]) {
   return array.sort((a, b) => a.position - b.position);

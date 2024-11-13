@@ -5,397 +5,511 @@
   [displayBack]="true"
 ></iwms-header>
 
-<iwms-dynamic-form
-  [controls]="welfareDetailsFormControls | async"
-  [isSubmitting]="isSubmitting"
-  [triggerValidityNotification]="triggerValidityNotification"
-  (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
-></iwms-dynamic-form>
-
-<mat-stepper
-  [linear]="true"
-  (selectedIndexChange)="setSelected('Chairperson', $event)"
->
-  <mat-step>
-    <!-- #region core account details-->
-
-    <ng-template matStepLabel
-      ><h4 class="core-account-header selected mat-headline-medium">
-        Chairperson Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <iwms-dynamic-form
-        [controls]="chairpersonDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="onValidityNotified($event, 'Chairperson Details')"
-      ></iwms-dynamic-form>
+<mat-accordion class="headers-align mat-elevation-z2">
+  <mat-expansion-panel
+    [expanded]="step() === 0"
+    (opened)="setStep(0)"
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> Welfare </mat-panel-title>
+      <mat-panel-description>
+        Enter Welfare Details
+        <mat-icon>accessibility_new</mat-icon></mat-panel-description
+      >
+    </mat-expansion-panel-header>
+    <iwms-dynamic-form
+      [controls]="welfareDetailsFormControls | async"
+      [isSubmitting]="isSubmitting"
+      [triggerValidityNotification]="triggerValidityNotification"
+      (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
+    ></iwms-dynamic-form>
+    <mat-action-row>
       <button
-        [disabled]="!isProceedAllowedForMember('Chairperson')"
         mat-button
-        matStepperNext
+        (click)="nextStep()"
+        [disabled]="!isProceedAllowed['Welfare']['proceed']"
       >
-        Proceed
+        Next
       </button>
-    </ng-template>
-  </mat-step>
+    </mat-action-row>
+  </mat-expansion-panel>
 
-  <!-- #region spouse details-->
+  <mat-expansion-panel
+    [expanded]="step() === 1"
+    (opened)="setStep(1)"
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> Chairperson </mat-panel-title>
+      <mat-panel-description>
+        Enter Chairperson Details(And Family Details)
+        <mat-icon>contacts</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-  <mat-step>
-    <ng-template matStepLabel
-      ><h4
-        class="spouse-header mat-headline-medium"
-        [class.selected]="isSelected['Chairperson'][1]"
-      >
-        Chairperson Spouse Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Chairperson']['Spouse']"
-          (change)="
-            check($event.checked, {
-              section: 'Chairperson',
-              subsection: 'Spouse'
-            })
-          "
-          >Chairperson is not married</mat-checkbox
-        >
-      </div>
-      @if (!checks['Chairperson']['Spouse']) {
-      <iwms-dynamic-form
-        [controls]="chairpersonSpouseDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="
-          onValidityNotified($event, 'Chairperson Spouse Details')
-        "
-      ></iwms-dynamic-form>
-      }
-      <button mat-button matStepperPrevious>Back</button>
+    <mat-stepper
+      [linear]="true"
+      (selectedIndexChange)="setSelected('Chairperson', $event)"
+    >
+      <mat-step>
+        <!-- #region core account details-->
+
+        <ng-template matStepLabel
+          ><h4 class="core-account-header selected mat-headline-medium">
+            Chairperson Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <iwms-dynamic-form
+            [controls]="chairpersonDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="onValidityNotified($event, 'Chairperson Details')"
+          ></iwms-dynamic-form>
+          <button
+            [disabled]="!isProceedAllowedForMember('Chairperson')"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
+
+      <!-- #region spouse details-->
+
+      <mat-step>
+        <ng-template matStepLabel
+          ><h4
+            class="spouse-header mat-headline-medium"
+            [class.selected]="isSelected['Chairperson'][1]"
+          >
+            Chairperson Spouse Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <div class="checkbox">
+            <mat-checkbox
+              [checked]="checks['Chairperson']['Spouse']"
+              (change)="
+                check($event.checked, {
+                  section: 'Chairperson',
+                  subsection: 'Spouse'
+                })
+              "
+              >Chairperson is not married</mat-checkbox
+            >
+          </div>
+          @if (!checks['Chairperson']['Spouse']) {
+          <iwms-dynamic-form
+            [controls]="chairpersonSpouseDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="
+              onValidityNotified($event, 'Chairperson Spouse Details')
+            "
+          ></iwms-dynamic-form>
+          }
+          <button mat-button matStepperPrevious>Back</button>
+          <button
+            [disabled]="!isProceedAllowedForMember('Chairperson', true)"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
+      <mat-step>
+        <!-- #region children details-->
+
+        <ng-template matStepLabel
+          ><h4
+            class="children-header mat-headline-medium"
+            [class.selected]="isSelected['Chairperson'][2]"
+          >
+            Chairperson Children Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <div class="checkbox">
+            <mat-checkbox
+              [checked]="checks['Chairperson']['Children']"
+              (change)="
+                check($event.checked, {
+                  section: 'Chairperson',
+                  subsection: 'Children'
+                })
+              "
+              >Chairperson has no children</mat-checkbox
+            >
+          </div>
+          @if (!checks['Chairperson']['Children']) { @for (validOffspring of
+          getChildren('Chairperson'); track $index) {
+          <h5 class="child-header mat-title-large">
+            Child Details [{{ $index + 1 }}]
+          </h5>
+          <iwms-dynamic-form
+            [controls]="chairpersonChildDetailsFormControls[$index] | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="
+              onValidityNotified(
+                $event,
+                'Chairperson Children Details',
+                $index,
+                true
+              )
+            "
+          ></iwms-dynamic-form
+          >}
+          <button
+            mat-stroked-button
+            class="add-child-btn"
+            (click)="addChairpersonChild()"
+          >
+            Add Child Details
+          </button>
+          <br />}
+
+          <button mat-button matStepperPrevious>Back</button>
+        </ng-template>
+      </mat-step>
+    </mat-stepper>
+
+    <mat-action-row>
+      <button mat-button (click)="prevStep()">Previous</button>
       <button
-        [disabled]="!isProceedAllowedForMember('Chairperson', true)"
         mat-button
-        matStepperNext
-      >
-        Proceed
-      </button>
-    </ng-template>
-  </mat-step>
-  <mat-step>
-    <!-- #region children details-->
-
-    <ng-template matStepLabel
-      ><h4
-        class="children-header mat-headline-medium"
-        [class.selected]="isSelected['Chairperson'][2]"
-      >
-        Chairperson Children Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Chairperson']['Children']"
-          (change)="
-            check($event.checked, {
-              section: 'Chairperson',
-              subsection: 'Children'
-            })
-          "
-          >Chairperson has no children</mat-checkbox
-        >
-      </div>
-      @if (!checks['Chairperson']['Children']) { @for (validOffspring of
-      getChildren('Chairperson'); track $index) {
-      <h5 class="child-header mat-title-large">
-        Child Details [{{ $index + 1 }}]
-      </h5>
-      <iwms-dynamic-form
-        [controls]="chairpersonChildDetailsFormControls[$index] | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="
-          onValidityNotified(
-            $event,
-            'Chairperson Children Details',
-            $index,
-            true
+        (click)="nextStep()"
+        [disabled]="
+          !(
+            isProceedAllowedForMember('Chairperson') &&
+            isProceedAllowedForMember('Chairperson', true) &&
+            areChildrenValid('Chairperson')
           )
         "
-      ></iwms-dynamic-form
-      >}
-      <button
-        mat-stroked-button
-        class="add-child-btn"
-        (click)="addChairpersonChild()"
       >
-        Add Child Details
+        Next
       </button>
-      <br />}
+    </mat-action-row>
+  </mat-expansion-panel>
 
-      <button mat-button matStepperPrevious>Back</button>
-    </ng-template>
-  </mat-step>
-</mat-stepper>
+  <mat-expansion-panel
+    [expanded]="step() === 2"
+    (opened)="setStep(2)"
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> Treasurer </mat-panel-title>
+      <mat-panel-description>
+        Enter Treasurer Details(And Family Details)
+        <mat-icon>contacts</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-<mat-stepper
-  [linear]="true"
-  (selectedIndexChange)="setSelected('Treasurer', $event)"
->
-  <mat-step>
-    <!-- #region core account details-->
+    <mat-stepper
+      [linear]="true"
+      (selectedIndexChange)="setSelected('Treasurer', $event)"
+    >
+      <mat-step>
+        <!-- #region core account details-->
 
-    <ng-template matStepLabel
-      ><h4 class="core-account-header selected mat-headline-medium">
-        Treasurer Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <iwms-dynamic-form
-        [controls]="treasurerDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="onValidityNotified($event, 'Treasurer Details')"
-      ></iwms-dynamic-form>
+        <ng-template matStepLabel
+          ><h4 class="core-account-header selected mat-headline-medium">
+            Treasurer Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <iwms-dynamic-form
+            [controls]="treasurerDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="onValidityNotified($event, 'Treasurer Details')"
+          ></iwms-dynamic-form>
+          <button
+            [disabled]="!isProceedAllowedForMember('Treasurer')"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
+
+      <!-- #region spouse details-->
+
+      <mat-step>
+        <ng-template matStepLabel
+          ><h4
+            class="spouse-header mat-headline-medium"
+            [class.selected]="isSelected['Chairperson'][1]"
+          >
+            Treasurer Spouse Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <div class="checkbox">
+            <mat-checkbox
+              [checked]="checks['Treasurer']['Spouse']"
+              (change)="
+                check($event.checked, {
+                  section: 'Treasurer',
+                  subsection: 'Spouse'
+                })
+              "
+              >Treasurer is not married</mat-checkbox
+            >
+          </div>
+          @if (!checks['Treasurer']['Spouse']) {
+          <iwms-dynamic-form
+            [controls]="treasurerSpouseDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="
+              onValidityNotified($event, 'Treasurer Spouse Details')
+            "
+          ></iwms-dynamic-form>
+          }
+          <button mat-button matStepperPrevious>Back</button>
+          <button
+            [disabled]="!isProceedAllowedForMember('Treasurer', true)"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
+      <mat-step>
+        <!-- #region children details-->
+
+        <ng-template matStepLabel
+          ><h4
+            class="children-header mat-headline-medium"
+            [class.selected]="isSelected['Treasurer'][2]"
+          >
+            Treasurer Children Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <div class="checkbox">
+            <mat-checkbox
+              [checked]="checks['Treasurer']['Children']"
+              (change)="
+                check($event.checked, {
+                  section: 'Treasurer',
+                  subsection: 'Children'
+                })
+              "
+              >Treasurer has no children</mat-checkbox
+            >
+          </div>
+          @if (!checks['Treasurer']['Children']) { @for (validOffspring of
+          getChildren('Treasurer'); track $index) {
+          <h5 class="child-header mat-title-large">
+            Child Details [{{ $index + 1 }}]
+          </h5>
+          <iwms-dynamic-form
+            [controls]="treasurerChildDetailsFormControls[$index] | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="
+              onValidityNotified(
+                $event,
+                'Treasurer Children Details',
+                $index,
+                true
+              )
+            "
+          ></iwms-dynamic-form
+          >}
+          <button
+            mat-stroked-button
+            class="add-child-btn"
+            (click)="addTreasurerChild()"
+          >
+            Add Child Details
+          </button>
+          <br />}
+
+          <button mat-button matStepperPrevious>Back</button>
+        </ng-template>
+      </mat-step>
+    </mat-stepper>
+
+    <mat-action-row>
+      <button mat-button (click)="prevStep()">Previous</button>
       <button
-        [disabled]="!isProceedAllowedForMember('Treasurer')"
         mat-button
-        matStepperNext
-      >
-        Proceed
-      </button>
-    </ng-template>
-  </mat-step>
-
-  <!-- #region spouse details-->
-
-  <mat-step>
-    <ng-template matStepLabel
-      ><h4
-        class="spouse-header mat-headline-medium"
-        [class.selected]="isSelected['Chairperson'][1]"
-      >
-        Treasurer Spouse Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Treasurer']['Spouse']"
-          (change)="
-            check($event.checked, {
-              section: 'Treasurer',
-              subsection: 'Spouse'
-            })
-          "
-          >Treasurer is not married</mat-checkbox
-        >
-      </div>
-      @if (!checks['Treasurer']['Spouse']) {
-      <iwms-dynamic-form
-        [controls]="treasurerSpouseDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="
-          onValidityNotified($event, 'Treasurer Spouse Details')
+        (click)="nextStep()"
+        [disabled]="
+          !(
+            isProceedAllowedForMember('Treasurer') &&
+            isProceedAllowedForMember('Treasurer', true) &&
+            areChildrenValid('Treasurer')
+          )
         "
-      ></iwms-dynamic-form>
-      }
-      <button mat-button matStepperPrevious>Back</button>
-      <button
-        [disabled]="!isProceedAllowedForMember('Treasurer', true)"
-        mat-button
-        matStepperNext
       >
-        Proceed
+        Next
       </button>
-    </ng-template>
-  </mat-step>
-  <mat-step>
-    <!-- #region children details-->
+    </mat-action-row>
+  </mat-expansion-panel>
 
-    <ng-template matStepLabel
-      ><h4
-        class="children-header mat-headline-medium"
-        [class.selected]="isSelected['Treasurer'][2]"
-      >
-        Treasurer Children Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Treasurer']['Children']"
-          (change)="
-            check($event.checked, {
-              section: 'Treasurer',
-              subsection: 'Children'
-            })
-          "
-          >Treasurer has no children</mat-checkbox
-        >
-      </div>
-      @if (!checks['Treasurer']['Children']) { @for (validOffspring of
-      getChildren('Treasurer'); track $index) {
-      <h5 class="child-header mat-title-large">
-        Child Details [{{ $index + 1 }}]
-      </h5>
-      <iwms-dynamic-form
-        [controls]="treasurerChildDetailsFormControls[$index] | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="
-          onValidityNotified($event, 'Treasurer Children Details', $index, true)
-        "
-      ></iwms-dynamic-form
-      >}
-      <button
-        mat-stroked-button
-        class="add-child-btn"
-        (click)="addTreasurerChild()"
-      >
-        Add Child Details
-      </button>
-      <br />}
+  <mat-expansion-panel
+    [expanded]="step() === 3"
+    (opened)="setStep(3)"
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> Secretary </mat-panel-title>
+      <mat-panel-description>
+        Enter Secretary Details(And Family Details)
+        <mat-icon>contacts</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-      <button mat-button matStepperPrevious>Back</button>
-    </ng-template>
-  </mat-step>
-</mat-stepper>
+    <mat-stepper
+      [linear]="true"
+      (selectedIndexChange)="setSelected('Secretary', $event)"
+    >
+      <mat-step>
+        <!-- #region core account details-->
 
-<mat-stepper
-  [linear]="true"
-  (selectedIndexChange)="setSelected('Secretary', $event)"
->
-  <mat-step>
-    <!-- #region core account details-->
+        <ng-template matStepLabel
+          ><h4 class="core-account-header selected mat-headline-medium">
+            Secretary Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <iwms-dynamic-form
+            [controls]="secretaryDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="onValidityNotified($event, 'Secretary Details')"
+          ></iwms-dynamic-form>
+          <button
+            [disabled]="!isProceedAllowedForMember('Secretary')"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
 
-    <ng-template matStepLabel
-      ><h4 class="core-account-header selected mat-headline-medium">
-        Secretary Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <iwms-dynamic-form
-        [controls]="secretaryDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="onValidityNotified($event, 'Secretary Details')"
-      ></iwms-dynamic-form>
-      <button
-        [disabled]="!isProceedAllowedForMember('Secretary')"
-        mat-button
-        matStepperNext
-      >
-        Proceed
-      </button>
-    </ng-template>
-  </mat-step>
+      <!-- #region spouse details-->
 
-  <!-- #region spouse details-->
+      <mat-step>
+        <ng-template matStepLabel
+          ><h4
+            class="spouse-header mat-headline-medium"
+            [class.selected]="isSelected['Chairperson'][1]"
+          >
+            Secretary Spouse Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <div class="checkbox">
+            <mat-checkbox
+              [checked]="checks['Secretary']['Spouse']"
+              (change)="
+                check($event.checked, {
+                  section: 'Secretary',
+                  subsection: 'Spouse'
+                })
+              "
+              >Secretary is not married</mat-checkbox
+            >
+          </div>
+          @if (!checks['Secretary']['Spouse']) {
+          <iwms-dynamic-form
+            [controls]="secretarySpouseDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="
+              onValidityNotified($event, 'Secretary Spouse Details')
+            "
+          ></iwms-dynamic-form>
+          }
+          <button mat-button matStepperPrevious>Back</button>
+          <button
+            [disabled]="!isProceedAllowedForMember('Secretary', true)"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
+      <mat-step>
+        <!-- #region children details-->
 
-  <mat-step>
-    <ng-template matStepLabel
-      ><h4
-        class="spouse-header mat-headline-medium"
-        [class.selected]="isSelected['Chairperson'][1]"
-      >
-        Secretary Spouse Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Secretary']['Spouse']"
-          (change)="
-            check($event.checked, {
-              section: 'Secretary',
-              subsection: 'Spouse'
-            })
-          "
-          >Secretary is not married</mat-checkbox
-        >
-      </div>
-      @if (!checks['Secretary']['Spouse']) {
-      <iwms-dynamic-form
-        [controls]="secretarySpouseDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="
-          onValidityNotified($event, 'Secretary Spouse Details')
-        "
-      ></iwms-dynamic-form>
-      }
-      <button mat-button matStepperPrevious>Back</button>
-      <button
-        [disabled]="!isProceedAllowedForMember('Secretary', true)"
-        mat-button
-        matStepperNext
-      >
-        Proceed
-      </button>
-    </ng-template>
-  </mat-step>
-  <mat-step>
-    <!-- #region children details-->
+        <ng-template matStepLabel
+          ><h4
+            class="children-header mat-headline-medium"
+            [class.selected]="isSelected['Secretary'][2]"
+          >
+            Secretary Children Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <div class="checkbox">
+            <mat-checkbox
+              [checked]="checks['Secretary']['Children']"
+              (change)="
+                check($event.checked, {
+                  section: 'Secretary',
+                  subsection: 'Children'
+                })
+              "
+              >Secretary has no children</mat-checkbox
+            >
+          </div>
+          @if (!checks['Secretary']['Children']) { @for (validOffspring of
+          getChildren('Secretary'); track $index) {
+          <h5 class="child-header mat-title-large">
+            Child Details [{{ $index + 1 }}]
+          </h5>
+          <iwms-dynamic-form
+            [controls]="secretaryChildDetailsFormControls[$index] | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="
+              onValidityNotified(
+                $event,
+                'Secretary Children Details',
+                $index,
+                true
+              )
+            "
+          ></iwms-dynamic-form
+          >}
+          <button
+            mat-stroked-button
+            class="add-child-btn"
+            (click)="addSecretaryChild()"
+          >
+            Add Child Details
+          </button>
+          <br />}
 
-    <ng-template matStepLabel
-      ><h4
-        class="children-header mat-headline-medium"
-        [class.selected]="isSelected['Secretary'][2]"
-      >
-        Secretary Children Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Secretary']['Children']"
-          (change)="
-            check($event.checked, {
-              section: 'Secretary',
-              subsection: 'Children'
-            })
-          "
-          >Secretary has no children</mat-checkbox
-        >
-      </div>
-      @if (!checks['Secretary']['Children']) { @for (validOffspring of
-      getChildren('Secretary'); track $index) {
-      <h5 class="child-header mat-title-large">
-        Child Details [{{ $index + 1 }}]
-      </h5>
-      <iwms-dynamic-form
-        [controls]="secretaryChildDetailsFormControls[$index] | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="
-          onValidityNotified($event, 'Secretary Children Details', $index, true)
-        "
-      ></iwms-dynamic-form
-      >}
-      <button
-        mat-stroked-button
-        class="add-child-btn"
-        (click)="addSecretaryChild()"
-      >
-        Add Child Details
-      </button>
-      <br />}
+          <button mat-button matStepperPrevious>Back</button>
+        </ng-template>
+      </mat-step>
+    </mat-stepper>
+    <mat-action-row>
+      <button mat-button (click)="prevStep()">Previous</button>
+    </mat-action-row>
+  </mat-expansion-panel>
 
-      <button mat-button matStepperPrevious>Back</button>
-    </ng-template>
-  </mat-step>
-</mat-stepper>
-<button
-  mat-flat-button
-  class="save-btn"
-  [disabled]="!enableSave"
-  (click)="save()"
->
-  Save Welfare
-</button>
+  <button
+    mat-flat-button
+    class="save-btn"
+    [disabled]="!enableSave"
+    (click)="save()"
+  >
+    Save Welfare
+  </button>
+</mat-accordion>

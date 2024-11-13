@@ -23,9 +23,9 @@ export function pettyCashAccountDetailsFormControls() {
     }),
     new CustomTextboxControl({
       key: 'name',
-      label: 'Bank Account Name',
+      label: 'Petty Cash Account Name',
       value: '',
-      placeholder: 'ABC Bank',
+      placeholder: 'ABC',
       icon: 'badge',
       required: true,
       order: 1,

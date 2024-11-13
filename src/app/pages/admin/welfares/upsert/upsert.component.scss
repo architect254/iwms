@@ -1,7 +1,13 @@
-.checkbox{
+.headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkbox {
     display: flex;
     margin: 24px 8px;
 }
+
 button {
     &.add-child-btn {
         margin-bottom: 32px;
@@ -12,9 +18,8 @@ button {
     }
 }
 
-:host ::ng-deep{
-    div.mat-horizontal-content-container{
+:host ::ng-deep {
+    div.mat-horizontal-content-container {
         padding: 0;
     }
 }
-
