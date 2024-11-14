@@ -12,6 +12,9 @@ import {
   SearchOption,
 } from '../../../shared/components/form-control/model';
 import { Filter } from '../../../shared/views/grid/model';
+import { BereavedMemberDto } from '../../../shared/views/is-bereaved-member-dialog/model';
+import { DeceasedMemberDto } from '../../../shared/views/is-deceased-member-dialog/model';
+import { DeactivatedMemberDto } from '../../../shared/views/is-deactivated-member-dialog/model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,25 +40,45 @@ export class MembersService extends ApiService implements Searchable {
     >(endpoint, payload);
   }
 
-  updateToBereaved(
+  isBereaved(
     id: number | string,
-    payload: {
-      deceased: string;
-      relationship_with_deceased: string;
-      bereavement_date: string;
-    }
-  ): Observable<{
-    deceased: string;
-    relationship_with_deceased: string;
-    bereavement_date: string;
-  }> {
+    payload: BereavedMemberDto
+  ): Observable<BereavedMemberDto> {
     const endpoint = this.endpoint + '/' + id + '/is-bereaved';
-    return this.http.put<{
-      deceased: string;
-      relationship_with_deceased: string;
-      bereavement_date: string;
-    }>(endpoint, payload, {
+    return this.http.put<BereavedMemberDto>(endpoint, payload, {
       headers: new HttpHeaders().set('content-type', 'application/json'),
+      observe: 'body',
+      responseType: 'json',
+    });
+  }
+
+  isDeceased(
+    id: number | string,
+    payload: DeceasedMemberDto
+  ): Observable<DeceasedMemberDto> {
+    const endpoint = this.endpoint + '/' + id + '/is-deceased';
+    return this.http.put<DeceasedMemberDto>(endpoint, payload, {
+      headers: new HttpHeaders().set('content-type', 'application/json'),
+      observe: 'body',
+      responseType: 'json',
+    });
+  }
+
+  isDeactivated(
+    id: number | string,
+    payload: DeactivatedMemberDto
+  ): Observable<DeactivatedMemberDto> {
+    const endpoint = this.endpoint + '/' + id + '/is-deactivated';
+    return this.http.put<DeactivatedMemberDto>(endpoint, payload, {
+      headers: new HttpHeaders().set('content-type', 'application/json'),
+      observe: 'body',
+      responseType: 'json',
+    });
+  }
+
+  activate(id: number | string): Observable<void> {
+    const endpoint = this.endpoint + '/' + id + '/activate';
+    return this.http.put<void>(endpoint, null, {
       observe: 'body',
       responseType: 'json',
     });
@@ -87,7 +110,7 @@ export class MembersService extends ApiService implements Searchable {
     const queryString = this.buildFilterQueryString(page, take, filters);
     return this.http.get<
       (Member | BereavedMember | DeceasedMember | DeactivatedMember)[]
-    >(`${this.endpoint}/welfare/${id}`, {
+    >(`${this.endpoint}/by-welfare/${id}`, {
       params: new HttpParams({ fromString: queryString }),
     });
   }
@@ -99,9 +122,5 @@ export class MembersService extends ApiService implements Searchable {
     return this.http.get<
       Member | BereavedMember | DeceasedMember | DeactivatedMember
     >(endpoint);
-  }
-
-  search(searchDto: SearchDto): Observable<SearchOption[]> {
-    return of([]);
   }
 }

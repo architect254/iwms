@@ -45,22 +45,12 @@
           <mat-icon>currency_exchange</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item routerLink="/finance" [activated]="isActive('finance')">
-        <a matListItemTitle routerLinkActive="nav-active">Finance</a>
+      <mat-list-item routerLink="/finances" [activated]="isActive('finance')">
+        <a matListItemTitle routerLinkActive="nav-active">Finances</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
           <mat-icon>account_balance</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item
-        routerLink="/transactions"
-        [activated]="isActive('transactions')"
-      >
-        <a matListItemTitle routerLinkActive="nav-active">Transactions</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>payments</mat-icon>
-        </button>
-      </mat-list-item>
-
       <mat-list-item routerLink="/reports" [activated]="isActive('reports')">
         <a matListItemTitle routerLinkActive="nav-active">Reports</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
@@ -92,10 +82,10 @@
         <button
           type="button"
           aria-label="Toggle sidenav"
-          mat-icon-button
+          mat-icon-button 
           (click)="drawer.toggle()"
         >
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+          <mat-icon color="accent" aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
         }
         <header class="app-header app-name">

@@ -21,8 +21,9 @@ export abstract class ListPage extends Page {
   protected take: number = 100;
   protected filters: Filter[] = [];
 
+  protected toggleOptions!: ToggleOption[];
   protected toggledOption!: ToggleOption;
-  protected toggledOptionValue: string = 'all';
+  protected toggledOptionValue: string = '';
 
   data: any[] = [];
 

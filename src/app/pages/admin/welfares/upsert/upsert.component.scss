@@ -1,20 +1,25 @@
-.checkbox{
+.headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkbox {
     display: flex;
     margin: 24px 8px;
 }
+
 button {
     &.add-child-btn {
         margin-bottom: 32px;
     }
 
     &.save-btn:not(.admin-save) {
-        margin-left: 24px;
+        margin-top: 24px;
     }
 }
 
-:host ::ng-deep{
-    div.mat-horizontal-content-container{
+:host ::ng-deep {
+    div.mat-horizontal-content-container {
         padding: 0;
     }
 }
-

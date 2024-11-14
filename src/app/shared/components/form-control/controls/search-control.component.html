@@ -1,30 +1,26 @@
 <div [formGroup]="form">
   <mat-form-field appearance="outline" class="form-field selector-control">
-    <!-- <mat-label [attr.for]="control.key">{{ control.label }}</mat-label> -->
+    <mat-label [attr.for]="control.key">{{ control.label }}</mat-label>
     <input
       type="text"
       [attr.aria-label]="control.label"
       [placeholder]="control.placeholder ?? 'Pick one'"
       matInput
-      [(ngModel)]="selectedOption"
       [formControlName]="control.key"
       [matAutocomplete]="auto"
     />
-    <button
+    @if(isLoading){
+    <mat-progress-spinner
+      style="margin-right: 16px"
       matSuffix
-      mat-button
-      mat-icon-button
-      aria-label="clear"
-      (click)="onNew()"
-    >
-      <mat-icon matSuffix>add_box</mat-icon>
-    </button>
-    <mat-autocomplete
-      #auto="matAutocomplete"
-      [displayWith]="displayFn"
-    >
-      @for (option of filteredOptions; track option) {
-      <mat-option [value]="option.id">{{ option?.name }}</mat-option>
+      mode="indeterminate"
+      diameter="20"
+    ></mat-progress-spinner>
+
+    }
+    <mat-autocomplete #auto="matAutocomplete">
+      @for (option of filteredOptions; track option.id) {
+      <mat-option [value]="option.name">{{ option?.name }}</mat-option>
       }
     </mat-autocomplete>
     <mat-icon matPrefix>{{ control.icon }}</mat-icon>

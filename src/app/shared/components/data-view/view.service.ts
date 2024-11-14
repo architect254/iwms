@@ -53,8 +53,14 @@ export class DynamicCustomDataBase<T> {
 export class CustomTextData extends DynamicCustomDataBase<string> {
   override dataType = 'text';
 }
+export class CustomCurrencyData extends DynamicCustomDataBase<string> {
+  override dataType = 'currency';
+}
 export class CustomDateData extends DynamicCustomDataBase<string> {
   override dataType = 'date';
+}
+export class CustomMonthData extends DynamicCustomDataBase<string> {
+  override dataType = 'month';
 }
 export class CustomStatusData extends DynamicCustomDataBase<string> {
   override dataType = 'status';

@@ -7,6 +7,7 @@ export enum Gender {
 
 export enum Membership {
   Active = 'Active',
+  Member = 'Member',
   Bereaved = 'Bereaved',
   Deceased = 'Deceased',
   Deactivated = 'Deactivated',

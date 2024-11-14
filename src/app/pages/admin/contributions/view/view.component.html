@@ -1,0 +1,14 @@
+<iwms-header
+  [title]="pageTitle"
+  [updateUrl]="updateUrl"
+  [listUrl]="listUrl"
+></iwms-header>
+
+<!-- #core_user -->
+
+<h4 class="core-account-header mat-headline-large">
+  Member Contribution Details
+</h4>
+<iwms-dynamic-view
+  [dataset]="memberContributionDataView | async"
+></iwms-dynamic-view>

@@ -1,9 +1,16 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
+import {
+  Component,
+  inject,
+  InjectionToken,
+  signal,
+  SkipSelf,
+} from '@angular/core';
 import { Data } from '@angular/router';
 
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -31,22 +38,47 @@ import { Child } from '../../../../core/entities/child.entity';
 import { Spouse } from '../../../../core/entities/spouse.entity';
 import { childDetailsFormControls } from '../../members/upsert/model';
 import { Membership } from '../../../../core/entities/user.entity';
+import { MatIconModule } from '@angular/material/icon';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
 >('Welfare details form controls');
 
-export const SPECIAL_MEMBER_DETAILS_FORM_CONTROLS = new InjectionToken<
+export const CHAIRPERSON_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
->('Special member details form controls');
+>('Chairperson details form controls');
 
-export const SPECIAL_MEMBER_SPOUSE_DETAILS_FORM_CONTROLS = new InjectionToken<
+export const CHAIRPERSON_SPOUSE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
->('Special member spouse details form controls');
+>('Chairperson spouse details form controls');
 
-export const SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
+export const CHAIRPERSON_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
->('Special member child details form controls');
+>('Chairperson child details form controls');
+
+export const TREASURER_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('Treasurer details form controls');
+
+export const TREASURER_SPOUSE_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('Treasurer spouse details form controls');
+
+export const TREASURER_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('Treasurer child details form controls');
+
+export const SECRETARY_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('Secretary details form controls');
+
+export const SECRETARY_SPOUSE_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('Secretary spouse details form controls');
+
+export const SECRETARY_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
+  Observable<DynamicCustomFormControlBase<ValueType>[]>
+>('Secretary child details form controls');
 
 @Component({
   selector: 'iwms-upsert',
@@ -57,6 +89,8 @@ export const SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
     DynamicFormComponent,
     MatButtonModule,
     MatStepperModule,
+    MatExpansionModule,
+    MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
     JsonPipe,
@@ -67,15 +101,39 @@ export const SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
       useFactory: welfareDetailsFormControls,
     },
     {
-      provide: SPECIAL_MEMBER_DETAILS_FORM_CONTROLS,
+      provide: CHAIRPERSON_DETAILS_FORM_CONTROLS,
       useFactory: specialMemberDetailsFormControls,
     },
     {
-      provide: SPECIAL_MEMBER_SPOUSE_DETAILS_FORM_CONTROLS,
+      provide: CHAIRPERSON_SPOUSE_DETAILS_FORM_CONTROLS,
       useFactory: specialMemberSpouseDetailsFormControls,
     },
     {
-      provide: SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS,
+      provide: CHAIRPERSON_CHILD_DETAILS_FORM_CONTROLS,
+      useFactory: specialMemberChildDetailsFormControls,
+    },
+    {
+      provide: TREASURER_DETAILS_FORM_CONTROLS,
+      useFactory: specialMemberDetailsFormControls,
+    },
+    {
+      provide: TREASURER_SPOUSE_DETAILS_FORM_CONTROLS,
+      useFactory: specialMemberSpouseDetailsFormControls,
+    },
+    {
+      provide: TREASURER_CHILD_DETAILS_FORM_CONTROLS,
+      useFactory: specialMemberChildDetailsFormControls,
+    },
+    {
+      provide: SECRETARY_DETAILS_FORM_CONTROLS,
+      useFactory: specialMemberDetailsFormControls,
+    },
+    {
+      provide: SECRETARY_SPOUSE_DETAILS_FORM_CONTROLS,
+      useFactory: specialMemberSpouseDetailsFormControls,
+    },
+    {
+      provide: SECRETARY_CHILD_DETAILS_FORM_CONTROLS,
       useFactory: specialMemberChildDetailsFormControls,
     },
   ],
@@ -93,20 +151,32 @@ export class UpsertComponent extends EditableViewPage {
   secretary: Member = new Member();
 
   welfareDetailsFormControls = inject(WELFARE_DETAILS_FORM_CONTROLS);
-  specialMemberDetailsFormControls = inject(
-    SPECIAL_MEMBER_DETAILS_FORM_CONTROLS
-  );
 
-  specialMemberSpouseDetailsFormControls = inject(
-    SPECIAL_MEMBER_SPOUSE_DETAILS_FORM_CONTROLS
+  chairpersonDetailsFormControls = inject(CHAIRPERSON_DETAILS_FORM_CONTROLS);
+  chairpersonSpouseDetailsFormControls = inject(
+    CHAIRPERSON_SPOUSE_DETAILS_FORM_CONTROLS
   );
-  specialMemberChildDetailsFormControls: Record<string, any[]> = {
-    Chairperson: [inject(SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS)],
-    Treasurer: [inject(SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS)],
-    Secretary: [inject(SPECIAL_MEMBER_CHILD_DETAILS_FORM_CONTROLS)],
-  };
+  chairpersonChildDetailsFormControls = [
+    inject(CHAIRPERSON_CHILD_DETAILS_FORM_CONTROLS),
+  ];
 
-  readonly specialMembers = ['Chairperson', 'Treasurer', 'Secretary'];
+  treasurerDetailsFormControls = inject(TREASURER_DETAILS_FORM_CONTROLS);
+  treasurerSpouseDetailsFormControls = inject(
+    TREASURER_SPOUSE_DETAILS_FORM_CONTROLS
+  );
+  treasurerChildDetailsFormControls = [
+    inject(TREASURER_CHILD_DETAILS_FORM_CONTROLS),
+  ];
+
+  secretaryDetailsFormControls = inject(SECRETARY_DETAILS_FORM_CONTROLS);
+  secretarySpouseDetailsFormControls = inject(
+    SECRETARY_SPOUSE_DETAILS_FORM_CONTROLS
+  );
+  secretaryChildDetailsFormControls = [
+    inject(SECRETARY_CHILD_DETAILS_FORM_CONTROLS),
+  ];
+
+  step = signal(0);
 
   readonly isSelected: Record<string, [boolean, boolean, boolean]> = {
     Chairperson: [true, false, false],
@@ -190,6 +260,267 @@ export class UpsertComponent extends EditableViewPage {
                 );
               }
             );
+            (this.isProceedAllowed['Welfare'] as Record<string, boolean>)[
+              'proceed'
+            ] = true;
+          }
+          if (this.chairperson) {
+            this.chairpersonDetailsFormControls.forEach(
+              (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                form.forEach(
+                  (control: DynamicCustomFormControlBase<ValueType>) => {
+                    if (control) {
+                      control.value = (
+                        this.chairperson as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )[control.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+            (this.isProceedAllowed['Chairperson'] as Record<string, boolean>)[
+              'proceed'
+            ] = true;
+
+            if (this.chairperson.spouse) {
+              const spouse = this.chairperson.spouse;
+              this.chairpersonSpouseDetailsFormControls.forEach(
+                (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                  form.forEach(
+                    (control: DynamicCustomFormControlBase<ValueType>) => {
+                      if (control) {
+                        control.value = (
+                          spouse as unknown as Record<
+                            string,
+                            string | number | Date
+                          >
+                        )[control.key] as string | number | Date;
+                      }
+                    }
+                  );
+                }
+              );
+            } else {
+              this.check(true, {
+                section: 'Chairperson',
+                subsection: 'Spouse',
+              });
+            }
+            (this.isProceedAllowed['Chairperson'] as Record<string, boolean>)[
+              'Spouse'
+            ] = true;
+
+            if (this.chairperson.children && this.chairperson.children.length) {
+              const children = this.chairperson.children;
+              children.forEach((child, index) => {
+                if (index > 0) {
+                  this.chairpersonChildDetailsFormControls.push(
+                    specialMemberChildDetailsFormControls()
+                  );
+                }
+                this.chairpersonChildDetailsFormControls[index].forEach(
+                  (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                    form.forEach(
+                      (control: DynamicCustomFormControlBase<ValueType>) => {
+                        if (control) {
+                          control.value = (
+                            child as unknown as Record<
+                              string,
+                              string | number | Date
+                            >
+                          )[control.key] as string | number | Date;
+                        }
+                      }
+                    );
+                  }
+                );
+                (this.isProceedAllowed['Chairperson']['Children'] as boolean[])[
+                  index
+                ] = true;
+              });
+            } else {
+              this.check(true, {
+                section: 'Chairperson',
+                subsection: 'Children',
+              });
+              (
+                this.isProceedAllowed['Chairperson']['Children'] as boolean[]
+              )[0] = true;
+            }
+          }
+          if (this.treasurer) {
+            this.treasurerDetailsFormControls.forEach(
+              (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                form.forEach(
+                  (control: DynamicCustomFormControlBase<ValueType>) => {
+                    if (control) {
+                      control.value = (
+                        this.treasurer as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )[control.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+            (this.isProceedAllowed['Treasurer'] as Record<string, boolean>)[
+              'proceed'
+            ] = true;
+
+            if (this.treasurer.spouse) {
+              const spouse = this.treasurer.spouse;
+              this.treasurerSpouseDetailsFormControls.forEach(
+                (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                  form.forEach(
+                    (control: DynamicCustomFormControlBase<ValueType>) => {
+                      if (control) {
+                        control.value = (
+                          spouse as unknown as Record<
+                            string,
+                            string | number | Date
+                          >
+                        )[control.key] as string | number | Date;
+                      }
+                    }
+                  );
+                }
+              );
+            } else {
+              this.check(true, {
+                section: 'Treasurer',
+                subsection: 'Spouse',
+              });
+            }
+            (this.isProceedAllowed['Treasurer'] as Record<string, boolean>)[
+              'Spouse'
+            ] = true;
+
+            if (this.treasurer.children && this.treasurer.children.length) {
+              const children = this.treasurer.children;
+              children.forEach((child, index) => {
+                if (index > 0) {
+                  this.treasurerChildDetailsFormControls.push(
+                    specialMemberChildDetailsFormControls()
+                  );
+                }
+                this.treasurerChildDetailsFormControls[index].forEach(
+                  (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                    form.forEach(
+                      (control: DynamicCustomFormControlBase<ValueType>) => {
+                        if (control) {
+                          control.value = (
+                            child as unknown as Record<
+                              string,
+                              string | number | Date
+                            >
+                          )[control.key] as string | number | Date;
+                        }
+                      }
+                    );
+                  }
+                );
+                (this.isProceedAllowed['Treasurer']['Children'] as boolean[])[
+                  index
+                ] = true;
+              });
+            } else {
+              this.check(true, {
+                section: 'Treasurer',
+                subsection: 'Children',
+              });
+              (this.isProceedAllowed['Treasurer']['Children'] as boolean[])[0] =
+                true;
+            }
+          }
+          if (this.secretary) {
+            this.secretaryDetailsFormControls.forEach(
+              (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                form.forEach(
+                  (control: DynamicCustomFormControlBase<ValueType>) => {
+                    if (control) {
+                      control.value = (
+                        this.secretary as unknown as Record<
+                          string,
+                          string | number | Date
+                        >
+                      )[control.key] as string | number | Date;
+                    }
+                  }
+                );
+              }
+            );
+            (this.isProceedAllowed['Secretary'] as Record<string, boolean>)[
+              'proceed'
+            ] = true;
+
+            if (this.secretary.spouse) {
+              const spouse = this.secretary.spouse;
+              this.secretarySpouseDetailsFormControls.forEach(
+                (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                  form.forEach(
+                    (control: DynamicCustomFormControlBase<ValueType>) => {
+                      if (control) {
+                        control.value = (
+                          spouse as unknown as Record<
+                            string,
+                            string | number | Date
+                          >
+                        )[control.key] as string | number | Date;
+                      }
+                    }
+                  );
+                }
+              );
+            } else {
+              this.check(true, {
+                section: 'Secretary',
+                subsection: 'Spouse',
+              });
+            }
+            (this.isProceedAllowed['Secretary'] as Record<string, boolean>)[
+              'Spouse'
+            ] = true;
+            if (this.secretary.children && this.secretary.children.length) {
+              const children = this.secretary.children;
+              children.forEach((child, index) => {
+                if (index > 0) {
+                  this.secretaryChildDetailsFormControls.push(
+                    specialMemberChildDetailsFormControls()
+                  );
+                }
+                this.secretaryChildDetailsFormControls[index].forEach(
+                  (form: DynamicCustomFormControlBase<ValueType>[]) => {
+                    form.forEach(
+                      (control: DynamicCustomFormControlBase<ValueType>) => {
+                        if (control) {
+                          control.value = (
+                            child as unknown as Record<
+                              string,
+                              string | number | Date
+                            >
+                          )[control.key] as string | number | Date;
+                        }
+                      }
+                    );
+                  }
+                );
+                (this.isProceedAllowed['Secretary']['Children'] as boolean[])[
+                  index
+                ] = true;
+              });
+            } else {
+              this.check(true, {
+                section: 'Secretary',
+                subsection: 'Children',
+              });
+              (this.isProceedAllowed['Secretary']['Children'] as boolean[])[0] =
+                true;
+            }
           }
         } else {
           this.chairperson.children = [];
@@ -198,6 +529,18 @@ export class UpsertComponent extends EditableViewPage {
         }
       })
     );
+  }
+
+  setStep(index: number) {
+    this.step.set(index);
+  }
+
+  nextStep() {
+    this.step.update((i) => i + 1);
+  }
+
+  prevStep() {
+    this.step.update((i) => i - 1);
   }
 
   setSelected(member: string, index: number) {
@@ -221,8 +564,6 @@ export class UpsertComponent extends EditableViewPage {
   }
 
   areChildrenValid(member: string) {
-    console.log('valid children', member, this.isProceedAllowed[member]);
-    console.log('getChildren', this.getChildren(member));
     return this.getChildren(member).reduce(
       (previusChildrenValid: boolean, currentOffspringValid: boolean) => {
         return previusChildrenValid && currentOffspringValid;
@@ -245,11 +586,25 @@ export class UpsertComponent extends EditableViewPage {
     );
   }
 
-  addChild(member: string) {
-    this.specialMemberChildDetailsFormControls[member].push(
+  addChairpersonChild() {
+    this.chairpersonChildDetailsFormControls.push(
       specialMemberChildDetailsFormControls()
     );
-    (this.isProceedAllowed[member]['Children'] as boolean[]).push(false);
+    (this.isProceedAllowed['Chairperson']['Children'] as boolean[]).push(false);
+  }
+
+  addTreasurerChild() {
+    this.treasurerChildDetailsFormControls.push(
+      specialMemberChildDetailsFormControls()
+    );
+    (this.isProceedAllowed['Treasurer']['Children'] as boolean[]).push(false);
+  }
+
+  addSecretaryChild() {
+    this.treasurerChildDetailsFormControls.push(
+      specialMemberChildDetailsFormControls()
+    );
+    (this.isProceedAllowed['Secretary']['Children'] as boolean[]).push(false);
   }
 
   check(
@@ -373,6 +728,10 @@ export class UpsertComponent extends EditableViewPage {
     const payload: any = {
       ...this.welfare,
     };
+
+    delete payload.chairperson;
+    delete payload.treasurer;
+    delete payload.secretary;
 
     if (this.chairperson) {
       payload['chairpersonDto'] = this.chairperson;

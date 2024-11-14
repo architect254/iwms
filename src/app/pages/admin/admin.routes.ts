@@ -34,6 +34,26 @@ export const adminRoutes: Routes = [
         loadChildren: () =>
           import('./members/members.routes').then((members) => members.routes),
       },
+      {
+        path: 'contributions',
+        data: {
+          title: 'IWMS Members Contributions',
+        },
+        loadChildren: () =>
+          import('./contributions/contributions.routes').then(
+            (contributions) => contributions.routes
+          ),
+      },
+      {
+        path: 'finances',
+        data: {
+          title: 'IWMS Welfare Finances',
+        },
+        loadChildren: () =>
+          import('./finance/finance.routes').then(
+            (finances) => finances.routes
+          ),
+      },
       { path: '', redirectTo: '/admins', pathMatch: 'full' },
     ],
   },

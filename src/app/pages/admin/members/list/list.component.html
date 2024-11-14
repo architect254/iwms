@@ -18,5 +18,7 @@
   [labels]="labels"
   [colors]="colors"
   (act)="doAction($event)"
+  [disableAddition]="!!toggledOptionValue || !welfareId"
+  (add)="doAdd()"
   (refresh)="doRefresh()"
 ></iwms-grid>

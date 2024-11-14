@@ -55,9 +55,13 @@ import {
 } from './model';
 import { DEACTIVATED_MEMBERS_COLUMNS } from '../../admins/list/list.component';
 import { Membership } from '../../../../core/entities/user.entity';
-import { bereavedMemberDetailsFormControls } from '../../../../shared/views/bereaved-member-dialog/model';
-import { BereavedMemberDialogComponent } from '../../../../shared/views/bereaved-member-dialog/bereaved-member-dialog.component';
 import { BereavedMember } from '../../../../core/entities/bereaved-member.entity';
+import { IsBereavedMemberDialogComponent } from '../../../../shared/views/is-bereaved-member-dialog/is-bereaved-member-dialog.component';
+import { IsDeceasedMemberDialogComponent } from '../../../../shared/views/is-deceased-member-dialog/is-deceased-member-dialog.component';
+import { DeceasedMember } from '../../../../core/entities/deceased-member.entity';
+import { IsDeactivatedMemberDialogComponent } from '../../../../shared/views/is-deactivated-member-dialog/is-deactivated-member-dialog.component';
+import { ConfirmationDialogComponent } from '../../../../shared/views/confirmation-dialog/confirmation-dialog.component';
+import { DeactivatedMember } from '../../../../core/entities/deactivated-member.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -102,7 +106,7 @@ export const COLORS = new InjectionToken<StatusLabels>('Grid status colors');
   styleUrl: './list.component.scss',
 })
 export class ListComponent extends ListPage {
-  toggleOptions = inject(TOGGLE_OPTIONS);
+  override toggleOptions = inject(TOGGLE_OPTIONS);
 
   filterOptions = inject(FILTERS);
   columns!: GridColumn[];
@@ -116,14 +120,16 @@ export class ListComponent extends ListPage {
     private service: MembersService
   ) {
     super(authService);
-
     this.columns = sort(allMemberColumns);
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;
     this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
 
-    this.welfareId =
-      this.router.getCurrentNavigation()?.extras.state?.['welfareId'];
+    this.subscriptions.add(
+      this.route.queryParamMap.subscribe(
+        (params) => (this.welfareId = params.get('welfareId')!)
+      )
+    );
   }
 
   override ngOnInit(): void {
@@ -135,9 +141,6 @@ export class ListComponent extends ListPage {
     this.toggledOptionValue = option.value;
     this.filters = [{ key: 'membership', value: this.toggledOptionValue }];
     switch (this.toggledOptionValue) {
-      case 'all':
-        this.columns = sort(allMemberColumns);
-        break;
       case Membership.Active:
         this.columns = sort(activeMembersColumns);
         break;
@@ -152,9 +155,9 @@ export class ListComponent extends ListPage {
         break;
 
       default:
+        this.columns = sort(allMemberColumns);
         break;
     }
-    console.log('toggled', this.filters, this.columns);
     this.cdr.detectChanges();
     this.doRefresh();
   }
@@ -192,6 +195,9 @@ export class ListComponent extends ListPage {
             relationship_with_deceased: (member as BereavedMember)
               ?.relationship_with_deceased,
             bereavement_date: (member as BereavedMember)?.bereavement_date,
+            demise_date: (member as DeceasedMember)?.demise_date,
+            deactivation_date: (member as DeactivatedMember)?.deactivation_date,
+            reason: (member as DeactivatedMember)?.reason,
             create_date: member.create_date,
             update_date: member.update_date,
             actionConfig: getActionConfig(member),
@@ -202,21 +208,65 @@ export class ListComponent extends ListPage {
   }
 
   doAction(action: ActionConfig) {
-    console.log('action', action);
-
     switch (action.key) {
-      case 'to_bereaved':
-        this.dialogRef = this.dialog.open(BereavedMemberDialogComponent, {
+      case 'is_bereaved':
+        this.dialogRef = this.dialog.open(IsBereavedMemberDialogComponent, {
           data: action.entity,
           width: '700px',
-          height: '600px',
+          height: '590px',
         });
+        break;
+      case 'is_deceased':
+        this.dialogRef = this.dialog.open(IsDeceasedMemberDialogComponent, {
+          data: action.entity,
+          width: '700px',
+          height: '430px',
+        });
+        break;
+      case 'deactivate':
+        this.dialogRef = this.dialog.open(IsDeactivatedMemberDialogComponent, {
+          data: action.entity,
+          width: '700px',
+          height: '430px',
+        });
+        break;
+      case 'activate':
+        this.dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          data: { action: action.key, message: `delete ${action.entity.name}` },
+          width: '700px',
+          height: '250px',
+        });
+
+        this.subscriptions.add(
+          this.dialogRef
+            .afterClosed()
+            .subscribe((act) => this.activateMember(action.entity.id))
+        );
 
         break;
 
       default:
         break;
     }
+
+    this.subscriptions.add(
+      this.dialogRef.afterClosed().subscribe(() => this.doRefresh())
+    );
+  }
+
+  activateMember(id: string) {
+    this.subscriptions.add(
+      this.service.activate(id).subscribe(() => {
+        this.doRefresh();
+      })
+    );
+  }
+
+  doAdd() {
+    this.router.navigate(['add'], {
+      queryParams: { welfareId: this.welfareId },
+      relativeTo: this.route,
+    });
   }
 
   override setTwitterCardMeta(): void {

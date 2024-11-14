@@ -7,87 +7,24 @@
 
 <!-- #region stepper-->
 
-<mat-stepper
-  orientation="vertical"
-  [linear]="true"
-  (selectedIndexChange)="selected = $event"
->
+<mat-vertical-stepper [linear]="true" (selectedIndexChange)="selected = $event">
   <mat-step>
     <!-- #region core account details-->
 
     <ng-template matStepLabel
       ><h4 class="core-account-header selected mat-headline-medium">
-        Account Details
+        Member Details
       </h4>
     </ng-template>
     <ng-template matStepContent>
       <iwms-dynamic-form
-        [controls]="coreUserDetailsFormControls | async"
+        [controls]="coreMemberDetailsFormControls | async"
         [isSubmitting]="isSubmitting"
         [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="onValidityNotified($event, 'Core Account Details')"
+        (notifyValidity)="onValidityNotified($event, 'Core Member Details')"
       ></iwms-dynamic-form>
-
-      @if(displayMemberForm){
-      <div class="checkbox">
-        <mat-checkbox
-          [checked]="checks['Create New Welfare']"
-          (change)="check($event.checked, 'Create New Welfare')"
-          [disabled]="!canCreateNewWelfare"
-          >Assign new group to account</mat-checkbox
-        >
-      </div>
       <button
-        [disabled]="!isProceedAllowed['Core Account Details']"
-        mat-button
-        matStepperNext
-      >
-        Proceed
-      </button>
-      }@else {
-      <button
-        mat-flat-button
-        class="admin-save save-btn"
-        [disabled]="!isProceedAllowed['Core Account Details']"
-        (click)="save()"
-      >
-        Save Account
-      </button>
-      }
-    </ng-template>
-  </mat-step>
-
-  @if (displayMemberForm) {
-
-  <!-- #region group details-->
-  <mat-step>
-    <ng-template matStepLabel
-      ><h4
-        class="welfare-header mat-headline-medium"
-        [class.selected]="isSelected[1]"
-      >
-        Welfare Details
-      </h4>
-    </ng-template>
-    <ng-template matStepContent>
-      @if (canCreateNewWelfare && checks['Create New Welfare']) {
-      <iwms-dynamic-form
-        [controls]="newWelfareDetailsFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
-      ></iwms-dynamic-form>
-      }@else{
-      <iwms-dynamic-form
-        [controls]="chooseWelfareFormControls | async"
-        [isSubmitting]="isSubmitting"
-        [triggerValidityNotification]="triggerValidityNotification"
-        (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
-      ></iwms-dynamic-form>
-      }
-      <button mat-button matStepperPrevious>Back</button>
-      <button
-        [disabled]="!isProceedAllowed['Welfare Details']"
+        [disabled]="!isProceedAllowed['Core Member Details']"
         mat-button
         matStepperNext
       >
@@ -102,17 +39,17 @@
     <ng-template matStepLabel
       ><h4
         class="spouse-header mat-headline-medium"
-        [class.selected]="isSelected[2]"
+        [class.selected]="getSelected(1)"
       >
-        Spouse Details
+        Member Spouse Details
       </h4>
     </ng-template>
     <ng-template matStepContent>
       <div class="checkbox">
         <mat-checkbox
-          [checked]="checks['Not Married']"
+          [checked]="checks['Spouse']"
           (change)="check($event.checked, 'Not Married')"
-          >Account owner is not married</mat-checkbox
+          >Member is not married</mat-checkbox
         >
       </div>
       @if (!checks['Not Married']) {
@@ -139,7 +76,7 @@
     <ng-template matStepLabel
       ><h4
         class="children-header mat-headline-medium"
-        [class.selected]="isSelected[3]"
+        [class.selected]="getSelected(2)"
       >
         Children Details
       </h4>
@@ -149,7 +86,7 @@
         <mat-checkbox
           [checked]="checks['No Children']"
           (change)="check($event.checked, 'No Children')"
-          >Account owner has no offsprings</mat-checkbox
+          >Member has no children</mat-checkbox
         >
       </div>
       @if (!checks['No Children']) { @for (validOffspring of validChildren;
@@ -172,14 +109,20 @@
       <br />}
 
       <button mat-button matStepperPrevious>Back</button>
-      <button
-        mat-flat-button
-        class="save-btn"
-        [disabled]="!isProceedAllowed['Children Details'] && !areChildrenValid"
-        (click)="save()"
-      >
-        Save Account
-      </button>
-    </ng-template> </mat-step
-  >}
-</mat-stepper>
+    </ng-template>
+  </mat-step>
+</mat-vertical-stepper>
+<button
+  mat-flat-button
+  class="save-btn"
+  [disabled]="
+    !(
+      isProceedAllowed['Core Member Details'] &&
+      isProceedAllowed['Spouse Details'] &&
+      (checks['No Children'] || areChildrenValid)
+    )
+  "
+  (click)="save()"
+>
+  Save Member
+</button>

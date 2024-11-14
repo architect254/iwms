@@ -2,6 +2,7 @@ export type DataType =
   | 'select'
   | 'string'
   | 'number'
+  | 'currency'
   | 'date'
   | 'status'
   | 'action';

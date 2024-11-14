@@ -17,7 +17,7 @@
 // Define the theme object.
 $iwms-theme: mat.define-theme((color: (theme-type: light,
         primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        tertiary: mat.$green-palette,
       ),
       typography: (brand-family: 'Poppins',
         bold-weight: 700),
@@ -37,10 +37,6 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
 
   .reduced-size {
     @include mat.all-component-densities(-4);
-  }
-
-  .alert {
-    color: green;
   }
 }
 
@@ -98,6 +94,11 @@ body {
   }
 }
 
-// ::-webkit-scrollbar {
-//   scrollbar-width: none;
-// }
+.alert-success {
+  color: green;
+  background-color: lightblue;
+}
+
+::-webkit-scrollbar {
+  scrollbar-width: 1px;
+}

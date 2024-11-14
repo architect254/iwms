@@ -87,3 +87,36 @@ export function memberDataView(): Observable<
   ];
   return of(data.sort((a, b) => a.order - b.order));
 }
+
+export function contributionDataView(): Observable<
+  DynamicCustomDataBase<string | number | Date>[]
+> {
+  const data: DynamicCustomDataBase<string | number | Date>[] = [
+    new CustomTextData({
+      key: 'type',
+      label: 'Transaction Type',
+      icon: 'badge',
+      order: 1,
+    }),
+    new CustomTextData({
+      key: 'transaction.amount',
+      label: 'Amount',
+      icon: 'badge',
+      order: 2,
+    }),
+    new CustomTextData({
+      key: 'from',
+      label: 'From Member',
+      value: '12345678',
+      icon: 'fingerprint',
+      order: 3,
+    }),
+    new CustomDateData({
+      key: 'to',
+      label: 'To Member',
+      icon: 'cake',
+      order: 4,
+    }),
+  ];
+  return of(data.sort((a, b) => a.order - b.order));
+}

@@ -1,4 +1,4 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe, SlicePipe } from '@angular/common';
 import { Component, inject, InjectionToken, SkipSelf } from '@angular/core';
 import { Data } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -23,7 +23,11 @@ import {
   spouseDataView,
   childDataView,
   memberDataView,
+  memberContributionDataView,
 } from './model';
+import { MatIconModule } from '@angular/material/icon';
+import { Contribution } from '../../../../core/entities/contribution.entity';
+import { MatButtonModule } from '@angular/material/button';
 
 export const MEMBER_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
@@ -41,10 +45,22 @@ export const CHILD_DATA_VIEW = new InjectionToken<
   Observable<DynamicCustomDataBase<ValueType>[]>
 >('Child data view');
 
+export const MEMBER_CONTRIBUTION_DATA_VIEW = new InjectionToken<
+  Observable<DynamicCustomDataBase<ValueType>[]>
+>('Member contribution data view');
+
 @Component({
   selector: 'iwms-view',
   standalone: true,
-  imports: [AsyncPipe, HeaderComponent, DynamicViewComponent, JsonPipe],
+  imports: [
+    AsyncPipe,
+    HeaderComponent,
+    DynamicViewComponent,
+    JsonPipe,
+    SlicePipe,
+    MatIconModule,
+    MatButtonModule,
+  ],
   providers: [
     {
       provide: MEMBER_DATA_VIEW,
@@ -62,25 +78,28 @@ export const CHILD_DATA_VIEW = new InjectionToken<
       provide: CHILD_DATA_VIEW,
       useFactory: childDataView,
     },
+    {
+      provide: MEMBER_CONTRIBUTION_DATA_VIEW,
+      useFactory: memberContributionDataView,
+    },
   ],
   templateUrl: './view.component.html',
   styleUrl: './view.component.scss',
 })
 export class ViewComponent extends ViewPage {
-  member!:
-    | Member
-    | BereavedMember
-    | DeceasedMember
-    | DeactivatedMember;
+  member!: Member | BereavedMember | DeceasedMember | DeactivatedMember;
   welfare?: Welfare;
 
   spouse?: Spouse;
   children?: Child[];
 
+  contributions?: Contribution[];
+
   memberDataView = inject(MEMBER_DATA_VIEW);
   welfareDataView = inject(WELFARE_DATA_VIEW);
   spouseDataView = inject(SPOUSE_DATA_VIEW);
   childDataView = [inject(CHILD_DATA_VIEW)];
+  memberContributionDataView = [inject(MEMBER_CONTRIBUTION_DATA_VIEW)];
 
   constructor(
     @SkipSelf() override authService: AuthService,
@@ -97,6 +116,7 @@ export class ViewComponent extends ViewPage {
         this.welfare = (this.member as Member)?.welfare;
         this.spouse = (this.member as Member)?.spouse;
         this.children = (this.member as Member)?.children;
+        this.contributions = (this.member as Member)?.from;
 
         this.memberDataView.forEach(
           (dataView: DynamicCustomDataBase<string | number | Date>[]) => {
@@ -186,8 +206,53 @@ export class ViewComponent extends ViewPage {
             }
           );
         }
+
+        if (this.contributions?.length) {
+          this.contributions.forEach((contribution, index) => {
+            if (index > 0) {
+              this.memberContributionDataView.push(
+                memberContributionDataView()
+              );
+            }
+          });
+          this.memberContributionDataView.forEach(
+            (
+              dataViewGroup: Observable<DynamicCustomDataBase<ValueType>[]>,
+              dataViewGoupIndex
+            ) => {
+              dataViewGroup.forEach(
+                (dataView: DynamicCustomDataBase<ValueType>[]) => {
+                  if (dataView) {
+                    dataView.forEach(
+                      (view: DynamicCustomDataBase<ValueType>) => {
+                        view.value = ((
+                          this.contributions as unknown as Record<
+                            string,
+                            string | number | Date
+                          >[]
+                        )?.[dataViewGoupIndex])[view.key];
+                      }
+                    );
+                  }
+                }
+              );
+            }
+          );
+        }
       })
     );
+  }
+  viewAllContributions() {
+    this.router.navigate(['/contributions'], {
+      relativeTo: this.route,
+      queryParams: { memberId: this.member.id },
+    });
+  }
+  createContribution() {
+    this.router.navigate(['/contributions/add'], {
+      relativeTo: this.route,
+      queryParams: { memberId: this.member.id },
+    });
   }
   override setDefaultMetaAndTitle(): void {}
   override setTwitterCardMeta(): void {}
