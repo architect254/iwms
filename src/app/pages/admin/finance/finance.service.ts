@@ -29,7 +29,11 @@ import {
 } from '../../../core/entities/account.entity';
 import { PettyCashAccountDto } from './upsert/petty-cash-account/model';
 import { InternalFundsTransferExpenditureDto } from './upsert/internal-funds-transfer-expenditure/model';
-import { InternalFundsTransferExpenditure } from '../../../core/entities/expenditure.entity';
+import {
+  ExternalFundsTransferExpenditure,
+  InternalFundsTransferExpenditure,
+} from '../../../core/entities/expenditure.entity';
+import { ExternalFundsTransferExpenditureDto } from './upsert/external-funds-transfer-expenditure/model';
 
 @Injectable({
   providedIn: 'root',
@@ -87,16 +91,24 @@ export class FinanceService extends ApiService {
   }
 
   createExpenditure(
-    payload: InternalFundsTransferExpenditureDto
-  ): Observable<InternalFundsTransferExpenditure> {
+    payload:
+      | InternalFundsTransferExpenditureDto
+      | ExternalFundsTransferExpenditureDto
+  ): Observable<
+    InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure
+  > {
     const endpoint = `${this.endpoint}/expenditures`;
     return this.http.post<InternalFundsTransferExpenditure>(endpoint, payload);
   }
 
   updateExpenditure(
     id: string,
-    payload: InternalFundsTransferExpenditureDto
-  ): Observable<InternalFundsTransferExpenditure> {
+    payload:
+      | InternalFundsTransferExpenditureDto
+      | ExternalFundsTransferExpenditureDto
+  ): Observable<
+    InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure
+  > {
     const endpoint = `${this.endpoint}/expenditures/${id}`;
     return this.http.put<InternalFundsTransferExpenditure>(endpoint, payload);
   }
@@ -105,10 +117,12 @@ export class FinanceService extends ApiService {
     page: number = 1,
     take: number = 100,
     filters?: Filter[]
-  ): Observable<(InternalFundsTransferExpenditure | PettyCashAccount)[]> {
+  ): Observable<
+    (InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure)[]
+  > {
     const queryString = this.buildFilterQueryString(page, take, filters);
     return this.http.get<
-      (InternalFundsTransferExpenditure | PettyCashAccount)[]
+      (InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure)[]
     >(`${this.endpoint}/expenditures`, {
       params: new HttpParams({ fromString: queryString }),
     });
@@ -119,10 +133,12 @@ export class FinanceService extends ApiService {
     page: number = 1,
     take: number = 100,
     filters?: Filter[]
-  ): Observable<(InternalFundsTransferExpenditure | PettyCashAccount)[]> {
+  ): Observable<
+    (InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure)[]
+  > {
     const queryString = this.buildFilterQueryString(page, take, filters);
     return this.http.get<
-      (InternalFundsTransferExpenditure | PettyCashAccount)[]
+      (InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure)[]
     >(`${this.endpoint}/expenditures/by-welfare/${id}`, {
       params: new HttpParams({ fromString: queryString }),
     });
@@ -130,11 +146,13 @@ export class FinanceService extends ApiService {
 
   getExpenditures(
     id: number | string
-  ): Observable<InternalFundsTransferExpenditure | PettyCashAccount> {
+  ): Observable<
+    InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure
+  > {
     const endpoint = `${this.endpoint}/expenditures/${id}`;
-    return this.http.get<InternalFundsTransferExpenditure | PettyCashAccount>(
-      endpoint
-    );
+    return this.http.get<
+      InternalFundsTransferExpenditure | ExternalFundsTransferExpenditure
+    >(endpoint);
   }
 
   override search(searchDto: SearchDto): Observable<SearchOption[]> {

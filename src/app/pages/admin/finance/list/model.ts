@@ -78,7 +78,7 @@ const accountColumns: GridColumn[] = [
     width: '250px',
   },
   {
-    key: 'name',
+    key: 'acc_name',
     label: 'Account Name',
     position: 1,
     type: 'string',
@@ -214,7 +214,7 @@ export const internalFundsTransferExpenditureColumns: GridColumn[] = [
 export const externalFundsTransferExpenditureColumns: GridColumn[] = [
   ...expenditureColumns,
   {
-    key: 'to',
+    key: 'toAccount',
     label: 'To',
     position: 3,
     type: 'string',
@@ -263,11 +263,17 @@ export function getActionConfig(entity: any) {
 export const statusLabels: StatusLabels = {
   [AccountType.Bank]: AccountType.Bank,
   [AccountType.PettyCash]: AccountType.PettyCash,
+  [ExpenditureType.InternalFundsTransfer]:
+    ExpenditureType.InternalFundsTransfer,
+  [ExpenditureType.ExternalFundsTransfer]:
+    ExpenditureType.ExternalFundsTransfer,
 };
 
 export const statusColors: StatusColors = {
   [AccountType.Bank]: 'green',
   [AccountType.PettyCash]: 'blue',
+  [ExpenditureType.InternalFundsTransfer]: 'crimson',
+  [ExpenditureType.ExternalFundsTransfer]: 'cornblue',
 };
 export interface FilterRequest {
   name?: string;

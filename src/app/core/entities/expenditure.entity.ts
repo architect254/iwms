@@ -23,7 +23,7 @@ export class InternalFundsTransferExpenditure
   implements InternalFundsTransferExpenditure {}
 
 export interface ExternalFundsTransferExpenditure extends Expenditure {
-  to: string;
+  toAccount: string;
 }
 
 export class ExternalFundsTransferExpenditure

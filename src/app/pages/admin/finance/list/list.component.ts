@@ -52,6 +52,7 @@ import { PettyCashAccountUpsertDialogComponent } from '../upsert/petty-cash-acco
 import {
   ExpenditureType,
   ExternalFundsTransferExpenditure,
+  InternalFundsTransferExpenditure,
 } from '../../../../core/entities/expenditure.entity';
 import { InternalFundsTransferExpenditureUpsertDialogComponent } from '../upsert/internal-funds-transfer-expenditure/internal-funds-transfer-expenditure.component';
 import { ExternalFundsTransferExpenditureUpsertDialogComponent } from '../upsert/external-funds-transfer-expenditure/external-funds-transfer-expenditure.component';
@@ -211,7 +212,7 @@ export class ListComponent extends ListPage {
               return {
                 id: account.id,
                 type: account.type,
-                name: account.name,
+                acc_name: account.name,
                 number: (account as BankAccount).number,
                 current_amount: account.current_amount,
                 base_amount: account.base_amount,
@@ -241,7 +242,7 @@ export class ListComponent extends ListPage {
               return {
                 id: account.id,
                 type: account.type,
-                name: account.name,
+                acc_name: account.name,
                 current_amount: account.current_amount,
                 base_amount: account.base_amount,
                 welfare: account.welfare.name,
@@ -271,6 +272,13 @@ export class ListComponent extends ListPage {
               return {
                 id: expenditure.id,
                 type: expenditure.type,
+                for: expenditure.for,
+                amount: expenditure.amount,
+                from: expenditure.from?.name,
+                welfare: expenditure.from?.welfare?.name,
+                to: (expenditure as InternalFundsTransferExpenditure).to.name,
+                create_date: expenditure.create_date,
+                update_date: expenditure.update_date,
               };
             });
           })
@@ -288,12 +296,20 @@ export class ListComponent extends ListPage {
           action = this.service.getManyExpenditures(page, take, filters);
         }
         this.subscriptions.add(
-          action.subscribe((accounts) => {
-            this.data = accounts.map((account) => {
+          action.subscribe((expenditures) => {
+            this.data = expenditures.map((expenditure) => {
               return {
-                id: account.id,
-                type: account.type,
-                actionConfig: getActionConfig(account),
+                id: expenditure.id,
+                type: expenditure.type,
+                for: expenditure.for,
+                amount: expenditure.amount,
+                from: expenditure.from?.name,
+                toAccount: (expenditure as ExternalFundsTransferExpenditure)
+                  .toAccount,
+                welfare: expenditure.from?.welfare?.name,
+                create_date: expenditure.create_date,
+                update_date: expenditure.update_date,
+                actionConfig: getActionConfig(expenditure),
               };
             });
           })
