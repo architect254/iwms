@@ -15,12 +15,12 @@ export const API_SERVER_URL = new InjectionToken<string>(
 );
 
 export const apiServerUrlFactory = (): string => {
-  if (false) {
+  if (true) {
     return 'https://iwms-be-api.onrender.com';
   } else {
     return `http://iwms.com`;
   }
-};
+}; 
 @Injectable({
   providedIn: 'root',
 })
