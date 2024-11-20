@@ -57,7 +57,8 @@ export class ListComponent extends ListPage {
 
     private service: WelfaresService
   ) {
-    super(authService);
+    super()
+
     // this.route.data.subscribe((data: Data) => {
     //   this.pageTitle = data['title'];
     // });

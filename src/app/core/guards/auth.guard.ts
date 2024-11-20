@@ -1,16 +1,19 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
+import {
+  CanActivateFn,
+  CanMatchFn,
+  RedirectCommand,
+  Router,
+} from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = async () => {
-  return new Promise<boolean>((resolve) => {
-    const authService = inject(AuthService);
+export const authGuard: CanMatchFn = async (route, seg) => {
+  const authService = inject(AuthService);
 
-    firstValueFrom(authService.isAuthenticated).then((isAuthenticated) => {
-      resolve(isAuthenticated);
-    });
+  return firstValueFrom(authService.isAuthenticated).then((is) => {
+    return is;
   });
 };

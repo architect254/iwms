@@ -1,6 +1,11 @@
 <mat-toolbar>
   <header class="app-header app-name">
-    <span class="start">IW</span><span class="end">MS</span>
+    @if (page_name) {
+    <span class="page_name" [innerHTML]="page_name"></span>
+    }@else {
+    <span class="start">{{ start }}</span
+    ><span class="end">{{ end }}</span>
+    }
   </header>
 </mat-toolbar>
 <div class="text-center">

@@ -35,8 +35,8 @@ export abstract class EditableViewPage extends ViewPage {
     this._triggerValidityNotification.next(doTrigger);
   }
 
-  constructor(authService: AuthService) {
-    super(authService);
+  constructor() {
+    super();
     this.subscriptions.add(
       this.route.data.subscribe({
         next: (data) => {

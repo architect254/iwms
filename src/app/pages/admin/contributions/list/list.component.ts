@@ -113,7 +113,8 @@ export class ListComponent extends ListPage {
     @SkipSelf() override authService: AuthService,
     private service: ContributionsService
   ) {
-    super(authService);
+    super()
+
     this.columns = sort(contributionColumns);
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;

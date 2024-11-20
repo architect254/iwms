@@ -4,6 +4,9 @@ import {
   isDevMode,
   InjectionToken,
   APP_INITIALIZER,
+  DEFAULT_CURRENCY_CODE,
+  LOCALE_ID,
+  EnvironmentInjector,
 } from '@angular/core';
 import {
   provideRouter,
@@ -35,27 +38,47 @@ import {
 import { AuthService } from './core/services/auth.service';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
-import {
-  API_SERVER_URL,
-  apiServerUrlFactory,
-} from './core/services/api.service';
-import { LocalStorageService } from './core/services/local-storage.service';
 import { adminRoutes } from './pages/admin/admin.routes';
-import { clientRoutes } from './pages/client/client.routes';
-
+import { clientRoutes } from './pages/clients/client.routes';
+import { firstValueFrom } from 'rxjs';
+import { ConfigService } from './core/services/config.service';
+import { BrowserPlatformLocation, DOCUMENT } from '@angular/common';
+// export const API_SERVER_URL = new InjectionToken<string>(
+//   'Dynamic API Server URL',
+//   { providedIn: 'root', factory: () => '' }
+// );
+// const apiServerUrlFactory = (): string => {
+//   if (false) {
+//     return 'https://iwms-be-api.onrender.com';
+//   } else {
+//     return `http://iwms.com`;
+//   }
+// };
 export function initializeAuth(authService: AuthService) {
   return () => authService.inilialize();
+}
+
+export function initializeConfig(
+  configService: ConfigService,
+  document: Document
+) {
+  return () => {
+    const hostname = document.defaultView?.location.hostname;
+    return configService.inilialize(hostname!);
+  };
 }
 
 export function initializeRoutes(authService: AuthService, router: Router) {
   return () => {
     new Promise<void>((resolve) => {
-      if (authService.isAdmin) {
-        router.resetConfig([...adminRoutes, ...routes]);
-      } else {
-        router.resetConfig([...clientRoutes, ...routes]);
-      }
-      resolve();
+      firstValueFrom(authService.isAdmin).then((isAdmin) => {
+        if (isAdmin) {
+          router.resetConfig([...adminRoutes, ...routes]);
+        } else {
+          router.resetConfig([...clientRoutes, ...routes]);
+        }
+        resolve();
+      });
     });
   };
 }
@@ -64,7 +87,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
-      adminRoutes,
+      routes,
       // withDebugTracing(),
       withRouterConfig({ onSameUrlNavigation: 'reload' })
     ),
@@ -88,20 +111,26 @@ export const appConfig: ApplicationConfig = {
     ),
     {
       provide: APP_INITIALIZER,
-      useFactory: initializeAuth,
-      deps: [AuthService, LocalStorageService],
+      useFactory: initializeConfig,
+      deps: [ConfigService, DOCUMENT],
       multi: true,
     },
-    // {
-    //   provide: APP_INITIALIZER,
-    //   useFactory: initializeRoutes,
-    //   deps: [AuthService, LocalStorageService, Router],
-    //   multi: true,
-    // },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [AuthService],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeRoutes,
+      deps: [AuthService, Router],
+      multi: true,
+    },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: API_SERVER_URL, useFactory: apiServerUrlFactory, multi: true },
-    AuthService,
     JwtHelperService,
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'KES' },
+    [{ provide: LOCALE_ID, useValue: 'en-KE' }],
   ],
 };

@@ -86,7 +86,8 @@ export class InternalFundsTransferExpenditureUpsertDialogComponent extends Page 
     override dialogRef: MatDialogRef<InternalFundsTransferExpenditureUpsertDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    super(authService);
+    super()
+
     const { action, internalFundsTransferExpenditure } = data;
     this.action = action;
     this.internalFundsTransferExpenditure = internalFundsTransferExpenditure;

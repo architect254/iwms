@@ -129,11 +129,9 @@ export class ListComponent extends ListPage {
   welfareId!: string;
   memberId!: string;
 
-  constructor(
-    @SkipSelf() override authService: AuthService,
-    private service: FinanceService
-  ) {
-    super(authService);
+  constructor(private service: FinanceService) {
+    super();
+
     this.columns = sort(bankAccountColumns);
     this.fincancesToggledOption = this.financesToggleOptions[0];
     this.fincancesToggledOptionValue = this.fincancesToggledOption.value;

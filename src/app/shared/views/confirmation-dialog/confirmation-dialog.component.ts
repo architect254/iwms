@@ -49,11 +49,10 @@ export class ConfirmationDialogComponent extends Page {
   canConfirm = false;
 
   constructor(
-    @SkipSelf() authService: AuthService,
     override dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { action: string; message: string }
   ) {
-    super(authService);
+    super();
   }
 
   override ngOnInit(): void {

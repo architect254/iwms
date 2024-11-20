@@ -71,12 +71,11 @@ export class IsDeceasedMemberDialogComponent extends Page {
   canConfirm = false;
 
   constructor(
-    @SkipSelf() authService: AuthService,
     private service: MembersService,
     override dialogRef: MatDialogRef<IsDeceasedMemberDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public member: Member
   ) {
-    super(authService);
+    super();
   }
 
   override ngOnInit(): void {

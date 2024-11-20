@@ -19,6 +19,7 @@ import { SignInDto, SignUpDto } from '../../shared/views/auth-dialog/auth.dto';
 import { Admin } from '../entities/admin.entity';
 import { Member } from '../entities/member.entity';
 import { Membership } from '../entities/user.entity';
+import { Welfare } from '../entities/welfare.entity';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends ApiService {
   protected override endpoint = `${this.API_URL}/auth`;
@@ -65,7 +66,22 @@ export class AuthService extends ApiService {
   get isAdmin(): Observable<boolean> {
     return this.user.pipe(
       map((user: Member | Admin | null) => {
-        return (user as Admin)?.isAdmin;
+        let isAdmin: boolean;
+        if (user && Object.hasOwn(user, 'isAdmin')) {
+          isAdmin = true;
+        } else {
+          isAdmin = false;
+        }
+        console.log('is Admin', isAdmin);
+        return isAdmin;
+      })
+    );
+  }
+
+  get welfare(): Observable<Welfare> {
+    return this.user.pipe(
+      map((user: Member | Admin | null) => {
+        return (user as Member)?.welfare;
       })
     );
   }
@@ -102,9 +118,12 @@ export class AuthService extends ApiService {
     return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload);
   }
 
-  logout() {
-    this._storage.clear();
-    this._token.next(null);
+  logout(): Promise<void> {
+    return new Promise((resolve) => {
+      this._storage.clear();
+      this._token.next(null);
+      resolve();
+    });
   }
 }
 export interface JwtPayload {

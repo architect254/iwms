@@ -85,7 +85,8 @@ export class ViewComponent extends ViewPage {
 
     private service: WelfaresService
   ) {
-    super(authService);
+    super()
+
   }
 
   override ngOnInit(): void {

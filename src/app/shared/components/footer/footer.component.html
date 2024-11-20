@@ -1,10 +1,9 @@
 <footer>
   <section class="newsletter">
     <div class="container">
-      <h5 class="newsletter-title">Sign Up For Atika Dominic's NewsLetter</h5>
+      <h5 class="newsletter-title">Sign Up For IWMS's NewsLetter</h5>
       <p class="newsletter-info">
-        Receive Atika Dominic's quarterly updates with the latest articles,
-        books and insights from this site
+        Receive IWMS's quarterly updates with the latest insights from this site
       </p>
       <form
         [formGroup]="newsLetterForm"
@@ -34,32 +33,18 @@
   <section class="links">
     <div class="container">
       <div class="site-links">
-        <a mat-button routerLink="/articles">Atika's Artices</a>
-        <a mat-button routerLink="/books">Atika's Books</a>
-        <a
-          mat-button
-          routerLink="/"
-          fragment="about-atika"
-          routerLinkOptions="{anchorScrolling:'enabled'}"
-          >About Atika</a
-        >
-        <a
-          mat-button
-          routerLink="/"
-          fragment="contact-atika"
-          routerLinkOptions="{anchorScrolling:'enabled'}"
-          >Contact Atika</a
-        >
+        <a mat-button routerLink="/">About Us</a>
+        <a mat-button routerLink="/">Contact Us</a>
       </div>
       <div class="external-links">
-        <p routerLink="" class="author-name">Atika Dominic</p>
+        <p routerLink="" class="author-name">IWMS</p>
         <small class="atikas-description">
-          Atika Dominic is a great great great greatgreat great great great
-          great great writer
+          IWMS is an Integrated Welfare Management System making it easier for
+          you to manage and track the progress of your welfare group
         </small>
 
         <small class="copy-right">
-          &copy;{{ year }} Atika Dominic. All rights reserved
+          &copy;{{ year }} IWMS. All rights reserved
         </small>
 
         <div class="social-links">
@@ -70,9 +55,9 @@
       </div>
     </div>
   </section>
-  <section class="developed-by">
-    <p class="container developed-by-text">
+  <!-- <section class="developed-by">
+    <p class="container developed-by-text text-center">
       Designed & Developed by Code Links Industries, Ltd
     </p>
-  </section>
+  </section> -->
 </footer>

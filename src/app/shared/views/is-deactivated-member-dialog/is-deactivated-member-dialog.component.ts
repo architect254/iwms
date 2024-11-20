@@ -24,7 +24,10 @@ import {
   DynamicCustomFormControlBase,
   ValueType,
 } from '../../components/form-control/model';
-import { deactivatedMemberDetailsFormControls, DeactivatedMemberDto} from './model';
+import {
+  deactivatedMemberDetailsFormControls,
+  DeactivatedMemberDto,
+} from './model';
 import { MembersService } from '../../../pages/admin/members/members.service';
 import { DynamicFormComponent } from '../../components/form-control/form.component';
 import { Member } from '../../../core/entities/member.entity';
@@ -69,12 +72,11 @@ export class IsDeactivatedMemberDialogComponent extends Page {
   canConfirm = false;
 
   constructor(
-    @SkipSelf() authService: AuthService,
     private service: MembersService,
     override dialogRef: MatDialogRef<IsDeactivatedMemberDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public member: Member
   ) {
-    super(authService);
+    super();
   }
 
   override ngOnInit(): void {
@@ -90,11 +92,13 @@ export class IsDeactivatedMemberDialogComponent extends Page {
     this.isSubmitting = of(true);
 
     this.subscriptions.add(
-      this.service.isDeactivated(this.member.id!, this.deactivatedDto).subscribe({
-        next: (value) => {
-          this.dialogRef.close();
-        },
-      })
+      this.service
+        .isDeactivated(this.member.id!, this.deactivatedDto)
+        .subscribe({
+          next: (value) => {
+            this.dialogRef.close();
+          },
+        })
     );
   }
 

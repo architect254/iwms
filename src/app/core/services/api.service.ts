@@ -10,22 +10,11 @@ import {
 } from '../../shared/components/form-control/model';
 import { Observable } from 'rxjs';
 
-export const API_SERVER_URL = new InjectionToken<string>(
-  'Dynamic API Server URL'
-);
-
-export const apiServerUrlFactory = (): string => {
-  if (true) {
-    return 'https://iwms-be-api.onrender.com';
-  } else {
-    return `http://iwms.com`;
-  }
-}; 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService implements Searchable {
-  readonly #SERVER_URL: string = inject(API_SERVER_URL);
+  readonly #SERVER_URL: string = 'https://iwms-be-api.onrender.com';
   readonly API_URL = `${this.#SERVER_URL}/api`;
 
   protected endpoint = `${this.API_URL}/`;

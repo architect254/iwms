@@ -1,0 +1,42 @@
+h4 {
+
+    .core-account-header,
+    .member-header,
+    .welfare-header,
+    .member-header,
+    .spouse-header {
+        margin: 2rem auto;
+    }
+
+    &.member-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        button[mat-flat-button] {
+            &.basic-btn {
+
+                &:hover {
+                    text-decoration: underline;
+                }
+
+                .btn-icon {
+                    font-size: 1.75rem;
+                    width: 1.75rem;
+                    height: 1.75rem;
+                }
+            }
+        }
+
+    }
+}
+
+h5.member {
+    margin: 1rem auto;
+}
+
+small {
+    display: block;
+    text-align: center;
+    margin-top: 10%;
+}

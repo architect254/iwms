@@ -34,6 +34,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingService } from '../../../core/services/loading.service';
 import { Admin } from '../../../core/entities/admin.entity';
 import { Member } from '../../../core/entities/member.entity';
+import { Config } from '../../../core/entities/config.entity';
+import { LocationService } from '../../../core/services/location.service';
 
 @Component({
   selector: 'iwms-navigation',
@@ -68,6 +70,11 @@ export class NavigationComponent implements OnInit, OnDestroy {
       shareReplay()
     );
 
+  page_name!: string;
+  home_content!: string;
+  start!: string;
+  end!: string;
+
   user!: Observable<Admin | Member | null>;
   isApiLoading: boolean = false;
 
@@ -75,7 +82,9 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   dialogRef!: MatDialogRef<PasswordResetDialogComponent>;
 
-  subscription = new Subscription();
+  subscriptions = new Subscription();
+
+  routes!: any[];
 
   constructor(
     private authService: AuthService,
@@ -83,14 +92,30 @@ export class NavigationComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    locationService: LocationService
   ) {
+    this.subscriptions.add(
+      locationService.routes.subscribe((routes) => (this.routes = routes))
+    );
+    this.subscriptions.add(
+      this.route.data.subscribe((data) => {
+        const config: Config = data['config'];
+        this.page_name = config?.page?.page_name;
+        this.home_content = config?.page?.home_content;
+
+        if (!this.page_name) {
+          this.start = 'IW';
+          this.end = 'MS';
+        }
+      })
+    );
     this.configureBreadCrumbs();
   }
 
   ngOnInit(): void {
     this.user = this.authService.user;
-    this.subscription.add(
+    this.subscriptions.add(
       this.loadingService.isLoading.subscribe((isLoading) => {
         this.isApiLoading = isLoading;
         this.cdr.detectChanges();
@@ -187,14 +212,13 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   public logout() {
-    this.authService.logout();
-    this.router.navigate(['/']).then(() => {
-      window.location.reload();
+    this.authService.logout().then(() => {
+      this.router.navigateByUrl('/');
     });
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 }
 interface BreadCrumb {
