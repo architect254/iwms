@@ -58,13 +58,13 @@ export const columns: GridColumn[] = [
     type: 'string',
     width: '250px',
   },
-  {
-    key: 'hostname',
-    label: 'Host Name',
-    position: 4,
-    type: 'string',
-    width: '250px',
-  },
+  // {
+  //   key: 'hostname',
+  //   label: 'Host Name',
+  //   position: 4,
+  //   type: 'string',
+  //   width: '250px',
+  // },
   {
     key: 'chairperson',
     label: 'Chair Person',

@@ -80,12 +80,12 @@ export class PettyCashAccountUpsertDialogComponent extends Page {
   canConfirm = false;
 
   constructor(
-    @SkipSelf() authService: AuthService,
     private service: FinanceService,
     override dialogRef: MatDialogRef<PettyCashAccountUpsertDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    super(authService);
+    super();
+
     const { action, pettyCashAccount } = data;
     this.action = action;
     this.pettyCashAccount = pettyCashAccount;

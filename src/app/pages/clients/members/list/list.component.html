@@ -1,0 +1,24 @@
+<iwms-header [title]="pageTitle">
+  <iwms-button-toggle
+    toggle
+    [options]="toggleOptions"
+    [value]="toggledOptionValue"
+    (toggle)="onToggle($event)"
+  ></iwms-button-toggle>
+  <iwms-grid-search
+    search
+    [filters]="filterOptions"
+    (applyFilter)="doApplyFilter($event)"
+  ></iwms-grid-search
+></iwms-header>
+<iwms-grid
+  [name]="toggledOption.name + ' Members'"
+  [data]="data"
+  [columns]="columns"
+  [labels]="labels"
+  [colors]="colors"
+  (act)="doAction($event)"
+  [disableAddition]="!!toggledOptionValue || !welfareId"
+  (add)="doAdd()"
+  (refresh)="doRefresh()"
+></iwms-grid>

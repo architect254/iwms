@@ -28,12 +28,12 @@ export function welfareDataView(): Observable<
       icon: 'email',
       order: 3,
     }),
-    new CustomTextData({
-      key: 'hostname',
-      label: 'Host Name',
-      icon: 'web',
-      order: 4,
-    }),
+    // new CustomTextData({
+    //   key: 'hostname',
+    //   label: 'Host Name',
+    //   icon: 'web',
+    //   order: 4,
+    // }),
   ];
   return of(data.sort((a, b) => a.order - b.order));
 }

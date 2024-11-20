@@ -20,11 +20,16 @@ footer {
             justify-content: stretch;
             width: 680px;
             margin: 32px 0;
+            height: 75px;
+
+            mat-form-field {
+                flex: 2 0 0;
+            }
 
             .mat-subscribe {
                 border-radius: 2px;
-                width: 220px;
-                height: 55px;
+                flex: 1 0 auto;
+                height: 50px;
             }
         }
     }

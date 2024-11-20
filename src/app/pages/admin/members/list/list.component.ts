@@ -62,6 +62,7 @@ import { DeceasedMember } from '../../../../core/entities/deceased-member.entity
 import { IsDeactivatedMemberDialogComponent } from '../../../../shared/views/is-deactivated-member-dialog/is-deactivated-member-dialog.component';
 import { ConfirmationDialogComponent } from '../../../../shared/views/confirmation-dialog/confirmation-dialog.component';
 import { DeactivatedMember } from '../../../../core/entities/deactivated-member.entity';
+import { ContributionType } from '../../../../core/entities/contribution.entity';
 
 export const TOGGLE_OPTIONS = new InjectionToken<ToggleOption[]>(
   'Header toggle options'
@@ -115,11 +116,9 @@ export class ListComponent extends ListPage {
 
   welfareId!: string;
 
-  constructor(
-    @SkipSelf() override authService: AuthService,
-    private service: MembersService
-  ) {
-    super(authService);
+  constructor(private service: MembersService) {
+    super();
+
     this.columns = sort(allMemberColumns);
     this.toggledOption = this.toggleOptions[0];
     this.toggledOptionValue = this.toggledOption.value;
@@ -209,14 +208,14 @@ export class ListComponent extends ListPage {
 
   doAction(action: ActionConfig) {
     switch (action.key) {
-      case 'is_bereaved':
+      case 'update_to_bereaved':
         this.dialogRef = this.dialog.open(IsBereavedMemberDialogComponent, {
           data: action.entity,
           width: '700px',
           height: '590px',
         });
         break;
-      case 'is_deceased':
+      case 'update_to_deceased':
         this.dialogRef = this.dialog.open(IsDeceasedMemberDialogComponent, {
           data: action.entity,
           width: '700px',
@@ -245,12 +244,33 @@ export class ListComponent extends ListPage {
 
         break;
 
+      case 'view_contributions':
+        this.viewContributions(action.entity);
+        break;
+      case 'add_membership_contribution':
+        this.addContribution(action.entity, ContributionType.Membership);
+        break;
+      case 'add_monthly_contribution':
+        this.addContribution(action.entity, ContributionType.Monthly);
+        break;
+      case 'add_bereaved_contribution':
+        this.addContribution(action.entity, ContributionType.BereavedMember);
+        break;
+      case 'add_deceased_contribution':
+        this.addContribution(action.entity, ContributionType.DeceasedMember);
+        break;
+      case 'add_reactivation_contribution':
+        this.addContribution(
+          action.entity,
+          ContributionType.MembershipReactivation
+        );
+        break;
       default:
         break;
     }
 
     this.subscriptions.add(
-      this.dialogRef.afterClosed().subscribe(() => this.doRefresh())
+      this.dialogRef?.afterClosed().subscribe(() => this.doRefresh())
     );
   }
 
@@ -260,6 +280,19 @@ export class ListComponent extends ListPage {
         this.doRefresh();
       })
     );
+  }
+  viewContributions(member: Member) {
+    this.router.navigate(['/contributions'], {
+      relativeTo: this.route,
+      queryParams: { memberId: member.id },
+    });
+  }
+
+  addContribution(member: Member, type: ContributionType) {
+    this.router.navigate(['/contributions/add'], {
+      relativeTo: this.route,
+      queryParams: { memberId: member.id, type },
+    });
   }
 
   doAdd() {

@@ -18,17 +18,80 @@
         <mat-icon>accessibility_new</mat-icon></mat-panel-description
       >
     </mat-expansion-panel-header>
-    <iwms-dynamic-form
-      [controls]="welfareDetailsFormControls | async"
-      [isSubmitting]="isSubmitting"
-      [triggerValidityNotification]="triggerValidityNotification"
-      (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
-    ></iwms-dynamic-form>
+    <mat-stepper
+      [linear]="true"
+      (selectedIndexChange)="setSelected('Welfare', $event)"
+    >
+      <mat-step>
+        <!-- #region core account details-->
+
+        <ng-template matStepLabel
+          ><h4 class="core-account-header selected mat-headline-medium">
+            Welfare Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <iwms-dynamic-form
+            [controls]="welfareDetailsFormControls | async"
+            [isSubmitting]="isSubmitting"
+            [triggerValidityNotification]="triggerValidityNotification"
+            (notifyValidity)="onValidityNotified($event, 'Welfare Details')"
+          ></iwms-dynamic-form>
+          <button
+            [disabled]="!isProceedAllowedForWelfare('Welfare')"
+            mat-button
+            matStepperNext
+          >
+            Proceed
+          </button>
+        </ng-template>
+      </mat-step>
+
+      <!-- #region spouse details-->
+
+      <mat-step>
+        <ng-template matStepLabel
+          ><h4
+            class="spouse-header mat-headline-medium"
+            [class.selected]="isSelected['Welfare'][1]"
+          >
+            Page Details
+          </h4>
+        </ng-template>
+        <ng-template matStepContent>
+          <h5>Home Page Content</h5>
+          <form [formGroup]="contentForm">
+            <editor
+              formControlName="homeContent"
+              [init]="{
+  base_url: '/tinymce',
+  suffix: '.min',
+  plugins:
+    'a11ychecker advcode advlist advtable anchor autocorrect autosave editimage image link linkchecker lists media mediaembed pageembed powerpaste searchreplace table template tinymcespellchecker typography visualblocks wordcount',
+  toolbar:
+    'undo redo | styles | bold italic underline strikethrough | align | table link image media pageembed | bullist numlist outdent indent | spellcheckdialog a11ycheck typography code',
+  height: 540,
+  a11ychecker_level: 'aaa',
+  typography_langs: ['en-US'],
+  typography_default_lang: 'en-US',
+  advcode_inline: true,
+  content_style:
+    'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+}"
+            ></editor>
+          </form>
+          <button mat-button matStepperPrevious>Back</button>
+        </ng-template>
+      </mat-step>
+    </mat-stepper>
+
     <mat-action-row>
       <button
         mat-button
         (click)="nextStep()"
-        [disabled]="!isProceedAllowed['Welfare']['proceed']"
+        [disabled]="
+          !(isProceedAllowed['Welfare']['proceed'] && contentForm.get('homeContent')?.valid)
+        "
       >
         Next
       </button>

@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { Member, Role } from '../../../../core/entities/member.entity';
 import { Welfare } from '../../../../core/entities/welfare.entity';
 import { getIDNumber } from '../../../../core/models/utils';
@@ -39,6 +40,7 @@ import { Spouse } from '../../../../core/entities/spouse.entity';
 import { childDetailsFormControls } from '../../members/upsert/model';
 import { Membership } from '../../../../core/entities/user.entity';
 import { MatIconModule } from '@angular/material/icon';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 export const WELFARE_DETAILS_FORM_CONTROLS = new InjectionToken<
   Observable<DynamicCustomFormControlBase<ValueType>[]>
@@ -90,9 +92,11 @@ export const SECRETARY_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
     MatButtonModule,
     MatStepperModule,
     MatExpansionModule,
+    ReactiveFormsModule,
     MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
+    EditorModule,
     JsonPipe,
   ],
   providers: [
@@ -136,6 +140,7 @@ export const SECRETARY_CHILD_DETAILS_FORM_CONTROLS = new InjectionToken<
       provide: SECRETARY_CHILD_DETAILS_FORM_CONTROLS,
       useFactory: specialMemberChildDetailsFormControls,
     },
+    { provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js' },
   ],
   templateUrl: './upsert.component.html',
   styleUrl: './upsert.component.scss',
@@ -176,9 +181,14 @@ export class UpsertComponent extends EditableViewPage {
     inject(SECRETARY_CHILD_DETAILS_FORM_CONTROLS),
   ];
 
+  contentForm = new FormGroup({
+    homeContent: new FormControl(),
+  });
+
   step = signal(0);
 
-  readonly isSelected: Record<string, [boolean, boolean, boolean]> = {
+  readonly isSelected: Record<string, boolean[]> = {
+    Welfare: [true, false],
     Chairperson: [true, false, false],
     Treasurer: [true, false, false],
     Secretary: [true, false, false],
@@ -188,7 +198,7 @@ export class UpsertComponent extends EditableViewPage {
     string,
     Record<string, boolean | boolean[]>
   > = {
-    Welfare: { proceed: false },
+    Welfare: { proceed: false, page: false },
     Chairperson: {
       proceed: false,
       Spouse: false,
@@ -226,7 +236,7 @@ export class UpsertComponent extends EditableViewPage {
     private service: WelfaresService,
     private membersService: MembersService
   ) {
-    super(authService);
+    super();
   }
 
   override ngOnInit(): void {
@@ -543,8 +553,8 @@ export class UpsertComponent extends EditableViewPage {
     this.step.update((i) => i - 1);
   }
 
-  setSelected(member: string, index: number) {
-    this.isSelected[member][index] = true;
+  setSelected(section: string, index: number) {
+    this.isSelected[section][index] = true;
   }
 
   isProceedAllowedForMember(member: string, spouse?: boolean) {
@@ -554,6 +564,18 @@ export class UpsertComponent extends EditableViewPage {
       ];
     } else {
       return (this.isProceedAllowed[member] as Record<string, boolean>)[
+        'proceed'
+      ];
+    }
+  }
+
+  isProceedAllowedForWelfare(section: string, page?: boolean) {
+    if (page) {
+      return (this.isProceedAllowed[section] as Record<string, boolean>)[
+        'page'
+      ];
+    } else {
+      return (this.isProceedAllowed[section] as Record<string, boolean>)[
         'proceed'
       ];
     }
@@ -732,6 +754,18 @@ export class UpsertComponent extends EditableViewPage {
     delete payload.chairperson;
     delete payload.treasurer;
     delete payload.secretary;
+
+    if (this.contentForm.get('homeContent')?.value) {
+      const configDto: any = {};
+      configDto['host'] = payload['hostname'];
+      const pageDto: any = {};
+      pageDto['page_name'] = payload['name'];
+      pageDto['home_content'] = this.contentForm.get('homeContent')?.value;
+      delete payload['hostname'];
+
+      configDto['pageDto'] = pageDto;
+      payload['configDto'] = configDto;
+    }
 
     if (this.chairperson) {
       payload['chairpersonDto'] = this.chairperson;

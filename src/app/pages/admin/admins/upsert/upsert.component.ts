@@ -66,7 +66,8 @@ export class UpsertComponent extends EditableViewPage {
     @SkipSelf() override authService: AuthService,
     private service: AdminsService
   ) {
-    super(authService);
+    super()
+
   }
 
   override ngOnInit(): void {

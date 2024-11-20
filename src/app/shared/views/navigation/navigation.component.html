@@ -9,67 +9,20 @@
   >
     <mat-toolbar class="mobile-navigation"><logo></logo></mat-toolbar>
     <mat-nav-list class="secondary-navigation">
+      @for (route of routes; track $index) {
       <mat-list-item
-        routerLink="/admins"
-        [activated]="isActive('admins')"
+        [routerLink]="'/' + route.route"
+        [activated]="isActive(route.route)"
       >
-        <a matListItemTitle routerLinkActive="nav-active">Admins</a>
+        <a matListItemTitle routerLinkActive="nav-active">{{ route.name }}</a>
         <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>group</mat-icon>
+          <mat-icon>{{ route.icon }}</mat-icon>
         </button>
       </mat-list-item>
-      <mat-list-item
-        routerLink="/welfares"
-        [activated]="isActive('welfares')"
-      >
-        <a matListItemTitle routerLinkActive="nav-active">Welfares</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>accessibility_new</mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item
-        routerLink="/members"
-        [activated]="isActive('members')"
-      >
-        <a matListItemTitle routerLinkActive="nav-active">Members</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>contacts</mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item
-        routerLink="/contributions"
-        [activated]="isActive('contributions')"
-      >
-        <a matListItemTitle routerLinkActive="nav-active">Contributions</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>currency_exchange</mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item routerLink="/finances" [activated]="isActive('finance')">
-        <a matListItemTitle routerLinkActive="nav-active">Finances</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>account_balance</mat-icon>
-        </button>
-      </mat-list-item>
-      <mat-list-item routerLink="/reports" [activated]="isActive('reports')">
-        <a matListItemTitle routerLinkActive="nav-active">Reports</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>summarize</mat-icon>
-        </button>
-      </mat-list-item>
-
-      <mat-list-item
-        routerLink="/notifications"
-        [activated]="isActive('notifications')"
-      >
-        <a matListItemTitle routerLinkActive="nav-active">Notifications</a>
-        <button mat-icon-button (click)="(0)" matListItemMeta>
-          <mat-icon>campaign</mat-icon>
-        </button>
-      </mat-list-item>
+      }
     </mat-nav-list>
     <mat-toolbar class="footer">
-      <small class="mat-body-small"> RichTech ICT, Ltd. &copy; 2024 </small>
+      <small class="mat-body-small"> IWMS, System. &copy; 2024 </small>
     </mat-toolbar>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -82,26 +35,23 @@
         <button
           type="button"
           aria-label="Toggle sidenav"
-          mat-icon-button 
+          mat-icon-button
           (click)="drawer.toggle()"
         >
-          <mat-icon color="accent" aria-label="Side nav toggle icon">menu</mat-icon>
+          <mat-icon color="accent" aria-label="Side nav toggle icon"
+            >menu</mat-icon
+          >
         </button>
         }
         <header class="app-header app-name">
-          <span class="start">IW</span><span class="end">MS</span>
+          @if (page_name) {
+          <span class="page_name" [innerHTML]="page_name"></span>
+          }@else {
+          <span class="start">{{ start }}</span
+          ><span class="end">{{ end }}</span> }
         </header>
         <span class="spacer"></span>
         <mat-nav-list class="primary-navigation">
-          <a mat-flat-button class="primary-nav-buttons" routerLink="/home"
-            ><mat-icon
-              aria-hidden="false"
-              aria-label="Example home icon"
-              fontIcon="home"
-            ></mat-icon>
-            Home</a
-          >
-
           <a mat-flat-button class="primary-nav-buttons" href=""
             ><mat-icon
               aria-hidden="false"
@@ -152,7 +102,10 @@
         </mat-nav-list>
       </mat-toolbar-row>
       <mat-toolbar-row class="secondary-toolbar">
-        <nav aria-label="breadcrumb" class="container-fluid breadcrumb-container">
+        <nav
+          aria-label="breadcrumb"
+          class="container-fluid breadcrumb-container"
+        >
           <ol class="breadcrumb mat-body-medium">
             @for (breadcrumb of breadcrumbs; track $index) {
             <li

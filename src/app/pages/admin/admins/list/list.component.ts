@@ -127,7 +127,8 @@ export class ListComponent extends ListPage {
 
     private service: AdminsService
   ) {
-    super(authService);
+    super()
+
   }
 
   override ngOnInit(): void {

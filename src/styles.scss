@@ -4,6 +4,7 @@
 // Plus imports for other components in your app.
 
 @use './app/shared/views/navigation/navigation.theme' as navigation;
+@use './app/shared/components/footer/footer.theme' as footer;
 @use './app/shared/views/grid/grid.theme' as grid;
 
 @use './app/pages/not-found/not-found.theme' as not-found;
@@ -30,6 +31,7 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
   @include mat.color-variants-backwards-compatibility($iwms-theme);
 
   @include navigation.theme($iwms-theme);
+  @include footer.theme($iwms-theme);
   @include grid.theme($iwms-theme);
 
   @include not-found.theme($iwms-theme);

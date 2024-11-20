@@ -84,7 +84,8 @@ export class BankAccountUpsertDialogComponent extends Page {
     override dialogRef: MatDialogRef<BankAccountUpsertDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    super(authService);
+    super()
+ 
     const { action, bankAccount } = data;
     this.action = action;
     this.bankAccount = bankAccount;

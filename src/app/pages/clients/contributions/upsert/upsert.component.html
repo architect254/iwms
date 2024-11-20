@@ -1,0 +1,21 @@
+<iwms-header
+  [title]="'Add ' + type + ' Contribution'"
+  [viewUrl]="viewUrl"
+  [listUrl]="listUrl"
+  [displayBack]="true"
+></iwms-header>
+
+<iwms-dynamic-form
+  [controls]="memberContributionFormControls | async"
+  [isSubmitting]="isSubmitting"
+  [triggerValidityNotification]="triggerValidityNotification"
+  (notifyValidity)="onValidityNotified($event)"
+></iwms-dynamic-form>
+<button
+  mat-flat-button
+  class="save-btn"
+  [disabled]="!isProceedAllowed"
+  (click)="save()"
+>
+  Save Contribution
+</button>

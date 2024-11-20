@@ -1,0 +1,71 @@
+<iwms-header
+  [title]="pageTitle"
+  [updateUrl]="updateUrl"
+  [listUrl]="listUrl"
+></iwms-header>
+
+<!-- #core_user -->
+
+<h4 class="core-account-header mat-headline-large">Member Details</h4>
+<iwms-dynamic-view [dataset]="memberDataView | async"></iwms-dynamic-view>
+
+<!-- #welfare -->
+@if (welfare) {
+<h4 class="welfare-header mat-headline-large">Welfare Details</h4>
+<iwms-dynamic-view [dataset]="welfareDataView | async"></iwms-dynamic-view>
+}
+<!-- #spouse -->
+
+@if (spouse) {
+<h4 class="spouse-header mat-headline-large">Spouse Details</h4>
+
+<iwms-dynamic-view
+  class="spouse-section"
+  [dataset]="spouseDataView | async"
+></iwms-dynamic-view>
+}
+
+<!-- #children -->
+
+@if (children && children.length) {
+<h4 class="children-header mat-headline-large">Children Details</h4>
+
+@for (item of children; track $index; ) {
+<h5 class="children-header child mat-title-medium">
+  Child Details [{{ $index + 1 }}]
+</h5>
+<iwms-dynamic-view
+  class="child-section"
+  [dataset]="childDataView[$index] | async"
+></iwms-dynamic-view>
+}}
+
+<!-- @if (members && members.length) { -->
+<h4 class="member-header mat-headline-large">
+  Members Contributions List
+  <button
+    mat-flat-button
+    class="basic-btn"
+    aria-label="View all members"
+    (click)="viewAllContributions()"
+  >
+    <mat-icon fontIcon="add" class="btn-icon"></mat-icon
+    ><span>View all contributions</span>
+  </button>
+</h4>
+
+@if (!contributions?.length) {
+<small
+  >No contributions yet.
+  <a class="icon-link text-primary" (click)="createContribution()"
+    >Create One...</a
+  ></small
+>} @for (item of contributions | slice:0:5; track $index; ) {
+<h5 class="member-header member mat-title-medium">
+  Welfare Member Contribution [{{ $index + 1 }}]
+</h5>
+<iwms-dynamic-view
+  class="member-section"
+  [dataset]="memberContributionDataView[$index] | async"
+></iwms-dynamic-view>
+}

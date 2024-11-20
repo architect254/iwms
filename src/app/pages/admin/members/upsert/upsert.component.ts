@@ -107,7 +107,8 @@ export class UpsertComponent extends EditableViewPage {
     @SkipSelf() override authService: AuthService,
     private service: MembersService
   ) {
-    super(authService);
+    super()
+
 
     this.subscriptions.add(
       this.route.queryParamMap.subscribe((params) => {

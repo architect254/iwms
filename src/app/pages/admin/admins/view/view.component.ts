@@ -46,7 +46,8 @@ export class ViewComponent extends ViewPage {
     @SkipSelf() override authService: AuthService,
     private service: AdminsService
   ) {
-    super(authService);
+    super()
+
   }
   override ngOnInit(): void {
     super.ngOnInit();

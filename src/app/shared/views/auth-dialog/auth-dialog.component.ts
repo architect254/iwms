@@ -71,11 +71,8 @@ export class AuthComponent extends Page {
   minDate = new Date(1930, 0, 1);
   maxDate = new Date(Date.now());
 
-  constructor(
-    @SkipSelf() authService: AuthService,
-    override dialogRef: MatDialogRef<AuthComponent>
-  ) {
-    super(authService);
+  constructor(override dialogRef: MatDialogRef<AuthComponent>) {
+    super();
   }
 
   get action(): Observable<'Sign Up' | 'Sign In'> {
@@ -223,7 +220,7 @@ export class AuthComponent extends Page {
           next: () => {
             this.isSigningIn = false;
             this.dialogRef?.close();
-            this.router.navigate(['/']);
+            window.location.reload();
           },
           error: (error) => {
             this.isSigningUp = false;

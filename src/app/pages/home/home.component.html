@@ -1,9 +1,43 @@
 <mat-toolbar>
   <header class="app-header app-name">
-    <span class="start">IW</span><span class="end">MS</span>
+    @if (page_name) {
+    <span class="page_name" [innerHTML]="page_name"></span>
+    }@else {
+    <span class="start">{{ start }}</span
+    ><span class="end">{{ end }}</span>
+    }
   </header>
+  <mat-nav-list class="primary-navigation">
+    <a mat-flat-button class="primary-nav-buttons" href=""
+      ><mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="info"
+      ></mat-icon>
+      About Us</a
+    >
+    <a mat-flat-button class="primary-nav-buttons" href=""
+      ><mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="phone"
+      ></mat-icon>
+      Contact Us</a
+    >
+
+    <a mat-button class="primary-nav-buttons login-button" (click)="login()"
+      ><mat-icon
+        aria-hidden="false"
+        aria-label="Example home icon"
+        fontIcon="login"
+      ></mat-icon>
+      Log In</a
+    >
+  </mat-nav-list>
 </mat-toolbar>
-<div class="text-center">
-  <h1 class="mat-display-large">Welcome Home</h1>
-  <p class="mat-title-large">Log in to proceed</p>
-</div>
+<h1 class="mat-display-large text-center">Welcome Home</h1>
+<section
+  class="home-content mat-body-large container-fluid"
+  [innerHTML]="home_content"
+></section>
+<iwms-footer></iwms-footer>

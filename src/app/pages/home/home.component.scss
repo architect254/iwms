@@ -1,3 +1,25 @@
-.text-center{
+.text-center {
     margin: 10% auto;
+}
+
+mat-toolbar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.primary-navigation {
+    display: flex;
+
+    .primary-nav-buttons {
+        margin: 4px;
+    }
+
+    .login-button {
+        color: white;
+        margin: 4px;
+    }
+}
+
+.home-content {
+    height: max-content;
 }

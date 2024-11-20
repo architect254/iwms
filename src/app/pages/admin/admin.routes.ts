@@ -1,12 +1,16 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guards/auth.guard';
 import { NavigationComponent } from '../../shared/views/navigation/navigation.component';
+import { configResolver } from '../../config.resolver';
 
 export const adminRoutes: Routes = [
   {
     path: '',
     component: NavigationComponent,
+    resolve: { config: configResolver },
+    canMatch: [authGuard],
     canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: 'admins',
@@ -57,5 +61,4 @@ export const adminRoutes: Routes = [
       { path: '', redirectTo: '/admins', pathMatch: 'full' },
     ],
   },
-  { path: '**', redirectTo: 'not-found' },
 ];

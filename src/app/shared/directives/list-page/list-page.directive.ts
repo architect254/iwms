@@ -27,10 +27,6 @@ export abstract class ListPage extends Page {
 
   data: any[] = [];
 
-  constructor(@SkipSelf() authService: AuthService) {
-    super(authService);
-  }
-
   override ngOnInit(): void {
     super.ngOnInit();
 

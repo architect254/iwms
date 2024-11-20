@@ -30,11 +30,13 @@ export abstract class Page implements OnInit, OnDestroy {
 
   snackbar = inject(MatSnackBar);
 
+  protected authService = inject(AuthService);
+
   protected subscriptions: Subscription = new Subscription();
 
   pageTitle!: string;
 
-  constructor(@SkipSelf() protected authService: AuthService) {
+  constructor() {
     this.getTitle();
     this.applyMetaTags();
   }
