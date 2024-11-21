@@ -116,7 +116,6 @@ export class InternalFundsTransferExpenditureUpsertDialogComponent extends Page 
         this.internalFundsTransferExpenditureDto
       );
     } else {
-      console.log('exp payload', this.internalFundsTransferExpenditureDto);
       serviceAction = this.service.createExpenditure(
         this.internalFundsTransferExpenditureDto
       );

@@ -317,7 +317,6 @@ export class ListComponent extends ListPage {
   }
 
   upsert(action: 'create' | 'update', entity?: any) {
-    console.log('toggl', this.toggledOptionValue);
     switch (this.toggledOptionValue) {
       case AccountType.Bank:
         this.dialogRef = this.dialog.open(BankAccountUpsertDialogComponent, {

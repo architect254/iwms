@@ -72,7 +72,6 @@ export class AuthService extends ApiService {
         } else {
           isAdmin = false;
         }
-        console.log('is Admin', isAdmin);
         return isAdmin;
       })
     );

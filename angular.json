@@ -62,7 +62,7 @@
                   "minify": true,
                   "inlineCritical": false
                 },
-                "fonts": true
+                "fonts": false
               },
               "sourceMap": false,
               "namedChunks": false,

@@ -760,7 +760,6 @@ export class UpsertComponent extends EditableViewPage {
       delete payload['secretaryDto'].children;
     }
 
-    console.log('payload', payload);
 
     let serviceAction;
 
