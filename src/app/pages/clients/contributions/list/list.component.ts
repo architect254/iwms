@@ -205,7 +205,6 @@ export class ListComponent extends ListPage {
           };
         });
 
-        console.log('data', statusLabels[this.data[1].type]);
       })
     );
   }

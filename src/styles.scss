@@ -31,7 +31,7 @@ $iwms-theme: mat.define-theme((color: (theme-type: light,
   @include mat.color-variants-backwards-compatibility($iwms-theme);
 
   @include navigation.theme($iwms-theme);
-  @include footer.theme($iwms-theme);
+  @include grid.theme($iwms-theme);
   @include grid.theme($iwms-theme);
 
   @include not-found.theme($iwms-theme);
