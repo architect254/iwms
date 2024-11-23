@@ -86,10 +86,10 @@ export class AuthService extends ApiService {
   }
 
   inilialize() {
-    return new Promise<void>((resolve) => {
+    return new Promise<true>((resolve) => {
       const token = this._storage.get(STORAGE_KEYS.ACCESS_TOKEN);
       this._token.next(token);
-      resolve();
+      resolve(true);
     });
   }
 

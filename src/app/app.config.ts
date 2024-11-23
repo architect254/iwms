@@ -40,7 +40,7 @@ import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { adminRoutes } from './pages/admin/admin.routes';
 import { clientRoutes } from './pages/clients/client.routes';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, tap } from 'rxjs';
 import { ConfigService } from './core/services/config.service';
 import { BrowserPlatformLocation, DOCUMENT } from '@angular/common';
 // export const API_SERVER_URL = new InjectionToken<string>(
@@ -70,15 +70,20 @@ export function initializeConfig(
 
 export function initializeRoutes(authService: AuthService, router: Router) {
   return () => {
-    new Promise<void>((resolve) => {
-      firstValueFrom(authService.isAdmin).then((isAdmin) => {
-        if (isAdmin) {
-          router.resetConfig([...adminRoutes, ...routes]);
-        } else {
-          router.resetConfig([...clientRoutes, ...routes]);
-        }
-        resolve();
-      });
+    return new Promise((resolve) => {
+      firstValueFrom(
+        authService.isAdmin.pipe(
+          tap({
+            next: (isAdmin) => {
+              if (isAdmin) {
+                router.resetConfig([...adminRoutes, ...routes]);
+              } else {
+                router.resetConfig([...clientRoutes, ...routes]);
+              }
+            },
+          })
+        )
+      ).finally(() => resolve(true));
     });
   };
 }
@@ -91,15 +96,15 @@ export const appConfig: ApplicationConfig = {
       // withDebugTracing(),
       withRouterConfig({ onSameUrlNavigation: 'reload' })
     ),
-    provideClientHydration(
-      withEventReplay(),
-      withHttpTransferCacheOptions({
-        filter: (req: HttpRequest<unknown>) => true, // to filter
-        includeHeaders: [], // to include headers
-        includePostRequests: true, // to include POST
-        includeRequestsWithAuthHeaders: false, // to include with auth
-      })
-    ),
+    // provideClientHydration(
+    //   withEventReplay(),
+    //   withHttpTransferCacheOptions({
+    //     filter: (req: HttpRequest<unknown>) => true, // to filter
+    //     includeHeaders: [], // to include headers
+    //     includePostRequests: true, // to include POST
+    //     includeRequestsWithAuthHeaders: false, // to include with auth
+    //   })
+    // ),
     provideAnimationsAsync(),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),

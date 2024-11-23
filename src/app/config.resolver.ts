@@ -6,9 +6,5 @@ import { Config } from './core/entities/config.entity';
 
 export const configResolver: ResolveFn<Config> = (route, state) => {
   const configService = inject(ConfigService);
-  return new Promise((resolve) => {
-    firstValueFrom(configService.config).then((config) => {
-      resolve(config);
-    });
-  });
+  return firstValueFrom(configService.config);
 };

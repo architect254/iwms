@@ -15,7 +15,7 @@ export const upsertMemberGuard: CanActivateFn = async (route, state) => {
       const membership =
         router.getCurrentNavigation()?.extras.state?.['membership'];
 
-      if (isAdmin && membership != Membership.Admin) {
+      if (isAdmin) {
         resolve(true);
       } else {
         resolve(false);
