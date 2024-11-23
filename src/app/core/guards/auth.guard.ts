@@ -13,7 +13,5 @@ import { AuthService } from '../services/auth.service';
 export const authGuard: CanMatchFn = async (route, seg) => {
   const authService = inject(AuthService);
 
-  return firstValueFrom(authService.isAuthenticated).then((is) => {
-    return is;
-  });
+  return firstValueFrom(authService.isAuthenticated);
 };

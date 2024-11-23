@@ -9,7 +9,6 @@ export const adminRoutes: Routes = [
     component: NavigationComponent,
     resolve: { config: configResolver },
     canMatch: [authGuard],
-    canActivate: [authGuard],
     canActivateChild: [authGuard],
     children: [
       {

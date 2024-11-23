@@ -9,13 +9,5 @@ export const welfareResolver: ResolveFn<Welfare> = (route, state) => {
   const authService = inject(AuthService);
   const welfareService = inject(WelfaresService);
 
-  return new Promise((resolve) => {
-    firstValueFrom(authService.welfare).then((welfare) => {
-      firstValueFrom(welfareService.getWelfareById(welfare.id!)).then(
-        (welf) => {
-          resolve(welf);
-        }
-      );
-    });
-  });
+  return firstValueFrom(authService.welfare);
 };

@@ -14,7 +14,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService implements Searchable {
-  readonly #SERVER_URL: string = 'https://iwms-be-api.onrender.com';
+  readonly #SERVER_URL: string = true ? 'https://iwms-be-api.onrender.com'
+    : 'http://iwms.com';
   readonly API_URL = `${this.#SERVER_URL}/api`;
 
   protected endpoint = `${this.API_URL}/`;

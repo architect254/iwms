@@ -11,15 +11,16 @@ export class ConfigService extends ApiService {
   _config = new ReplaySubject<Config>(1);
 
   inilialize(hostname: string) {
-    return new Promise<void>((resolve) => {
-      firstValueFrom(this.getConfig(hostname))
-        .then((config) => {
-          this._config.next(config || null);
-          resolve();
-        })
-        .catch(() => {
-          resolve();
-        });
+    return new Promise((resolve) => {
+      firstValueFrom(
+        this.getConfig(hostname).pipe(
+          tap({
+            next: (value) => {
+              this._config.next(value || null);
+            },
+          })
+        )
+      ).finally(() => resolve(true));
     });
   }
 

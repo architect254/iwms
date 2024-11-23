@@ -7,11 +7,7 @@ import { AuthService } from '../services/auth.service';
 import { Membership } from '../entities/user.entity';
 
 export const upsertAdminGuard: CanActivateFn = () => {
-  return new Promise<boolean>((resolve) => {
-    const authService = inject(AuthService);
+  const authService = inject(AuthService);
 
-    firstValueFrom(authService.isAdmin).then((isAdmin) => {
-      resolve(isAdmin);
-    });
-  });
+  return firstValueFrom(authService.isAdmin);
 };
